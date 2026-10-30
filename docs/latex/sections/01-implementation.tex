@@ -1,0 +1,64 @@
+\section{Chương 1: Cài đặt}
+\label{sec:implementation}
+
+\subsection{Bài toán, mục tiêu và phạm vi}
+Khai thác tập phổ biến (frequent itemset mining, FIM) tìm mọi tập item xuất hiện
+trong đủ số giao dịch. Nhóm lựa chọn Eclat dựa trên bài báo của Zaki~\cite{zaki2000}.
+\todo{Giới thiệu động cơ, phạm vi đồ án và liên hệ với nền tảng association
+rules~\cite{agrawal1994}; nêu đóng góp thực tế của nhóm sau khi triển khai.}
+
+Gọi $D=\{t_1,\ldots,t_n\}$ là CSDL gồm $n$ giao dịch, $I$ là tập item và
+$X\subseteq I$, $X\ne\emptyset$, là một itemset. Tidset của $X$ và support count là
+\begin{equation}
+ T(X)=\{i\mid X\subseteq t_i\},\qquad \sigma(X)=|T(X)|.
+ \label{eq:support}
+\end{equation}
+Với relative minsup $\theta\in(0,1]$, ngưỡng đếm của cài đặt là
+$\tau=\lceil\theta n\rceil$ khi $n>0$; $X$ frequent nếu $\sigma(X)\ge\tau$.
+Relative support là $s(X)=\sigma(X)/n$. \todo{Giải thích policy CSDL rỗng và
+rounding; kiểm tra mọi ký hiệu nhất quán với CLI và SPMF.}
+
+\subsection{Cơ sở Eclat và đối chiếu paper}
+Quan hệ
+\begin{equation}
+ T(X\cup Y)=T(X)\cap T(Y)
+ \label{eq:intersection}
+\end{equation}
+cho phép tính support qua giao tidsets. Prefix equivalence classes phân rã không
+gian tìm kiếm; support không tăng khi thêm item, tạo cơ sở tỉa extension infrequent.
+\todo{Giải thích bằng một toy DB, bảng horizontal/vertical và ví dụ giao tid-lists;
+dẫn chiếu Eq.~\ref{eq:intersection} và hình/bảng do nhóm tự xây dựng.}
+
+Paper~\cite{zaki2000}, mục 5.4, mô tả Eclat bằng prefix equivalence và bottom-up
+search trong lớp. Theo kế hoạch, nhóm chọn depth-first search (DFS) prefix extension.
+\todo{Trình bày chính xác adaptation: phần giữ nguyên, phần thay đổi scheduling,
+lý do lựa chọn; so với mô tả DFS của tài liệu SPMF~\cite{spmf}. Không gọi DFS là bản
+chép nguyên pseudocode Fig.12 của paper.}
+
+\subsection{Cài đặt basic trong Julia}
+\todo{A viết pseudocode của nhóm, xây vertical tid-lists và F1/F2, thứ tự item,
+prefix extension, intersection, pruning, phát kết quả, điều kiện dừng và giải phóng
+intermediate lists. Nêu invariant và giải thích tính đầy đủ/không trùng.}
+
+\todo{Mô tả kiểu Itemset, Pattern, ListAtom; API mine, parser, writer và CLI.
+Nêu cách xử lý metadata/blank lines, duplicate transaction, item trùng và input sai.
+Đưa ví dụ CLI với file thật và support boundary.}
+
+\subsection{Tối ưu BitVector và phân tích độ phức tạp}
+\todo{A mô tả packed BitVector, AND/popcount, typed structures và multiple dispatch;
+chứng minh cùng enumeration semantics với basic; ownership/buffer reuse nếu có.}
+
+Gọi $m=|I|$ và $w$ là số bit trong một machine word. Một giao sorted tid-lists có
+chi phí $O(|T_a|+|T_b|)$; với packed bitsets chiều dài $n$, chi phí một phép
+AND/count khoảng $O(\lceil n/w\rceil)$ word operations. Có thể có tới $2^m-1$
+itemset khác rỗng nên cần tính đến output size.
+\todo{Phân tích tổng theo candidate intersections thực tế; memory input, active
+tidsets và output; tránh tuyên bố complexity tuyến tính cho mọi dữ liệu.}
+
+\subsection{Kiểm thử và khả năng tái lập}
+\todo{B mô tả ít nhất 5 CSDL, oracle độc lập, SPMF references thật, edge cases và
+canonical comparator; A giải thích sửa lỗi. Điền số test và tỉ lệ khớp đã đo,
+không dùng kết quả scaffold thay cho kiểm chứng thuật toán.}
+
+\todo{Ghi Julia/Java/SPMF, seed, commit, dữ liệu và hash, CI và lệnh chạy test;
+tham chiếu kết quả benchmark tại Chương~\ref{sec:evaluation}.}

@@ -1,0 +1,45 @@
+\documentclass[conference,a4paper]{IEEEtran}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+% Compile with pdfLaTeX + BibTeX. IEEEtran and Vietnamese fonts (vntex) required.
+% This is a report template, not a finished 10–15-page report.
+\newcommand{\todo}[1]{\textbf{[TODO: #1]}}
+
+\title{Khai thác tập phổ biến bằng Eclat:\\Cài đặt Julia, đánh giá và ứng dụng Groceries -- Splice DNA}
+\author{\IEEEauthorblockN{TODO: Họ tên A -- MSSV A \qquad Họ tên B -- MSSV B}
+\IEEEauthorblockA{Nhóm TODO -- Môn Khai phá dữ liệu và ứng dụng\\
+Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM\\
+TODO: Lớp, giảng viên thực hành, email}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\todo{Viết 150--200 từ sau khi có kết quả: bài toán FIM; cài đặt Eclat bằng Julia;
+DFS prefix extension và BitVector; bốn benchmark; hai ứng dụng Groceries và UCI
+Splice DNA; kết quả định lượng thực và giới hạn. Không đưa speedup hoặc tỉ lệ
+khớp SPMF khi chưa có log đo.}
+\end{abstract}
+
+\begin{IEEEkeywords}
+frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
+\end{IEEEkeywords}
+
+% Three main chapters as IEEE sections; do not use book/report \chapter commands.
+\input{sections/01-implementation}
+\input{sections/02-evaluation}
+\input{sections/03-applications}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% Optional appendix: raw configs, extra plots, test logs and reproducibility.
+% References and appendices do not count toward the required 10–15 body pages.
+\end{document}

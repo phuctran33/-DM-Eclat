@@ -1,0 +1,19 @@
+seed = 42
+
+[groceries]
+input = "data/applications/groceries"
+minsup = "TODO after pilot"
+minconf = "TODO after pilot"
+top_k = 10
+interpret_at_least = 3
+
+[dna]
+input = "data/applications/splice.data"
+classes = ["EI", "IE", "N"]
+# Proposal for A/B confirmation: -6..-1,+1..+6 around 30|31 boundary.
+positions_1based = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+positions_status = "proposed — confirm in M1"
+ambiguity_policy = "TODO choose and document"
+minsup = "TODO after pilot"
+display_pattern_lengths = [2, 3, 4]
+label_is_mined_item = false

@@ -1,0 +1,45 @@
+\section{Chương 3: Ứng dụng thực tế}
+\label{sec:applications}
+
+\subsection{Groceries: chuyển đổi giao dịch và khai thác}
+\todo{B mô tả nguồn Groceries, snapshot/license, schema raw, thống kê trước/sau;
+giải thích một basket là một transaction, item mapping, duplicate policy.}
+\todo{Nêu minsup/minconf sau pilot và lý do; chạy basic/BitVector của nhóm,
+không dùng output thư viện FIM cho kết quả ứng dụng.}
+
+Với $A,B$ là hai itemset khác rỗng, rời nhau, xét luật $A\Rightarrow B$:
+\begin{align}
+\operatorname{supp}(A\Rightarrow B)&=\sigma(A\cup B)/n,\\
+\operatorname{conf}(A\Rightarrow B)&=\sigma(A\cup B)/\sigma(A),\\
+\operatorname{lift}(A\Rightarrow B)&=\operatorname{conf}(A\Rightarrow B)/(\sigma(B)/n).
+\end{align}
+$n$ là số basket; $\sigma$ được định nghĩa tại Eq.~\ref{eq:support}.
+\todo{A/B giải thích lọc minsup/minconf, sinh luật, tie-break và chọn top-10 theo lift.}
+
+\subsection{Groceries: kết quả và ý nghĩa kinh doanh}
+\todo{B điền bảng top-10, decoded product names, support, confidence, lift và counts.
+Giải thích ít nhất 3 luật với gợi ý thực tế; phân tích support thấp và tránh suy
+nhân quả từ co-occurrence. Gắn artifact CSV và lệnh tái lập.}
+
+\subsection{Splice DNA: dữ liệu và mã hóa 12 vị trí}
+Dữ liệu UCI Splice~\cite{splice} có sequence DNA và ba nhãn EI, IE, N.
+\todo{B trình bày provenance và counts theo lớp từ file thực; giải thích EI/IE/N.}
+Theo kế hoạch, mỗi sequence được chuyển thành transaction từ 12 vị trí.
+\todo{Xác nhận cửa sổ đề xuất $-6,\ldots,-1,+1,\ldots,+6$, chỉ số Julia 25:36;
+item là cặp (vị trí, base), mapping ổn định, nhãn lớp giữ riêng.}
+\todo{Giải thích ambiguity D/N/S/R, chính sách xử lý, số sample bị loại theo lớp;
+phân biệt nhãn N với base N. Không coi tập base không vị trí là cùng representation.}
+
+\subsection{Splice DNA: pattern 2--4 item và so sánh EI/IE/N}
+\todo{Chạy cài đặt nhóm theo lớp; minsup relative dùng denominator của lớp.
+Mine đầy đủ, sau đó lọc độ dài 2--4 để trình bày; thống nhất candidate across classes.}
+\todo{B điền bảng decoded patterns, count và relative support từng lớp,
+chênh lệch support, criterion chọn. Đếm trực tiếp candidate nếu không có trong
+frequent output lớp khác; không tự gán support 0.}
+\todo{Diễn giải co-occurrence quanh splice, imbalance, window/threshold selection
+và ambiguity; không kết luận cơ chế sinh học hoặc accuracy classifier chưa đo.}
+
+\subsection{Khả năng tái lập, hạn chế và kết luận}
+\todo{B mô tả cold-run Colab: raw data, code chuẩn bị, mapping/config, miner, bảng,
+figures. A/B tổng hợp kết quả thật hai ứng dụng, giới hạn và bước tiếp theo.
+Kết luận ngắn bao quát cả ba chương, không thay kết luận bằng checklist công việc.}

@@ -1,0 +1,18 @@
+name: Julia scaffold checks
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        julia-version: ['1.9', '1.11']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.julia-version }}
+      - run: julia --project=. tests/runtests.jl
+      - run: julia --project=. scripts/mine.jl --help
+      # TODO after implementing both backends: set ECLAT_TEST_MINER=1.
+      # M1: list only (default); M2/final: ECLAT_TEST_BACKENDS=list,bitset.
+      # TODO after generating/pinning SPMF references: set ECLAT_TEST_SPMF=1.

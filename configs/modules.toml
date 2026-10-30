@@ -1,0 +1,26 @@
+year = 2026
+timezone = "Asia/Saigon"
+official_moodle_deadline = "TODO — các mốc bên dưới chỉ là lịch nội bộ"
+daily_commits_required = false
+weekly_sync_minutes = "20–30"
+
+[[modules]]
+id = "M1"
+start = "2026-10-28"
+end = "2026-11-03"
+issues = [1, 2, 3]
+gate = "Basic + CLI, 100% SPMF on >=5 toy databases, unit tests"
+
+[[modules]]
+id = "M2"
+start = "2026-11-04"
+end = "2026-11-10"
+issues = [4, 5, 6]
+gate = "BitVector correct, Groceries top-10, Splice EI/IE/N, minimal Colab"
+
+[[modules]]
+id = "M3"
+start = "2026-11-11"
+end = "2026-11-17"
+issues = [7, 8, 9]
+gate = "Four benchmarks, figures, IEEE report, public GitHub/Colab, full tests"
