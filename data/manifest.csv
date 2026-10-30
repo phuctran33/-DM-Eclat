@@ -1,7 +1,7 @@
 dataset,module,owner,original_source,public_snapshot_url,revision,license,sha256,local_path,status
-chess,M3,A,SPMF or FIMI,TODO,TODO,TODO,TODO,data/benchmark/chess.txt,pending
-mushroom,M3,A,SPMF or FIMI,TODO,TODO,TODO,TODO,data/benchmark/mushroom.txt,pending
-retail,M3,A,SPMF or FIMI,TODO,TODO,TODO,TODO,data/benchmark/retail.txt,pending
-T10I4D100K,M3,A,SPMF or FIMI,TODO,TODO,TODO,TODO,data/benchmark/T10I4D100K.txt,pending
-groceries,M2,B,TODO exact original version,TODO,TODO,TODO,TODO,data/applications/groceries,pending
-splice,M2,B,https://doi.org/10.24432/C5M888,TODO,TODO,CC BY 4.0,TODO,data/applications/splice.data,pending
+chess,M3,A,SPMF or FIMI,,,,,data/benchmark/chess.txt,pending
+mushroom,M3,A,SPMF or FIMI,,,,,data/benchmark/mushroom.txt,pending
+retail,M3,A,SPMF or FIMI,,,,,data/benchmark/retail.txt,pending
+T10I4D100K,M3,A,SPMF or FIMI,,,,,data/benchmark/T10I4D100K.txt,pending
+groceries,M2,B,TODO exact original version,,,,,data/applications/groceries.csv,pending
+splice,M2,B,https://doi.org/10.24432/C5M888,,,CC BY 4.0,,data/applications/splice.data,pending

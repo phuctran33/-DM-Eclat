@@ -25,9 +25,10 @@ nhân quả từ co-occurrence. Gắn artifact CSV và lệnh tái lập.}
 Dữ liệu UCI Splice~\cite{splice} có sequence DNA và ba nhãn EI, IE, N.
 \todo{B trình bày provenance và counts theo lớp từ file thực; giải thích EI/IE/N.}
 Theo kế hoạch, mỗi sequence được chuyển thành transaction từ 12 vị trí.
-\todo{Xác nhận cửa sổ đề xuất $-6,\ldots,-1,+1,\ldots,+6$, chỉ số Julia 25:36;
-item là cặp (vị trí, base), mapping ổn định, nhãn lớp giữ riêng.}
-\todo{Giải thích ambiguity D/N/S/R, chính sách xử lý, số sample bị loại theo lớp;
+Schema v1.0.0 cố định cửa sổ $-6,\ldots,-1,+1,\ldots,+6$, chỉ số Julia 25:36;
+item là cặp (vị trí, base), 48 IDs theo thứ tự A/C/G/T, nhãn lớp giữ riêng.
+\todo{Giải thích ambiguity D/N/S/R, chính sách bỏ sample khi window chứa base mơ hồ,
+số sample bị loại theo lớp;
 phân biệt nhãn N với base N. Không coi tập base không vị trí là cùng representation.}
 
 \subsection{Splice DNA: pattern 2--4 item và so sánh EI/IE/N}

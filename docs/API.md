@@ -1,4 +1,6 @@
-# API và hợp đồng dữ liệu — gói 01 / M1
+# API A/B — schema v1.0.0 đã chốt
+
+Định nghĩa đầy đủ: [SCHEMA.md](SCHEMA.md). Kiểu dữ liệu ở `src/schemas.jl`.
 
 | API | Input | Output / yêu cầu |
 |---|---|---|
@@ -9,10 +11,10 @@
 | `mine(...; backend=:bitset)` | Cùng hợp đồng baseline | Kết quả giống tuyệt đối; thay biểu diễn tidset |
 | `write_patterns(path, patterns)` | Pattern có key canonical | SPMF TXT, ổn định theo độ dài rồi itemset |
 | `read_patterns(path)` | SPMF TXT numeric | `Dict{Itemset,Int}`, bỏ qua thứ tự dòng; phát hiện trùng |
-| `association_rules(patterns, n; minconf=0.6)` | Output đầy đủ của miner | TODO A hỗ trợ B: schema rules có support/count/confidence/lift |
-| `groceries_transactions(path)` | Raw Groceries đã chốt schema | TODO B: transactions + mapping tên + thống kê |
-| `splice_transactions(path; positions=25:36)` | UCI Splice raw | TODO B: transactions + labels + IDs + mapping + thống kê |
-| `compare_dna_patterns(transactions, labels, patterns)` | Output nhóm và dữ liệu theo lớp | TODO B: bảng support EI/IE/N cho pattern 2–4 item |
+| `association_rules(patterns, n; minconf=3//5)` | Output đầy đủ của miner | `Vector{AssociationRule}`, counts + support/confidence/lift, sort xác định |
+| `groceries_transactions(path)` | Canonical CSV `basket_id,item_name` | `PreparedDataset`, classes=nothing |
+| `splice_transactions(path; positions=25:36)` | UCI Splice raw, cửa sổ đã khóa | `PreparedDataset`, 48-ID mapping, metadata EI/IE/N |
+| `compare_dna_patterns(dataset, patterns_by_class)` | PreparedDataset + Dict đủ EI/IE/N | `Vector{DNAPatternComparison}`, candidates 2–4 item |
 
 `Pattern.items` là tuple ID tăng dần; `Pattern.support` là số giao dịch chứa itemset.
 Support của itemset bằng đúng ngưỡng vẫn là frequent. Không đưa nhãn EI/IE/N vào
@@ -23,5 +25,10 @@ Blank/comment/metadata input không tạo TID. Giữ các transaction giống nh
 là các quan sát độc lập. File input sai thứ tự/trùng item bị từ chối; helper chuẩn bị
 dữ liệu phải chuẩn hóa rõ ràng, không âm thầm đổi dữ liệu trong parser.
 
-M1: A/B chốt pseudocode và schema ứng dụng cụ thể trước khi triển khai TODO. M2:
-hai backend phải dùng cùng ordering/candidate policy để so sánh tối ưu có ý nghĩa.
+`PreparedDataset` có `dataset_id,transactions,item_labels,row_ids,classes`.
+A gọi `mine(prepared.transactions, min_count)`; B giữ mapping/metadata để diễn giải.
+Stats/audit xuất riêng, không đổi return type. Preprocessing, miner và application
+functions vẫn TODO; khai báo schema không thay cho việc triển khai.
+
+M1 A/B đọc schema đã chốt và hoàn thiện pseudocode. M2 hai backend giữ cùng
+ordering/candidate policy để so sánh tối ưu có ý nghĩa.

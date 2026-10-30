@@ -1,0 +1,1 @@
+schema_version,run_id,dataset,input_sha256,backend,minsup,min_count,repeat,seed,n_transactions,n_patterns,metric_scope,seconds,allocated_bytes,peak_rss_mib,status,julia_version,java_version,spmf_version

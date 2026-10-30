@@ -1,0 +1,55 @@
+schema_version = "1.0.0"
+encoding = "UTF-8"
+csv_dialect = "RFC4180"
+csv_header = true
+item_list_separator = " "
+display_label_separator = " | "
+missing_metric = "NA"
+seed = 42
+
+[prepared_dataset]
+fields = ["dataset_id", "transactions", "item_labels", "row_ids", "classes"]
+transaction_order_is_metadata_order = true
+item_id_start = 1
+groceries_classes = "nothing"
+dna_classes = ["EI", "IE", "N"]
+
+[groceries]
+input = "data/applications/groceries.csv"
+columns = ["basket_id", "item_name"]
+normalization = ["NFC", "lowercase", "strip", "collapse_whitespace"]
+item_order = "normalized_label_lexicographic"
+transaction_order = "basket_id_lexicographic"
+empty_value_policy = "error"
+duplicate_item_policy = "deduplicate_within_basket"
+duplicate_basket_policy = "retain_distinct_basket_ids"
+
+[dna]
+input = "data/applications/splice.data"
+raw_columns = ["class", "source_id", "sequence"]
+raw_header = false
+raw_sequence_length = 60
+positions_1based = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+relative_positions = [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]
+base_order = ["A", "C", "G", "T"]
+item_id_formula = "4*(slot-1)+base_index"
+mapping_size = 48
+ambiguity_policy = "drop_sample_if_window_has_non_ACGT"
+malformed_policy = "error"
+transaction_order = "source_line"
+row_id_format = "splice:<source_line>"
+display_lengths = [2, 3, 4]
+
+[tables]
+items = ["item_id", "item_label", "position", "base"]
+observations = ["tid", "row_id", "source_id", "class"]
+preparation_audit = ["schema_version", "dataset_id", "class", "reason", "count"]
+groceries_rules = ["rank", "antecedent_ids", "consequent_ids", "antecedent_labels", "consequent_labels", "length", "support_count", "antecedent_count", "consequent_count", "n_transactions", "support", "confidence", "lift"]
+dna_patterns = ["rank", "pattern_ids", "pattern_labels", "length", "count_EI", "count_IE", "count_N", "n_EI", "n_IE", "n_N", "support_EI", "support_IE", "support_N", "support_span"]
+spmf_manifest = ["schema_version", "dataset", "input_path", "input_sha256", "minsup", "min_count", "n_transactions", "output_path", "output_sha256", "spmf_version", "spmf_jar_sha256", "java_version", "command", "status"]
+benchmark_runs = ["schema_version", "run_id", "dataset", "input_sha256", "backend", "minsup", "min_count", "repeat", "seed", "n_transactions", "n_patterns", "metric_scope", "seconds", "allocated_bytes", "peak_rss_mib", "status", "julia_version", "java_version", "spmf_version"]
+comparisons = ["schema_version", "run_id", "dataset", "minsup", "own_backend", "reference_backend", "own_count", "reference_count", "exact_matches", "missing", "extra", "wrong_support", "exact_match_rate", "identical"]
+
+[ranking]
+rules = ["lift_desc", "confidence_desc", "support_desc", "union_length_asc", "antecedent_asc", "consequent_asc"]
+dna = ["support_span_desc", "max_class_support_desc", "length_asc", "items_asc"]

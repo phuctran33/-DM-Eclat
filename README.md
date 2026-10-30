@@ -4,6 +4,11 @@
 > Eclat basic, BitVector, Groceries, DNA và bộ điều phối benchmark còn TODO.
 > Chưa có kết quả SPMF, benchmark hoặc kết luận ứng dụng. Xem [tiến độ](docs/planning/STATUS.md).
 
+**Schema A/B v1.0.0 đã chốt:** [đặc tả đầy đủ](docs/SCHEMA.md),
+[hợp đồng dạng TOML](schemas/contracts.toml), shared types trong `src/schemas.jl`.
+Preprocessing trả `PreparedDataset`; DNA cố định 25:36/48 item IDs;
+Groceries nhận CSV `basket_id,item_name`. A/B triển khai theo cùng hợp đồng này.
+
 Template bám [đề HCMUS](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/),
 paper **Mohammed J. Zaki, “Scalable Algorithms for Association Mining”, IEEE TKDE,
 12(3), 372–390, 2000**, [DOI](https://doi.org/10.1109/69.846291), và kế hoạch nhóm
@@ -13,8 +18,8 @@ paper **Mohammed J. Zaki, “Scalable Algorithms for Association Mining”, IEEE
 
 | Vai trò | Họ tên / MSSV | Chủ trì | Review |
 |---|---|---|---|
-| A | TODO | Eclat, tối ưu, benchmark, Chương 1–2 | Test, ứng dụng, bàn giao |
-| B | TODO | SPMF/test, Groceries, Splice DNA, Colab, Chương 3 | Thuật toán và số liệu |
+| A | Nguyễn Đức Hưng | Eclat, tối ưu, benchmark, Chương 1–2 | Test, ứng dụng, bàn giao |
+| B | Trần Thiên Phúc | SPMF/test, Groceries, Splice DNA, Colab, Chương 3 | Thuật toán và số liệu |
 
 | Module | Thời gian năm 2026 | Mốc nghiệm thu | Kết quả cần đạt |
 |---|---|---|---|
@@ -97,7 +102,7 @@ TODO FINAL TEST OUTPUT — chưa chạy full suite; chưa có kết quả để 
 | UCI Splice DNA | [nguồn gốc](https://archive.ics.uci.edu/dataset/69/molecular+biology+splice+junction+gene+sequences) |
 
 Notebook mẫu: [notebooks/demo.ipynb](notebooks/demo.ipynb). Xác minh template local:
-**33 kiểm tra hạ tầng pass**, mining/SPMF pending; chi tiết tại
+**66 kiểm tra hạ tầng/schema pass**, mining/SPMF pending; chi tiết tại
 [docs/verification.md](docs/verification.md). Các ô chuẩn bị dữ liệu
 phải chạy trong notebook hoặc import helper của repo. Template chưa tải benchmark
 và chưa thực hiện remote Colab cold-run.

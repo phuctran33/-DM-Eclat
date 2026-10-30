@@ -1,4 +1,5 @@
 using EclatProject
+using SHA
 
 # One process per dataset/backend/support/repeat. External monitor measures RSS.
 # Deliberately fails on the current TODO core instead of fabricating results.
@@ -7,6 +8,8 @@ function main(args)
     input, minsup, backend_name, repeat, output = args
     relative = parse_minsup(minsup)
     backend = Symbol(backend_name)
+    input_hash = bytes2hex(open(sha256, input))
+    run_id = string(time_ns(), '-', getpid())
     # Compile on a tiny database before measuring. No full dataset is retained here.
     mine([[1, 2], [1], [2]], 1; backend=backend)
     GC.gc()
@@ -19,10 +22,12 @@ function main(args)
         mine(transactions, threshold[]; backend=backend)
     end
     write_patterns(output, run.value) # output serialization is outside internal timer
-    println("input,minsup,backend,repeat,n_transactions,min_count,n_patterns,read_and_mine_seconds,allocated_bytes,peak_rss_mib")
-    escaped_input = "\"" * replace(input, "\"" => "\"\"") * "\""
-    println(join((escaped_input, minsup, backend_name, repeat, transaction_count[], threshold[],
-                  length(run.value), run.time, run.bytes, "NA"), ','))
+    println("schema_version,run_id,dataset,input_sha256,backend,minsup,min_count,repeat,seed,n_transactions,n_patterns,metric_scope,seconds,allocated_bytes,peak_rss_mib,status,julia_version,java_version,spmf_version")
+    fields = (SCHEMA_VERSION, run_id, splitext(basename(input))[1], input_hash,
+              backend_name, Float64(relative), threshold[], repeat, 42,
+              transaction_count[], length(run.value), "internal_read_mine",
+              run.time, run.bytes, "NA", "ok", VERSION, "NA", "NA")
+    println(join(("\"" * replace(string(field), "\"" => "\"\"") * "\"" for field in fields), ','))
     println(stderr, "RSS is NOT measured here. Use an external process monitor; allocations are not peak memory.")
 end
 

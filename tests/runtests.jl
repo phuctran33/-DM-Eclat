@@ -8,6 +8,7 @@ all(backend -> backend in [:list, :bitset], TEST_BACKENDS) ||
 
 include("test_io.jl")
 include("test_support.jl")
+include("test_schema.jl")
 
 if get(ENV, "ECLAT_TEST_MINER", "0") == "1"
     include("test_correctness.jl")

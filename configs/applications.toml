@@ -1,19 +1,28 @@
 seed = 42
+schema_version = "1.0.0"
 
 [groceries]
-input = "data/applications/groceries"
-minsup = "TODO after pilot"
-minconf = "TODO after pilot"
+input = "data/applications/groceries.csv"
+input_format = "csv_long"
+input_columns = ["basket_id", "item_name"]
+item_normalization = "NFC_lowercase_strip_collapse_whitespace"
+row_order = "basket_id_lexicographic"
+# Initial pilot values; changes must be recorded in the run metadata.
+minsup = "0.005"
+minconf = "0.60"
 top_k = 10
 interpret_at_least = 3
 
 [dna]
 input = "data/applications/splice.data"
 classes = ["EI", "IE", "N"]
-# Proposal for A/B confirmation: -6..-1,+1..+6 around 30|31 boundary.
+# Frozen: -6..-1,+1..+6 around 30|31 boundary.
 positions_1based = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
-positions_status = "proposed — confirm in M1"
-ambiguity_policy = "TODO choose and document"
-minsup = "TODO after pilot"
+positions_status = "frozen_v1"
+base_order = ["A", "C", "G", "T"]
+ambiguity_policy = "drop_sample_if_window_has_non_ACGT"
+malformed_row_policy = "error"
+row_order = "source_line"
+minsup = "0.20"
 display_pattern_lengths = [2, 3, 4]
 label_is_mined_item = false

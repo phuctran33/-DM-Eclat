@@ -39,6 +39,6 @@ Nhóm đã chọn Julia theo đề và kế hoạch; không được bỏ ứng 
 
 - Deadline Moodle chính thức, Group ID, tên/MSSV và GitHub usernames A/B.
 - Bản dữ liệu cụ thể, public mirror HF/Kaggle và license; tính lại thống kê trên file thật.
-- Cửa sổ DNA 12 vị trí: template đề xuất −6..−1,+1..+6, tương ứng chỉ số 25:36.
+- Schema đã khóa tại docs/SCHEMA.md: DNA −6..−1,+1..+6, chỉ số 25:36; không cần chọn lại.
 - Grid minsup sau pilot, minconf Groceries và tiêu chí chọn pattern DNA.
 - Các URL công khai và output test cuối chỉ điền sau khi có bằng chứng thật.

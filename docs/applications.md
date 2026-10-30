@@ -6,7 +6,9 @@ Hai pipeline phải chạy được trong Colab từ raw data/mirror đã ghi pr
 
 ## Groceries: basket analysis
 
-Chốt snapshot Groceries thật và schema trước khi viết parser. Một basket là một
+Schema v1.0.0 đã chốt tại [SCHEMA.md](SCHEMA.md); nguồn snapshot thực tế cần được
+xác minh. Helper nhận canonical CSV `basket_id,item_name` tại
+`data/applications/groceries.csv`, trả `PreparedDataset`. Một basket là một
 transaction, product name là một item; bỏ item trùng trong basket, giữ basket trùng
 giữa các lượt mua. Tạo vocabulary theo thứ tự ổn định, lưu mapping ID↔tên sản phẩm.
 Xuất thống kê số basket, item và width sau chuyển đổi.
@@ -16,8 +18,8 @@ M2: helper `groceries_transactions` → `mine(...; backend=:list/:bitset)` →
 
 `support=σ(X)/n`, `confidence=σ(X)/σ(A)`, `lift=confidence/(σ(B)/n)`.
 
-Chọn minsup/minconf có lý do sau pilot; đề yêu cầu minsup và minconf, nhóm cần
-công bố cách chọn. Nếu không đủ 10 luật, kiểm tra threshold và báo minh bạch;
+Pilot bắt đầu ở minsup `0.005`, minconf `0.60`; điều chỉnh sau pilot phải ghi lý do
+và run config. Nếu không đủ 10 luật, kiểm tra threshold và báo minh bạch;
 không bịa thêm. Lưu `groceries_rules.csv` với items/tên, absolute counts, support,
 confidence, lift, rank; sắp lift giảm dần và tie-break xác định. B giải thích ít nhất
 3 luật trong top-10: kết hợp sản phẩm, gợi ý kinh doanh, baseline phổ biến, giới hạn.
@@ -30,19 +32,18 @@ Nguồn gốc: [UCI Molecular Biology (Splice-junction Gene Sequences)](https://
 các lớp EI (exon→intron), IE (intron→exon), N (neither). Kiểm lại counts trên file tải.
 Ký tự ngoài A/C/G/T như D/N/S/R biểu thị ambiguity; N trong sequence khác nhãn lớp N.
 
-Kế hoạch chỉ chốt **12 vị trí**, chưa ghi rõ cửa sổ. Template đề xuất 6 bên trái và
-6 bên phải mốc giữa: relative −6..−1,+1..+6, Julia index **25:36** trong sequence 60 base.
-A/B xác nhận đề xuất này ở M1. Lưu lựa chọn trong config và report; không đổi cửa sổ
-âm thầm theo pattern nhìn đẹp.
+Schema đã khóa **12 vị trí**: relative −6..−1,+1..+6, Julia index **25:36** trong
+sequence 60 base. Mapping đủ 48 IDs với base order A,C,G,T;
+`id=4*(slot-1)+base_index`. Không đổi cửa sổ âm thầm theo pattern nhìn đẹp.
 
 Mỗi sequence là transaction; item phải là **(position, base)**, ví dụ `(-2,G)`.
 Chỉ mã hóa A/C/G/T thành IDs 1..48 theo mapping cố định khi không có ambiguity.
 Không mã hóa thành tập {A,C,G,T} vì sẽ mất vị trí và dễ thành pattern tầm thường.
-Giữ class label, sample ID ngoài transaction. B chọn chính sách ambiguity: bỏ sample
-nếu cửa sổ chứa ký tự không chuẩn, hoặc giữ token ambiguity có giải thích; thống kê
-trước/sau theo lớp, không expand làm một mẫu biến thành nhiều giao dịch giả độc lập.
+Giữ class label, sample ID ngoài transaction. Chính sách ambiguity đã chốt: bỏ cả
+sample nếu window chứa ký tự ngoài A/C/G/T; ngoài window vẫn được giữ. Structural
+errors phải fail. Thống kê trước/sau theo lớp, không expand thành giao dịch giả.
 
-Chạy mine cho từng lớp, mẫu số relative support là số sample hợp lệ **của lớp đó**.
+Pilot minsup `0.20` cho từng lớp; mẫu số relative support là số sample hợp lệ **của lớp đó**.
 Để trình bày lấy pattern 2–4 item từ output đầy đủ, không bật giới hạn độ dài trong
 correctness/benchmark. Hợp các candidate từ ba lớp; đếm lại trực tiếp trên mọi lớp
 để điền support cho pattern không frequent ở lớp khác. Không xem missing output

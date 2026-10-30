@@ -8,6 +8,7 @@ depot. Phiên bản 1.9 được cấu hình trong CI nhưng chưa chạy local.
 ```text
 SPMF I/O and canonical comparison:       14 / 14 pass
 Threshold boundaries and API validation: 19 / 19 pass
+Shared schema v1:                        33 / 33 pass
 Eclat correctness:                       pending / skipped
 SPMF comparison:                         pending / skipped
 ```
@@ -25,6 +26,8 @@ Các kiểm tra bổ sung đã đạt:
 - Năm expected toy được kiểm lại bằng exhaustive subset counting ở 40%, độc lập SPMF.
 - Project/configs parse TOML; notebook parse mọi Python code cell, không có output giả.
 - Chín local issue briefs đúng ba module; các link Markdown local cụ thể tồn tại.
+- Schema v1.0.0: PreparedDataset alignment/mapping, rule counts/ratios,
+  DNA class denominators, fixed-window validation; tổng 66 test hạ tầng/schema pass.
 
 Đã sửa parser để luôn đóng file khi dữ liệu sai, tránh giữ file handle trên Windows.
 
