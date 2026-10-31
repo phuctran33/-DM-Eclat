@@ -94,23 +94,28 @@ def main():
             case["n_transactions"] = sum(bool(line.strip()) and line[0] not in "#%@" for line in stream)
     source_hashes = {str(p.relative_to(ROOT)): sha256(p) for directory in ["src", "scripts"]
                      for p in sorted((ROOT / directory).rglob("*")) if p.suffix in {".jl", ".py"}}
+    env = environment(args.julia, args.java, args.jar)
+    if sys.platform == "darwin":
+        env["cpu_model"] = subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip()
+        env["ram_bytes"] = int(subprocess.check_output(["sysctl", "-n", "hw.memsize"], text=True))
+    runtime_fields = ("platform", "machine", "processor", "cpu_count", "cpu_model", "ram_bytes",
+                      "julia_version", "java_version", "spmf_version", "python_version", "julia_threads")
     signature = dict(config=config, phase=args.phase, source_hashes=source_hashes,
                      input_hashes={c["dataset"]: c["input_sha256"] for c in all_cases},
-                     jar_sha256=sha256(args.jar))
+                     jar_sha256=sha256(args.jar), runtime={k: env.get(k, NA) for k in runtime_fields})
     checkpoint_path = output / "raw/checkpoint.json"
     rows, comparisons, completed = [], [], []
+    if args.resume and not checkpoint_path.exists():
+        parser.error("No checkpoint to resume in the selected output directory")
     if checkpoint_path.exists():
         if not args.resume:
             parser.error(f"Existing results in {output}; use a different --output or --resume")
         checkpoint = json.loads(checkpoint_path.read_text())
         if checkpoint["signature"] != signature:
-            parser.error("Resume refused: config, source, dataset or JAR changed")
+            parser.error("Resume refused: config, source, dataset, JAR or runtime environment changed")
         rows, comparisons, completed = checkpoint["rows"], checkpoint["comparisons"], checkpoint["completed"]
-    env = environment(args.julia, args.java, args.jar)
-    if sys.platform == "darwin":
-        env["cpu_model"] = subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip()
-        env["ram_bytes"] = int(subprocess.check_output(["sysctl", "-n", "hw.memsize"], text=True))
-    json_write(output / "raw/environment.json", env)
+    if not args.resume:
+        json_write(output / "raw/environment.json", env)
     json_write(output / "raw/protocol.json", signature)
     def save():
         write_csv(output / "raw/benchmark_runs.csv", rows, CONTRACT["tables"]["benchmark_runs"])

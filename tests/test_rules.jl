@@ -29,6 +29,13 @@
               [(r.antecedent,r.consequent) for r in association_rules(patterns,5;minconf=3//5)]
     end
     @test isempty(association_rules(Pattern[], 1))
+    pairs = [Pattern([1], 100), Pattern([2], 20), Pattern([1, 2], 7)]
+    @test length(association_rules(pairs, 200; minconf=1e-6)) == 2
+    @test length(association_rules(pairs, 200; minconf=0.07)) == 2
+    @test length(association_rules(pairs, 200; minconf=nextfloat(0.07))) == 1
+    for invalid in [NaN, Inf, -Inf]
+        @test_throws ArgumentError association_rules(pairs, 200; minconf=invalid)
+    end
     @test_throws ArgumentError association_rules([Pattern([1, 2], 1)], 1)
     @test_throws ArgumentError association_rules([Pattern([1], 1), Pattern([1], 1)], 1)
     @test_throws ArgumentError association_rules([Pattern([1], 2)], 1)

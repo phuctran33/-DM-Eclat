@@ -1,5 +1,6 @@
 """End-to-end controller smoke: tiny real grid, exact comparison and safe resume."""
 import csv
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -36,6 +37,13 @@ memory_minsup="0.4"
     before = raw.read_bytes()
     subprocess.run(cmd + ["--resume"], cwd=ROOT, check=True)
     assert raw.read_bytes() == before
+    checkpoint=root/"results/raw/checkpoint.json"
+    altered=json.loads(checkpoint.read_text())
+    altered["signature"]["runtime"]["julia_threads"]="999"
+    checkpoint.write_text(json.dumps(altered))
+    rejected=subprocess.run(cmd+["--resume"],cwd=ROOT,capture_output=True,text=True)
+    assert rejected.returncode!=0 and "runtime environment changed" in rejected.stderr
+    assert raw.read_bytes()==before
     logs = list((root/"results/logs/benchmark").glob("*.json"))
     assert len(logs) == 11, len(logs) # 8 processes + 3 output-verification records
     for target in [root/"synthetic-a.txt",root/"synthetic-b.txt"]:
@@ -51,3 +59,4 @@ memory_minsup="0.4"
         previous=data
     print("PASS: real toy grid (5 measurements), 2 exact maps, log isolation, safe resume")
     print("PASS: deterministic synthetic rows and nested seeded subsets")
+    print("PASS: resume refuses changed runtime without overwriting measurements")

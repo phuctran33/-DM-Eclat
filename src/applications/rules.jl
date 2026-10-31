@@ -10,10 +10,20 @@ Filter minconf with exact count ratios before converting report values to floats
 function association_rules(patterns::Vector{Pattern}, n::Integer;
                            minconf=3//5)::Vector{AssociationRule}
     n > 0 || throw(ArgumentError("n must be positive"))
-    # Decimal floats are interpreted through their printed decimal value; prefer
-    # Rational or parse_minsup for an explicit exact confidence boundary.
-    confidence = minconf isa AbstractFloat ? parse_minsup(string(minconf)) : big(minconf)
-    0 < confidence <= 1 || throw(ArgumentError("minconf must lie in (0, 1]"))
+    0 < minconf <= 1 || throw(ArgumentError("minconf must lie in (0, 1]"))
+    # Interpret printed decimal floats exactly, including scientific notation.
+    # Rational input remains preferable for an explicit confidence boundary.
+    confidence = if minconf isa AbstractFloat
+        pieces = split(lowercase(string(minconf)), 'e')
+        digits = split(pieces[1], '.')
+        places = length(digits) == 2 ? length(digits[2]) : 0
+        exponent = length(pieces) == 2 ? parse(Int, pieces[2]) : 0
+        numerator = parse(BigInt, join(digits))
+        scale = places - exponent
+        scale >= 0 ? numerator // big(10)^scale : numerator * big(10)^(-scale) // big(1)
+    else
+        big(minconf)
+    end
     supports = Dict(p.items => p.support for p in patterns)
     length(supports) == length(patterns) || throw(ArgumentError("Duplicate itemsets"))
     all(p -> p.support <= n, patterns) || throw(ArgumentError("Support exceeds n"))
