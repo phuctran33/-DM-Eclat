@@ -1,3 +1,4 @@
+.gitattributes
 .github/workflows/ci.yml
 .gitignore
 Manifest.toml
@@ -12,6 +13,7 @@ docs/API.md
 docs/HANDOFF_MEMBER_A.md
 docs/Member-A-review.pdf
 docs/SCHEMA.md
+docs/changed-files-member-a.txt
 docs/experiments.md
 docs/latex/MemberAReview.tex
 docs/latex/README.md
@@ -56,6 +58,8 @@ results/logs/basic-tests.log
 results/logs/benchmark-logs.tar.gz
 results/logs/benchmark-runner.log
 results/logs/benchmark-smoke.log
+results/logs/clean-checkout-audit.log
+results/logs/clean-checkout-tests.log
 results/logs/controller-tests.log
 results/logs/final-tests.log
 results/logs/full-tests-prebenchmark.log

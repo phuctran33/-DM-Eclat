@@ -1,0 +1,4 @@
+PASS frozen measurement source: 49dafc999b6c00f8c4275ee68f99d4a6e3046f3d
+PASS 35 cases, 875 measurements, 70 exact full-map comparisons
+Statuses: {'ok': 875}
+PASS shared headers, unique run IDs, thresholds/counts/hashes, aggregates and archived OS logs

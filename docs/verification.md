@@ -90,3 +90,10 @@ Build LaTeX: `latexmk -pdf -interaction=nonstopmode -halt-on-error` cho cả
 `docs/Report.pdf` cuối với nội dung Chương 3 chưa hoàn thành. Log và kết quả audit
 cuối được đính kèm cùng artifacts. B cần review nội dung/paper adaptation và hoàn
 thiện Chương 3, Colab, thông tin nhóm/đầu ra ứng dụng trước nghiệm thu toàn nhóm.
+
+## Kiểm tra checkout sạch
+
+Clone local từ feature commit vào `.tools/repro-check`, chạy lại full suite và
+artifact audit không dựa vào runtime/cache/raw outputs trong repo gốc. Logs:
+`results/logs/clean-checkout-tests.log`, `clean-checkout-audit.log`.
+Draft PR: https://github.com/phuctran33/-DM-Eclat/pull/1.

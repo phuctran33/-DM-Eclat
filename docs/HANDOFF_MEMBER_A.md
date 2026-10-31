@@ -115,7 +115,7 @@ paper gốc và nhiều nguồn liên quan, gồm attribution Retail theo yêu c
 
 Feature branch có commits theo baseline/correctness, BitVector/rules, benchmark
 infrastructure, fixes và measured report/evidence. Không force-push, không merge main.
-PR được tạo để review phần A nếu quyền GitHub cho phép; URL và HEAD cuối báo trong
+Draft PR: https://github.com/phuctran33/-DM-Eclat/pull/1. HEAD cuối báo trong
 handoff chat. Dùng `git log --oneline origin/main..HEAD` xem lịch sử.
 
 ## I. Remaining blockers / việc còn lại
