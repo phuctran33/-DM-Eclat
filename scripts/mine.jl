@@ -1,7 +1,7 @@
 using EclatProject
 
 const HELP = """
-Eclat project template (algorithm implementation pending)
+Eclat frequent itemset miner
 Usage:
   julia --project=. scripts/mine.jl --input FILE --output FILE --minsup 0.4 [--backend list|bitset]
   julia --project=. scripts/mine.jl --input FILE --output FILE --min-count 2 [--backend list|bitset]
