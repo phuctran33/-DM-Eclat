@@ -1,0 +1,128 @@
+{
+  "config": {
+    "seed": 42,
+    "warmup_runs": 1,
+    "repeats": 5,
+    "timeout_seconds": 120,
+    "backends": [
+      "list",
+      "bitset",
+      "spmf"
+    ],
+    "scalability_dataset": "retail",
+    "scalability_fractions": [
+      0.1,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "scalability_minsup": "0.01",
+    "synthetic_lengths": [
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "synthetic_transactions": 10000,
+    "synthetic_items": 100,
+    "synthetic_minsup": 0.2,
+    "datasets": [
+      {
+        "name": "chess",
+        "path": "data/benchmark/chess.txt",
+        "minsup": [
+          0.95,
+          0.9,
+          0.85,
+          0.8,
+          0.75,
+          0.7
+        ],
+        "memory_minsup": 0.85
+      },
+      {
+        "name": "mushroom",
+        "path": "data/benchmark/mushroom.txt",
+        "minsup": [
+          0.6,
+          0.55,
+          0.5,
+          0.45,
+          0.4,
+          0.35
+        ],
+        "memory_minsup": 0.5
+      },
+      {
+        "name": "retail",
+        "path": "data/benchmark/retail.txt",
+        "minsup": [
+          0.05,
+          0.04,
+          0.03,
+          0.02,
+          0.01,
+          0.005
+        ],
+        "memory_minsup": 0.03
+      },
+      {
+        "name": "T10I4D100K",
+        "path": "data/benchmark/T10I4D100K.txt",
+        "minsup": [
+          0.02,
+          0.015,
+          0.01,
+          0.008,
+          0.006,
+          0.004
+        ],
+        "memory_minsup": 0.01
+      }
+    ]
+  },
+  "phase": "all",
+  "source_hashes": {
+    "src/EclatProject.jl": "8ea646b7fe9ed52c1735527b7b1373a6fb474fabef67b57f3b753c21afacaf2e",
+    "src/algorithm/baseline.jl": "502504e038628bcacad133f215c8e7ea2fede6e4e7817f9bddf24633b3658b12",
+    "src/algorithm/bitset.jl": "78d42d15f101855d858c84020177c5ac8ff7fbc42b7f2882ce18107e03d796f9",
+    "src/applications/dna.jl": "57aaed01fed712a5d4bc0fbfca3765615f7defd193b47ac45d7eed4e4116c7ba",
+    "src/applications/groceries.jl": "1a7fa4839699d228207b0fecd79f9f0e00c09afaae49d3cda139c57a5c616395",
+    "src/applications/rules.jl": "df2b05ca4c9046b055a71ef17e2bce360647e7fea224e51323fb8a385dbd7874",
+    "src/schemas.jl": "ec0964ae776ff47393e07e47cc437007d46b49e10506d469f24b1b0dc49ad10b",
+    "src/structures.jl": "15efb29ca33d2797674d31477f8baa6fc5d5af38fb32381f0acf285c20ec77f2",
+    "src/utils.jl": "b41a98c464c1ea1b2baf858b6632f347c46107d039615f251aa8396e112afa20",
+    "scripts/acquire_benchmarks.py": "3f2a52b26ffdbabf819cb47700d81ff1111c51ad2983c8b304b09c46474b4e28",
+    "scripts/benchlib.py": "c65503de69fe76ddf5d3da0031ace06ef7ee701fb759ba8fabc690d4b3dddc50",
+    "scripts/benchmark_runner.jl": "89c1792b36c775c40919c50c714ecfd3e575ecaf078fddb8f58786df50db16bd",
+    "scripts/benchmark_runner.py": "4a05218511508ab91aa6f4dcee24bd2e1d472bfa7775254f870fc0803ab03af7",
+    "scripts/benchmark_worker.jl": "a110ebda5b988de83f6b94f0899ce974a4587aa532fd5e7c1791ccefa0a6c318",
+    "scripts/compare_spmf.jl": "c3a2098e31817fe6999a2565ada7352b8df554a2d3a89e22e8d88c87bac0ff1d",
+    "scripts/generate_synthetic.jl": "82d40dfd05d14f15c9d42403e2d915f39a093b6b45f5048e7c5a57e7358bfec6",
+    "scripts/make_subsets.jl": "aee8e0048052f8099f6d023d54627c5834ce41fbf4428120c710d8d1cedec7d3",
+    "scripts/mine.jl": "a6a4896f64709af57848707ec364be115c0aaac5e85d56467ce166d1cae3ff41",
+    "scripts/plot_results.py": "8b976113d2460d8d61b5b8fa1154770bd41e5cdbe8cd9d9d71dc47b2fd7dda4c",
+    "scripts/prepare_spmf.py": "682857963409fb62ad2c255a74b1b6128fc9c9a86218991fa845eb13e1e10f22"
+  },
+  "input_hashes": {
+    "chess": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "mushroom": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "retail": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "T10I4D100K": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "retail_subset_10": "ffbfa168e5a2a7409202b18d52e6e13b4b860a8c897abce195e15c8dff616450",
+    "retail_subset_25": "cf7186c4ce22b2e526694b14708607084e5dd32d0b7c744067391062263610d9",
+    "retail_subset_50": "d02f9f2a8fb8cf7863bed16ba1522f8be97329f6eeaf83b0b22b85c7ab9f80de",
+    "retail_subset_75": "71d29efca24ec8987f4e551d7e70f60a0439b5ca128e478a93578e8072294f5a",
+    "retail_subset_100": "05b57dc9e5c7340dd96d0ee1d13db019c44182cbf60b750bf92f38bd5f0028b3",
+    "synthetic_width_5": "a8a24013da6a363b7836ecd932808e11e7dee2eef04699f7b7b684381dadf7c3",
+    "synthetic_width_10": "530b21f9aafece4b6c0fa011626bd710621fd7001180f7eb1fc743eaa029d338",
+    "synthetic_width_15": "8643148556dc892d0eac8366b6f779043029023627dd47710260c9e3e23fd8ba",
+    "synthetic_width_20": "e48ee98868f2f9960f1ae3a102830b0b644bc9626a356784ee700ab09691175e",
+    "synthetic_width_25": "a998165902e298f7b9907c967347fc2f782e34d0a355e93766b55c3aa5733c35",
+    "synthetic_width_30": "4157615b90c7b0d10213ede98be7ba955c4510b637e7114be786dd584730c4fb"
+  },
+  "jar_sha256": "c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250"
+}

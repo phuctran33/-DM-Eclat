@@ -1,142 +1,157 @@
-# Đồ án Frequent Itemset Mining — Eclat / Julia
+# Frequent Itemset Mining — ECLAT / Julia
 
-> **Trạng thái: project template.** Hạ tầng I/O, CLI, comparator và dữ liệu toy có sẵn.
-> Eclat basic, BitVector, Groceries, DNA và bộ điều phối benchmark còn TODO.
-> Chưa có kết quả SPMF, benchmark hoặc kết luận ứng dụng. Xem [tiến độ](docs/planning/STATUS.md).
+Phần Member A — **Nguyễn Đức Hưng**: ECLAT Basic, BitVector, association-rule helper,
+correctness, benchmark harness và Chương 1–2 đã triển khai. Hai backend xuất mọi
+frequent itemset cùng support tuyệt đối, giữ nguyên **schema A/B v1.0.0**.
+Bằng chứng đo, test và giới hạn tại [verification](docs/verification.md),
+[experiments](docs/experiments.md) và [handoff](docs/HANDOFF_MEMBER_A.md).
 
-**Schema A/B v1.0.0 đã chốt:** [đặc tả đầy đủ](docs/SCHEMA.md),
-[hợp đồng dạng TOML](schemas/contracts.toml), shared types trong `src/schemas.jl`.
-Preprocessing trả `PreparedDataset`; DNA cố định 25:36/48 item IDs;
-Groceries nhận CSV `basket_id,item_name`. A/B triển khai theo cùng hợp đồng này.
+Phần Member B — **Trần Thiên Phúc**: Groceries/DNA preprocessing, ứng dụng thực tế,
+Colab cold-run và Chương 3 vẫn pending; không xem miner pass là hoàn thành các phần đó.
+[Report nguồn](docs/latex/Report.tex) giữ đủ cấu trúc ba chương.
+[PDF review phần A](docs/Member-A-review.pdf) là tài liệu kiểm tra Chương 1–2,
+chưa thay thế `docs/Report.pdf` cuối của nhóm.
 
-Template bám [đề HCMUS](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/),
-paper **Mohammed J. Zaki, “Scalable Algorithms for Association Mining”, IEEE TKDE,
-12(3), 372–390, 2000**, [DOI](https://doi.org/10.1109/69.846291), và kế hoạch nhóm
-`Ke_hoach_Eclat_Julia_3_tuan_theo_module.pdf` do nhóm cung cấp.
+Dựa trên [đề HCMUS](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
+và M. J. Zaki, *Scalable Algorithms for Association Mining*, IEEE TKDE 12(3),
+372–390, 2000, [DOI](https://doi.org/10.1109/69.846291).
+[Paper notes](docs/paper-notes.md) giải thích DFS prefix extension adaptation;
+không gọi DFS của nhóm là bản chép Fig.12 bottom-up trong paper.
 
-## Thành viên và lịch nội bộ
+## Cài đặt và chạy miner
 
-| Vai trò | Họ tên / MSSV | Chủ trì | Review |
-|---|---|---|---|
-| A | Nguyễn Đức Hưng | Eclat, tối ưu, benchmark, Chương 1–2 | Test, ứng dụng, bàn giao |
-| B | Trần Thiên Phúc | SPMF/test, Groceries, Splice DNA, Colab, Chương 3 | Thuật toán và số liệu |
+Cần [Julia ≥1.9](https://julialang.org/downloads/). Core chỉ dùng Base/stdlib;
+`Manifest.toml` được tạo bằng Julia 1.10.10. Chạy từ repo root:
 
-| Module | Thời gian năm 2026 | Mốc nghiệm thu | Kết quả cần đạt |
-|---|---|---|---|
-| M1 — Foundation + Correctness | 28/10–03/11 | 03/11 | Basic + CLI, khớp SPMF 100% trên ≥5 toy DB |
-| M2 — Optimization + Applications | 04/11–10/11 | 10/11 | BitVector đúng; Groceries và DNA chạy được; Colab tối thiểu |
-| M3 — Evaluation + Delivery | 11/11–17/11 | 17/11 | 4 benchmark, biểu đồ, Report.pdf, Colab và GitHub công khai |
-
-Đây là **lịch nội bộ**, chưa phải deadline Moodle. Chỉ sync 20–30 phút ở mốc
-nghiệm thu; không bắt buộc commit, PR hoặc báo cáo hằng ngày. Ngày 16–17/11 dành
-cho cold-run và sửa lỗi. Chi tiết: [kế hoạch 3 module / 9 gói việc](docs/planning/PLAN.md).
-
-## Cài đặt
-
-Cài [Julia](https://julialang.org/downloads/) **1.9+**. Mã template chỉ dùng
-Julia Base/stdlib. Chạy mọi lệnh từ repo root:
-
-```text
-julia --project=. -e "using Pkg; Pkg.instantiate()"
-julia --project=. tests/runtests.jl
-julia --project=. scripts/mine.jl --help
-```
-
-Lần đầu chạy Julia có thể có chi phí biên dịch JIT. Cần Java để chạy SPMF tham chiếu;
-tự tải `spmf.jar` từ [SPMF](https://www.philippe-fournier-viger.com/spmf/), đặt tại
-`tools/spmf.jar`. Không đưa mã Java SPMF vào phần cài đặt Eclat của nhóm.
-
-## Cách chạy sau khi hoàn thành M1/M2
-
-```text
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/basic.txt --minsup 0.4 --backend list
 julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/bitset.txt --min-count 2 --backend bitset
-java -jar tools/spmf.jar run Eclat data/toy/basic.txt results/spmf.txt 40%
-julia --project=. scripts/compare_spmf.jl results/basic.txt results/spmf.txt
 ```
 
-Hai lệnh mining hiện **dừng với lỗi TODO** cho tới khi cài đặt thuật toán. Dữ liệu:
-mỗi dòng là một transaction, item ID nguyên dương, tăng dần, không trùng trong dòng.
-Output: `1 2 #SUP: 3`. Minsup `0.4` và `40%` cùng nghĩa;
-ngưỡng đếm là `ceil(minsup × số transaction)`, điều kiện frequent là `>=`.
-Chi tiết interface: [API](docs/API.md).
+Fixture này có 5 transactions, count=2 và 7 patterns. Input mỗi dòng là transaction
+ID dương tăng dần, không trùng item. Giữ các rows giống nhau; reject item invalid,
+không sort/sửa ngầm. Output dạng `1 2 #SUP: 3`, sort theo length rồi tuple.
+Minsup parse chính xác từ decimal/percent; `0.07 × 100` cho count 7.
+Xem [API](docs/API.md), [schema](docs/SCHEMA.md), [contracts](schemas/contracts.toml).
 
-## Kiểm thử và bằng chứng cuối
+```julia
+using EclatProject
+transactions = [[1, 2], [1], [2]]
+patterns = mine(transactions, 1; backend=:bitset) # Vector{Pattern}
+rules = association_rules(patterns, 3; minconf=1//2)
+```
 
-Các test mặc định chỉ kiểm tra hạ tầng; hai nhóm test Eclat/SPMF được đánh dấu
-**skipped/pending**. M1 bật `ECLAT_TEST_MINER=1`, `ECLAT_TEST_SPMF=1` và dùng backend
-`list` mặc định, chưa cần BitVector. Từ M2/final bật cả hai backend như dưới đây,
-sau khi cài đặt và tạo 5 reference từ SPMF:
+Rules gồm mọi antecedent/consequent hợp lệ, consequent có thể nhiều item; support
+của subset thiếu là lỗi. Helper giữ ranking và counts theo schema, không phụ thuộc
+mappings Groceries/DNA chưa hoàn tất của B.
 
-PowerShell:
+## Correctness và SPMF
 
-```powershell
-$env:ECLAT_TEST_MINER='1'
-$env:ECLAT_TEST_SPMF='1'
-$env:ECLAT_TEST_BACKENDS='list,bitset'
+Cần Java ≥21 và Python ≥3.11 để tạo lại reference/chạy controller. Pin SPMF **2.64b**
+từ [archive chính thức](https://www.philippe-fournier-viger.com/spmf/index.php?link=download.php),
+JAR SHA-256 được kiểm bởi script; không commit JAR hoặc sao chép source thuật toán.
+
+```bash
+python3 scripts/prepare_spmf.py --references
 julia --project=. tests/runtests.jl
+python3 tests/test_benchmark.py -v
+python3 tests/smoke_benchmark.py
+julia --project=. scripts/compare_spmf.jl results/basic.txt tests/reference/spmf/basic.txt
 ```
 
-Bash / Colab:
+Mining tests mặc định bật `list,bitset` và năm references thật. Có exhaustive oracle,
+randomized tests, empty/invalid/duplicate cases, packed-word tails, caller ownership,
+rules/PreparedDataset và CLI. Để ghi rõ cấu hình final:
 
 ```bash
 ECLAT_TEST_MINER=1 ECLAT_TEST_SPMF=1 ECLAT_TEST_BACKENDS=list,bitset julia --project=. tests/runtests.jl
 ```
 
-Không coi scaffold pass là bằng chứng Eclat đúng. Xem
-[cách tạo oracle SPMF](tests/reference/spmf/README.md). Trước nộp, bật cả hai nhóm
-trong CI và dán **stdout thực tế của lần chạy cuối** vào đây:
+**622 Julia checks pass, 0 fail/error/skip**; controller 5/5 tests pass. Stdout thật
+của lần kiểm thử cuối và tổng pass/fail/skip nằm trong
+[final-tests.log](results/logs/final-tests.log). References/hash provenance ở
+[manifest](tests/reference/spmf/manifest.csv); output tự tính của toy fixtures không
+được gọi là reference SPMF.
 
-```text
-TODO FINAL TEST OUTPUT — chưa chạy full suite; chưa có kết quả để công bố.
+## Dữ liệu và thực nghiệm
+
+Bốn benchmark: Chess, Mushroom, Retail, T10I4D100K. Acquisition từ
+[FIMI học thuật](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/), pin raw SHA-256
+trong [datasets.toml](configs/datasets.toml), giữ normalized hashes trong
+[manifest](data/manifest.csv). Retail/T10 có ID 0: cộng 1 cho **toàn bộ** IDs, không
+bỏ giao dịch. Ba backends nhận cùng normalized file. Đây là content-addressed FIMI
+snapshot; không gắn nhãn một HF/Kaggle revision chưa xác minh. Raw data bị ignore.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-plot.txt
+python scripts/acquire_benchmarks.py
+julia --project=. scripts/benchmark_runner.jl --phase pilot --repeats 1 --output results/new-pilot
+JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output results/reproduced
+python scripts/plot_results.py --results results/reproduced --report
 ```
 
-## Tài nguyên và demo
+Grid sáu minsup/tập × ba backends × năm repetitions; thêm Retail nested
+10/25/50/75/100% và synthetic widths 5/10/15/20/25/30 (seed 42). Timeout, exit status,
+stdout/stderr, hashes và full-map equality được lưu thật. Peak RSS lấy từ OS;
+allocation không phải peak memory. Có hai scope riêng:
 
-| Tài nguyên công khai | Trạng thái |
+| Scope | So sánh |
 |---|---|
-| GitHub repository của nhóm | [phuctran33/-DM-Eclat](https://github.com/phuctran33/-DM-Eclat) |
-| Google Colab notebook | [Mở từ GitHub](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) — chưa cold-run; kiểm quyền public trước nộp |
-| Snapshot benchmark trên Hugging Face / Kaggle | TODO: URL + revision/version trong data/manifest.csv |
-| Groceries source + mapping tên sản phẩm | TODO: nguồn và phiên bản |
-| UCI Splice DNA | [nguồn gốc](https://archive.ics.uci.edu/dataset/69/molecular+biology+splice+junction+gene+sequences) |
+| end_to_end | Basic/BitVector/SPMF, gồm startup/JIT/JVM, read/mine/write |
+| internal_read_mine | Hai backend Julia sau warm-up đầy đủ case; không so trực tiếp SPMF |
 
-Notebook mẫu: [notebooks/demo.ipynb](notebooks/demo.ipynb). Xác minh template local:
-**66 kiểm tra hạ tầng/schema pass**, mining/SPMF pending; chi tiết tại
-[docs/verification.md](docs/verification.md). Các ô chuẩn bị dữ liệu
-phải chạy trong notebook hoặc import helper của repo. Template chưa tải benchmark
-và chưa thực hiện remote Colab cold-run.
+[Raw runs](results/raw/benchmark_runs.csv), [summary](results/raw/summary.csv),
+[correctness](results/correctness/comparisons.csv), [figures](results/plots/),
+[dataset statistics](results/raw/dataset_statistics.csv),
+[environment](results/raw/environment.json) và [protocol](results/raw/protocol.json).
+Số liệu không phải cam kết hiệu năng trên máy khác; xem giới hạn và cách resume
+trong [experiments](docs/experiments.md). Logs process được giữ trong archive:
 
-## Bố cục
-
-```text
-src/algorithm/             M1 basic DFS, M2 BitVector (A)
-src/applications/          M2 Groceries, association rules, Splice DNA (B; A hỗ trợ rules)
-src/structures.jl          Kiểu dữ liệu dùng chung
-src/utils.jl               I/O SPMF, minsup và interface mine
-scripts/                   CLI, comparator, worker đo đạc, sinh dữ liệu/subset
-tests/                     Unit/edge tests, oracle độc lập và SPMF
-data/toy/                  5 CSDL nhỏ + expected tự kiểm chứng
-data/benchmark/            4 benchmark, không commit file lớn
-data/manifest.csv          Nguồn, phiên bản, hash và đường dẫn dữ liệu
-configs/                   Tham số thí nghiệm và module
-notebooks/demo.ipynb       Colab: setup → M1 → M2 → M3
-results/                   CSV, logs, bảng ứng dụng và hình được sinh khi chạy
-docs/planning/             Kế hoạch, 9 issue briefs, tiến độ và checklist
-docs/paper-notes.md        Ghi chú paper, giải thích DFS adaptation
-docs/experiments.md        Giao thức correctness/runtime/RAM/scalability
-docs/applications.md       Groceries + DNA, giả định và output cần có
-docs/latex/Report.tex      Mẫu báo cáo IEEE tiếng Việt, 3 chương
-docs/Report.pdf            Sinh từ LaTeX khi hoàn thiện, chưa có trong template
+```bash
+tar -xzf results/logs/benchmark-logs.tar.gz -C results/logs
 ```
 
-## Quy cách báo cáo và nộp bài
+## Báo cáo và bàn giao
 
-Viết tiếng Việt, **10–15 trang nội dung** theo IEEE conference, không tính tài liệu
-tham khảo/phụ lục; đặt PDF cuối tại `docs/Report.pdf`. Trích paper gốc và ít nhất
-3 tài liệu khác. Hai ứng dụng chiếm 50% điểm. Nộp một link public GitHub lên Moodle,
-README có Colab public và output test cuối; giữ commit history minh bạch.
+```bash
+cd docs/latex
+latexmk -pdf -interaction=nonstopmode -halt-on-error MemberAReview.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
+```
 
-Xem [ma trận yêu cầu](docs/requirements.md), [hướng dẫn báo cáo](docs/latex/README.md)
-và [checklist bàn giao](docs/planning/DELIVERY.md). Mọi người cần hiểu, giải thích
-được code và số liệu của nhóm; ghi nguồn và cách sử dụng AI theo yêu cầu môn học.
+Cần IEEEtran, vntex, babel-vietnamese, algorithm/algpseudocode trong TeX Live.
+`MemberAReview.tex` chỉ đưa Chương 1–2; `Report.tex` vẫn gồm Chương 3 của B với trạng
+thái pending được ghi rõ. Các hình/bảng được tạo từ CSV, có caption/label/reference;
+PDF cuối 10–15 trang và `docs/Report.pdf` cần B hoàn thiện ứng dụng/Chương 3 rồi cả
+nhóm rà soát, không tự đánh dấu xong.
+
+[Colab template](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb)
+chưa cold-run. Notebook của B còn cờ/tế bào template; để dùng miner ngay, import
+API hoặc CLI ở trên. [Status](docs/planning/STATUS.md) phân biệt phần đã chạy với
+việc còn lại. Các mốc module trong kế hoạch là lịch nội bộ, không suy ra hạn Moodle.
+
+## Stdout kiểm thử cuối (31/10/2026)
+
+```text
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  2.3s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  2.1s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  2.9s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.1s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.6s
+Test Summary:                                     | Pass  Total  Time
+Association rules and PreparedDataset integration |   94     94  4.0s
+Test Summary:                    | Pass  Total   Time
+CLI round trip and failure paths |   10     10  12.5s
+Test Summary:                               | Pass  Total  Time
+Exact agreement with SPMF on five databases |   25     25  0.1s
+```

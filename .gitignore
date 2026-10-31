@@ -15,12 +15,13 @@ results/raw/*
 !results/raw/protocol.json
 !results/raw/cases.json
 !results/raw/dataset_provenance.json
+!results/raw/render_environment.json
 !results/correctness/
 !results/plots/
 !results/logs/
 results/logs/*
 !results/logs/*.log
-!results/logs/benchmark/
+!results/logs/*.tar.gz
 !results/reference/
 tools/*.jar
 docs/references/*.pdf

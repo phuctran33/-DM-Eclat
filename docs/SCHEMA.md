@@ -213,8 +213,9 @@ long rows, không đếm observations bị loại. Structural errors fail cả p
 
 Benchmark: run_id unique, seed=42; status trong ok/timeout/oom/error; metric_scope
 trong internal_read_mine/end_to_end. Không gộp hai phạm vi đo lên cùng đường cong.
-Thiếu RSS là NA, không lấy allocated_bytes thay peak RSS. Worker hiện còn cần
-runner/monitor/aggregation; schema xác định output đích, chưa tự cài đặt chúng.
+Thiếu RSS là NA, không lấy allocated_bytes thay peak RSS. Runner/monitor/aggregation
+đã triển khai trong scripts/benchmark_runner.py và benchlib.py; schema v1.0.0
+không thay đổi.
 
 ## 9. Phân công và trạng thái
 
@@ -227,6 +228,7 @@ runner/monitor/aggregation; schema xác định output đích, chưa tự cài �
 | A / M3 | Benchmark runner/RSS/aggregation/plotting |
 | B / M3 | Benchmark correctness, Chương 3, Colab và bàn giao |
 
-Shared types/validation đã có. Miner, preprocessing, rule generation và DNA
-comparison vẫn TODO. URL snapshot/revision/hash chưa tải xác minh thì pending;
-đó là provenance thực tế, không phải schema chưa quyết định.
+Shared types/validation, hai miner backends, rule generation và benchmark harness
+đã triển khai. Preprocessing Groceries/DNA và DNA comparison của B vẫn TODO.
+Benchmark URLs/raw hashes và phép chuyển ID được xác minh trong configs/datasets.toml
+và data/manifest.csv. Provenance của hai ứng dụng vẫn do B hoàn thiện.

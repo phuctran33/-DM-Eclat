@@ -1,0 +1,8 @@
+  Installing known registries into `~/.julia`
+       Added `General` registry to ~/.julia/registries
+    Updating registry at `~/.julia/registries/General.toml`
+    Updating `~/-DM-Eclat/Project.toml`
+  [ea8e919c] ~ SHA ⇒ v0.7.0
+    Updating `~/-DM-Eclat/Manifest.toml`
+  [9a3f8284] + Random
+  [ea8e919c] + SHA v0.7.0

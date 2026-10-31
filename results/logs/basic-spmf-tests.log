@@ -1,0 +1,12 @@
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.3s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  0.8s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   40     40  2.3s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   40     40  1.5s
+Test Summary:                               | Pass  Total  Time
+Exact agreement with SPMF on five databases |   15     15  0.1s

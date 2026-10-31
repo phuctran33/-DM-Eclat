@@ -1,0 +1,71 @@
+[1/35] chess_s0.95: correctness preflight
+  complete: counts={'list': 77, 'bitset': 77, 'spmf': 77}, failures={}
+[2/35] chess_s0.9: correctness preflight
+  complete: counts={'list': 622, 'bitset': 622, 'spmf': 622}, failures={}
+[3/35] chess_s0.85: correctness preflight
+  complete: counts={'list': 2669, 'bitset': 2669, 'spmf': 2669}, failures={}
+[4/35] chess_s0.8: correctness preflight
+  complete: counts={'list': 8227, 'bitset': 8227, 'spmf': 8227}, failures={}
+[5/35] chess_s0.75: correctness preflight
+  complete: counts={'list': 20993, 'bitset': 20993, 'spmf': 20993}, failures={}
+[6/35] chess_s0.7: correctness preflight
+  complete: counts={'list': 48731, 'bitset': 48731, 'spmf': 48731}, failures={}
+[7/35] mushroom_s0.6: correctness preflight
+  complete: counts={'list': 51, 'bitset': 51, 'spmf': 51}, failures={}
+[8/35] mushroom_s0.55: correctness preflight
+  complete: counts={'list': 99, 'bitset': 99, 'spmf': 99}, failures={}
+[9/35] mushroom_s0.5: correctness preflight
+  complete: counts={'list': 153, 'bitset': 153, 'spmf': 153}, failures={}
+[10/35] mushroom_s0.45: correctness preflight
+  complete: counts={'list': 329, 'bitset': 329, 'spmf': 329}, failures={}
+[11/35] mushroom_s0.4: correctness preflight
+  complete: counts={'list': 565, 'bitset': 565, 'spmf': 565}, failures={}
+[12/35] mushroom_s0.35: correctness preflight
+  complete: counts={'list': 1189, 'bitset': 1189, 'spmf': 1189}, failures={}
+[13/35] retail_s0.05: correctness preflight
+  complete: counts={'list': 16, 'bitset': 16, 'spmf': 16}, failures={}
+[14/35] retail_s0.04: correctness preflight
+  complete: counts={'list': 18, 'bitset': 18, 'spmf': 18}, failures={}
+[15/35] retail_s0.03: correctness preflight
+  complete: counts={'list': 32, 'bitset': 32, 'spmf': 32}, failures={}
+[16/35] retail_s0.02: correctness preflight
+  complete: counts={'list': 55, 'bitset': 55, 'spmf': 55}, failures={}
+[17/35] retail_s0.01: correctness preflight
+  complete: counts={'list': 159, 'bitset': 159, 'spmf': 159}, failures={}
+[18/35] retail_s0.005: correctness preflight
+  complete: counts={'list': 580, 'bitset': 580, 'spmf': 580}, failures={}
+[19/35] T10I4D100K_s0.02: correctness preflight
+  complete: counts={'list': 155, 'bitset': 155, 'spmf': 155}, failures={}
+[20/35] T10I4D100K_s0.015: correctness preflight
+  complete: counts={'list': 237, 'bitset': 237, 'spmf': 237}, failures={}
+[21/35] T10I4D100K_s0.01: correctness preflight
+  complete: counts={'list': 385, 'bitset': 385, 'spmf': 385}, failures={}
+[22/35] T10I4D100K_s0.008: correctness preflight
+  complete: counts={'list': 494, 'bitset': 494, 'spmf': 494}, failures={}
+[23/35] T10I4D100K_s0.006: correctness preflight
+  complete: counts={'list': 772, 'bitset': 772, 'spmf': 772}, failures={}
+[24/35] T10I4D100K_s0.004: correctness preflight
+  complete: counts={'list': 2001, 'bitset': 2001, 'spmf': 2001}, failures={}
+[25/35] retail_subset_10_s0.01: correctness preflight
+  complete: counts={'list': 161, 'bitset': 161, 'spmf': 161}, failures={}
+[26/35] retail_subset_25_s0.01: correctness preflight
+  complete: counts={'list': 157, 'bitset': 157, 'spmf': 157}, failures={}
+[27/35] retail_subset_50_s0.01: correctness preflight
+  complete: counts={'list': 162, 'bitset': 162, 'spmf': 162}, failures={}
+[28/35] retail_subset_75_s0.01: correctness preflight
+  complete: counts={'list': 158, 'bitset': 158, 'spmf': 158}, failures={}
+[29/35] retail_subset_100_s0.01: correctness preflight
+  complete: counts={'list': 159, 'bitset': 159, 'spmf': 159}, failures={}
+[30/35] synthetic_width_5_s0.2: correctness preflight
+  complete: counts={'list': 0, 'bitset': 0, 'spmf': 0}, failures={}
+[31/35] synthetic_width_10_s0.2: correctness preflight
+  complete: counts={'list': 0, 'bitset': 0, 'spmf': 0}, failures={}
+[32/35] synthetic_width_15_s0.2: correctness preflight
+  complete: counts={'list': 0, 'bitset': 0, 'spmf': 0}, failures={}
+[33/35] synthetic_width_20_s0.2: correctness preflight
+  complete: counts={'list': 53, 'bitset': 53, 'spmf': 53}, failures={}
+[34/35] synthetic_width_25_s0.2: correctness preflight
+  complete: counts={'list': 100, 'bitset': 100, 'spmf': 100}, failures={}
+[35/35] synthetic_width_30_s0.2: correctness preflight
+  complete: counts={'list': 100, 'bitset': 100, 'spmf': 100}, failures={}
+Saved 875 measurements; 70 full-map comparisons
