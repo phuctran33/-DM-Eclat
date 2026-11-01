@@ -18,16 +18,42 @@ và M. J. Zaki, *Scalable Algorithms for Association Mining*, IEEE TKDE 12(3),
 [Paper notes](docs/paper-notes.md) giải thích DFS prefix extension adaptation;
 không gọi DFS của nhóm là bản chép Fig.12 bottom-up trong paper.
 
+## Bắt đầu đọc project
+
+Đọc [ARCHITECTURE.md](docs/ARCHITECTURE.md) để hiểu toàn luồng CLI → miner → tests
+→ benchmark → báo cáo. Tài liệu có bản đồ file, giải thích Julia/shared DFS,
+đánh giá những phần nên giữ, hướng dẫn clone sạch và **20 câu vấn đáp kèm đáp án
+bám code**. Không cần đọc hết logs hoặc chạy toàn grid để bắt đầu học thuật toán.
+
+| Muốn hiểu/chạy gì? | Đọc ở đâu? | Entry point |
+|---|---|---|
+| Chạy toy, đọc input/output | Mục cài đặt ngay dưới đây | `scripts/mine.jl` |
+| Struct, include/export, dispatch và trace DFS | [Kiến trúc mục 3–4](docs/ARCHITECTURE.md#miner), [paper notes](docs/paper-notes.md) | `src/EclatProject.jl` → `structures.jl` → `utils.jl` → `algorithm/` |
+| Hợp đồng tích hợp A/B, rules | [API](docs/API.md), [schema](docs/SCHEMA.md) | `mine`, `association_rules`, `PreparedDataset` |
+| Correctness và SPMF | [Kiến trúc tests](docs/ARCHITECTURE.md#tests) | `tests/runtests.jl`, `scripts/compare_spmf.jl` |
+| Đo/vẽ và giải thích metrics | [Kiến trúc benchmark](docs/ARCHITECTURE.md#benchmark), [protocol](docs/experiments.md) | `benchmark_runner.jl` → controller → worker → `plot_results.py` |
+| Tái lập từ clone sạch | [Các bước tuần tự](docs/ARCHITECTURE.md#reproduce) | Toy/tests trước, full grid ở output riêng sau |
+| Việc B còn pending | [Phân công hiện tại](docs/ARCHITECTURE.md#ownership), [applications](docs/applications.md) | Groceries/DNA helpers, notebook, Chương 3 |
+
+Thứ tự tập vấn đáp: tự tính toy → trace Basic → so BitVector → kiểm oracle → lần
+một CSV row tới timer/log/plot → giải thích phần B. Chi tiết ở cuối tài liệu kiến trúc.
+
 ## Cài đặt và chạy miner
 
 Cần [Julia ≥1.9](https://julialang.org/downloads/). Core chỉ dùng Base/stdlib;
 `Manifest.toml` được tạo bằng Julia 1.10.10. Chạy từ repo root:
 
 ```bash
+git clone --branch feat/member-a-eclat-complete https://github.com/phuctran33/-DM-Eclat.git
+cd -- -DM-Eclat
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
-julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/basic.txt --minsup 0.4 --backend list
-julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/bitset.txt --min-count 2 --backend bitset
+julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/learning/basic.txt --minsup 0.4 --backend list
+julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/learning/bitset.txt --min-count 2 --backend bitset
+julia --project=. scripts/compare_spmf.jl .tools/learning/basic.txt .tools/learning/bitset.txt
 ```
+
+Nếu đã clone, bỏ hai lệnh đầu. Các ví dụ shell dùng Bash trên Linux/macOS.
+`scripts/mine.jl --help` liệt kê options. Core miner không cần Java hoặc Python.
 
 Fixture này có 5 transactions, count=2 và 7 patterns. Input mỗi dòng là transaction
 ID dương tăng dần, không trùng item. Giữ các rows giống nhau; reject item invalid,
@@ -53,11 +79,28 @@ từ [archive chính thức](https://www.philippe-fournier-viger.com/spmf/index.
 JAR SHA-256 được kiểm bởi script; không commit JAR hoặc sao chép source thuật toán.
 
 ```bash
-python3 scripts/prepare_spmf.py --references
+python3 scripts/prepare_spmf.py
 julia --project=. tests/runtests.jl
 python3 tests/test_benchmark.py -v
 python3 tests/smoke_benchmark.py
-julia --project=. scripts/compare_spmf.jl results/basic.txt tests/reference/spmf/basic.txt
+julia --project=. scripts/compare_spmf.jl .tools/learning/basic.txt tests/reference/spmf/basic.txt
+```
+
+`prepare_spmf.py` tải/kiểm JAR cho smoke. Julia unit tests chỉ đọc references đã
+commit nên không cần Java; muốn chạy Java oracle mới mà không ghi đè manifest:
+
+```bash
+java -jar tools/spmf.jar run Eclat data/toy/basic.txt .tools/learning/spmf-basic.txt 40%
+julia --project=. scripts/compare_spmf.jl .tools/learning/basic.txt .tools/learning/spmf-basic.txt
+```
+
+`prepare_spmf.py --references` dành cho việc chủ động tạo lại cả năm references,
+manifest và logs; hãy kiểm diff provenance sau đó. Không cần regenerate chỉ để
+chạy Julia tests. Python plot test cần dependency riêng:
+
+```bash
+python3 -m pip install -r requirements-plot.txt
+python3 tests/test_plot_results.py -v
 ```
 
 Mining tests mặc định bật `list,bitset` và năm references thật. Có exhaustive oracle,
@@ -68,9 +111,14 @@ rules/PreparedDataset và CLI. Để ghi rõ cấu hình final:
 ECLAT_TEST_MINER=1 ECLAT_TEST_SPMF=1 ECLAT_TEST_BACKENDS=list,bitset julia --project=. tests/runtests.jl
 ```
 
-**622 Julia checks pass, 0 fail/error/skip**; controller 5/5 tests pass. Stdout thật
-của lần kiểm thử cuối và tổng pass/fail/skip nằm trong
-[final-tests.log](results/logs/final-tests.log). References/hash provenance ở
+**622 Julia assertions pass, 0 fail/error/skip**; controller hiện có **10 unittest
+methods**, plot có **1 integration test**. CI kiểm Julia 1.9/1.11 trên Linux,
+controller/plot trên Linux/macOS/Windows. Measurement test POSIX được skip trên
+Windows theo giới hạn công khai; test từ chối Windows và xuất bảng UTF-8 vẫn chạy.
+Ba lỗi Phúc review (artifacts, timeout/platform, Unicode) có regression coverage.
+Stdout Julia bản bàn giao 31/10 nằm trong
+[final-tests.log](results/logs/final-tests.log); log controller 5 tests ngày đó là
+lịch sử, không phải số tests hiện tại. References/hash provenance ở
 [manifest](tests/reference/spmf/manifest.csv); output tự tính của toy fixtures không
 được gọi là reference SPMF.
 
@@ -96,6 +144,14 @@ julia --project=. scripts/benchmark_runner.jl --phase pilot --repeats 1 --output
 JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output results/reproduced
 python scripts/plot_results.py --results results/reproduced --report
 ```
+
+Runner từ chối output nonempty trước khi ghi, kể cả checkout chỉ có CSV/metadata
+mà thiếu checkpoint. Không chạy mặc định vào `results/`; chọn output mới như trên.
+Pilot và full grid dùng output riêng vì khác phase/repeats. `--resume` cần giữ
+nguyên phase/config/repeats/source/input/JAR/runtime, không phải cờ để retry mọi
+case đã đánh dấu completed. Acquisition ghi metadata ở vị trí chuẩn; `--report`
+copy hình/bảng mới vào nguồn LaTeX. Hai bước này là cập nhật có chủ đích, hãy xem
+diff; để học mà giữ nguyên evidence, dùng hướng dẫn [output riêng](docs/ARCHITECTURE.md#reproduce).
 
 Grid sáu minsup/tập × ba backends × năm repetitions; thêm Retail nested
 10/25/50/75/100% và synthetic widths 5/10/15/20/25/30 (seed 42). Timeout, exit status,
@@ -137,7 +193,13 @@ chưa cold-run. Notebook của B còn cờ/tế bào template; để dùng miner
 API hoặc CLI ở trên. [Status](docs/planning/STATUS.md) phân biệt phần đã chạy với
 việc còn lại. Các mốc module trong kế hoạch là lịch nội bộ, không suy ra hạn Moodle.
 
-## Stdout kiểm thử cuối (31/10/2026)
+## Stdout Julia bản bàn giao (31/10/2026)
+
+Đây là stdout đã lưu trong artifacts; giữ nguyên lịch sử. Các lần chạy mới xem
+checks của PR/CI và chạy lại các lệnh ở trên.
+
+<details>
+<summary>Xem đầy đủ 9 testsets, tổng 622 assertions</summary>
 
 ```text
 Test Summary:                     | Pass  Total  Time
@@ -159,3 +221,5 @@ CLI round trip and failure paths |   10     10  12.5s
 Test Summary:                               | Pass  Total  Time
 Exact agreement with SPMF on five databases |   25     25  0.1s
 ```
+
+</details>
