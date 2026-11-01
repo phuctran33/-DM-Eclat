@@ -1,33 +1,32 @@
-# Mẫu báo cáo IEEE tiếng Việt
+# Báo cáo IEEE tiếng Việt
 
-`Report.tex` dùng `IEEEtran` chế độ conference, A4, hai cột. Nội dung đúng **3 chương**
-thể hiện bằng `\section` theo định dạng IEEE. Chưa có Report.pdf; đây là mẫu soạn thảo,
-không phải báo cáo hoàn chỉnh hoặc bằng chứng đủ 10–15 trang.
+Chương 1–2 của Member A có implementation, protocol, kết quả thật và phân tích.
+Chương 3 giữ nguyên nội dung template thuộc B; chưa có kết quả hai ứng dụng.
+Không coi bản PDF review này là nghiệm thu 10–15 trang cuối của cả nhóm.
 
-Dùng Overleaf có IEEEtran + Vietnamese fonts hoặc TeX Live với `IEEEtran`, `vntex`,
-`babel-vietnamese`. Build từ thư mục này:
+Cần TeX Live/Overleaf có IEEEtran, vntex, babel-vietnamese, amsmath, booktabs,
+algorithm và algpseudocode. Trước build, sinh figures/tables từ CSV thực:
 
-```text
-pdflatex Report.tex
-bibtex Report
-pdflatex Report.tex
-pdflatex Report.tex
+```bash
+python3 scripts/plot_results.py --results results --report
+cd docs/latex
+latexmk -pdf -interaction=nonstopmode -halt-on-error MemberAReview.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
 ```
 
-Sau khi rà PDF, copy `Report.pdf` lên `docs/Report.pdf`. Đối chiếu định dạng với
-[IEEE conference templates](https://www.ieee.org/conferences/publishing/templates).
-Giữ font/cỡ chữ, lề và spacing của class; không thu nhỏ để nhét trang.
+Chạy lệnh đầu từ repo root. Bản `MemberAReview.pdf` chỉ gồm Chương 1–2, copy đã
+kiểm tra ở `docs/Member-A-review.pdf`. `Report.pdf` local vẫn gồm ba chương,
+Chương 3 pending có nhãn rõ. Không ghi lên `docs/Report.pdf` cuối trước khi B hoàn
+thiện ứng dụng và nhóm review. Khi latexmk không có, dùng pdflatex → bibtex →
+pdflatex → pdflatex cho mỗi entry point.
 
-Gợi ý page budget: abstract + mở đầu trong Chương 1 khoảng 0.5–1 trang;
-Chương 1 tổng 3–4 trang; Chương 2 khoảng 3–4 trang; Chương 3 khoảng 4–5 trang.
-Tổng nội dung cần 10–15 trang, không tính references/phụ lục; cân theo kết quả thật.
+Hình ở `figures/`, fragments bảng ở `generated/`, nguồn CSV/logs trong `results/`.
+Các hình có caption/label/reference và units; code sinh hình cũng copy PDFs để
+clean clone build được review mà không phải chạy lại benchmark. Không sinh bảng
+bằng số liệu tự điền. Các warnings reference/citation phải hết sau các pass cuối;
+underfull boxes do căn cột tiếng Việt có thể còn, không đồng nghĩa lỗi biên dịch.
 
-A chủ trì Chương 1–2, B chủ trì Chương 3. Phần Chương 1 phát triển từ M1, phương
-pháp/tối ưu và ứng dụng từ M2, số liệu và phân tích hoàn thiện M3. Mọi TODO phải được
-thay bằng nội dung hiểu và kiểm chứng được. Figures vào `figures/`, caption và dẫn
-chiếu trong lời văn; bảng/công thức dùng ký hiệu đã định nghĩa. Không dùng hình
-placeholder như kết quả đo.
-
-BibTeX có paper gốc và 3 nguồn khởi đầu khác (Apriori, SPMF, UCI). Đọc/kiểm lại
-nguồn trước khi dùng, thêm nguồn Groceries đúng phiên bản thực tế. Lưu bản paper
-tham khảo cục bộ tại `docs/references/` nếu cần; không tự coi PDF có quyền tái xuất bản.
+Giữ font/lề/spacing IEEEtran. A dùng khoảng 3 trang cho implementation và phần
+còn lại cho phương pháp/kết quả; B cân dung lượng Chương 3 để bản nhóm đạt 10–15
+trang nội dung, chưa tính tài liệu tham khảo. Abstract ghi rõ tình trạng bản review;
+không đưa kết quả ứng dụng chưa chạy vào abstract/kết luận.

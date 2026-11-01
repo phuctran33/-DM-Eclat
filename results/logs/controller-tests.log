@@ -1,0 +1,10 @@
+test_aggregation_retains_failure (__main__.ControllerTests.test_aggregation_retains_failure) ... ok
+test_measure_and_timeout (__main__.ControllerTests.test_measure_and_timeout) ... ok
+test_patterns_and_comparison (__main__.ControllerTests.test_patterns_and_comparison) ... ok
+test_reference_hashes (__main__.ControllerTests.test_reference_hashes) ... ok
+test_spmf_count_bins (__main__.ControllerTests.test_spmf_count_bins) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.377s
+
+OK

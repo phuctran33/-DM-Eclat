@@ -1,0 +1,317 @@
+[
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.95",
+    "experiment": "runtime",
+    "x": "0.95",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.9",
+    "experiment": "runtime",
+    "x": "0.9",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.85",
+    "experiment": "runtime",
+    "x": "0.85",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.8",
+    "experiment": "runtime",
+    "x": "0.8",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.75",
+    "experiment": "runtime",
+    "x": "0.75",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "chess",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/chess.txt",
+    "minsup": "0.7",
+    "experiment": "runtime",
+    "x": "0.7",
+    "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "n_transactions": 3196
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.6",
+    "experiment": "runtime",
+    "x": "0.6",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.55",
+    "experiment": "runtime",
+    "x": "0.55",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.5",
+    "experiment": "runtime",
+    "x": "0.5",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.45",
+    "experiment": "runtime",
+    "x": "0.45",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.4",
+    "experiment": "runtime",
+    "x": "0.4",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "mushroom",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/mushroom.txt",
+    "minsup": "0.35",
+    "experiment": "runtime",
+    "x": "0.35",
+    "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "n_transactions": 8124
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.05",
+    "experiment": "runtime",
+    "x": "0.05",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.04",
+    "experiment": "runtime",
+    "x": "0.04",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.03",
+    "experiment": "runtime",
+    "x": "0.03",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.02",
+    "experiment": "runtime",
+    "x": "0.02",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.01",
+    "experiment": "runtime",
+    "x": "0.01",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "retail",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/retail.txt",
+    "minsup": "0.005",
+    "experiment": "runtime",
+    "x": "0.005",
+    "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.02",
+    "experiment": "runtime",
+    "x": "0.02",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.015",
+    "experiment": "runtime",
+    "x": "0.015",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.01",
+    "experiment": "runtime",
+    "x": "0.01",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.008",
+    "experiment": "runtime",
+    "x": "0.008",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.006",
+    "experiment": "runtime",
+    "x": "0.006",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "T10I4D100K",
+    "path": "/Users/nguyenduchung/-DM-Eclat/data/benchmark/T10I4D100K.txt",
+    "minsup": "0.004",
+    "experiment": "runtime",
+    "x": "0.004",
+    "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "n_transactions": 100000
+  },
+  {
+    "dataset": "retail_subset_10",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/subsets/subset_10.txt",
+    "minsup": "0.01",
+    "experiment": "scalability",
+    "x": 10,
+    "input_sha256": "ffbfa168e5a2a7409202b18d52e6e13b4b860a8c897abce195e15c8dff616450",
+    "n_transactions": 8816
+  },
+  {
+    "dataset": "retail_subset_25",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/subsets/subset_25.txt",
+    "minsup": "0.01",
+    "experiment": "scalability",
+    "x": 25,
+    "input_sha256": "cf7186c4ce22b2e526694b14708607084e5dd32d0b7c744067391062263610d9",
+    "n_transactions": 22040
+  },
+  {
+    "dataset": "retail_subset_50",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/subsets/subset_50.txt",
+    "minsup": "0.01",
+    "experiment": "scalability",
+    "x": 50,
+    "input_sha256": "d02f9f2a8fb8cf7863bed16ba1522f8be97329f6eeaf83b0b22b85c7ab9f80de",
+    "n_transactions": 44081
+  },
+  {
+    "dataset": "retail_subset_75",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/subsets/subset_75.txt",
+    "minsup": "0.01",
+    "experiment": "scalability",
+    "x": 75,
+    "input_sha256": "71d29efca24ec8987f4e551d7e70f60a0439b5ca128e478a93578e8072294f5a",
+    "n_transactions": 66121
+  },
+  {
+    "dataset": "retail_subset_100",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/subsets/subset_100.txt",
+    "minsup": "0.01",
+    "experiment": "scalability",
+    "x": 100,
+    "input_sha256": "05b57dc9e5c7340dd96d0ee1d13db019c44182cbf60b750bf92f38bd5f0028b3",
+    "n_transactions": 88162
+  },
+  {
+    "dataset": "synthetic_width_5",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_5.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 5,
+    "input_sha256": "a8a24013da6a363b7836ecd932808e11e7dee2eef04699f7b7b684381dadf7c3",
+    "n_transactions": 10000
+  },
+  {
+    "dataset": "synthetic_width_10",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_10.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 10,
+    "input_sha256": "530b21f9aafece4b6c0fa011626bd710621fd7001180f7eb1fc743eaa029d338",
+    "n_transactions": 10000
+  },
+  {
+    "dataset": "synthetic_width_15",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_15.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 15,
+    "input_sha256": "8643148556dc892d0eac8366b6f779043029023627dd47710260c9e3e23fd8ba",
+    "n_transactions": 10000
+  },
+  {
+    "dataset": "synthetic_width_20",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_20.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 20,
+    "input_sha256": "e48ee98868f2f9960f1ae3a102830b0b644bc9626a356784ee700ab09691175e",
+    "n_transactions": 10000
+  },
+  {
+    "dataset": "synthetic_width_25",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_25.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 25,
+    "input_sha256": "a998165902e298f7b9907c967347fc2f782e34d0a355e93766b55c3aa5733c35",
+    "n_transactions": 10000
+  },
+  {
+    "dataset": "synthetic_width_30",
+    "path": "/Users/nguyenduchung/-DM-Eclat/results/synthetic/width_30.txt",
+    "minsup": "0.2",
+    "experiment": "length",
+    "x": 30,
+    "input_sha256": "4157615b90c7b0d10213ede98be7ba955c4510b637e7114be786dd584730c4fb",
+    "n_transactions": 10000
+  }
+]

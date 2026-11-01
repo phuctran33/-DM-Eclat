@@ -10,3 +10,8 @@ Kế hoạch nội bộ nhóm cung cấp: `D:\Ke_hoach_Eclat_Julia_3_tuan_theo_m
 
 Các PDF gốc không bị chỉnh sửa hoặc tự đăng công khai. BibTeX tham khảo đặt tại
 `docs/latex/references.bib`; bổ sung đúng nguồn Groceries và snapshots thực tế.
+
+Member A đọc lại ngày 31/10/2026 từ bản lưu trữ SPMF:
+https://www.philippe-fournier-viger.com/spmf/zaki2000.pdf (19 trang).
+Acquisition bốn benchmarks dùng FIMI gốc, nội dung pin hash; tài liệu API BitArray
+Julia và SPMF Eclat được đối chiếu riêng. Không đưa source thuật toán SPMF vào repo.

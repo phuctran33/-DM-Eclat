@@ -1,0 +1,21 @@
+{
+  "command": [
+    "java",
+    "-jar",
+    "tools/spmf.jar",
+    "run",
+    "Eclat",
+    "data/toy/boundary.txt",
+    "tests/reference/spmf/boundary.txt",
+    "40%"
+  ],
+  "monitor": [
+    "/usr/bin/time",
+    "-l"
+  ],
+  "seconds": 0.40582191688008606,
+  "peak_rss_mib": 56.484375,
+  "exit_code": 0,
+  "status": "ok",
+  "timeout_seconds": 30
+}

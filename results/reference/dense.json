@@ -1,0 +1,21 @@
+{
+  "command": [
+    "java",
+    "-jar",
+    "tools/spmf.jar",
+    "run",
+    "Eclat",
+    "data/toy/dense.txt",
+    "tests/reference/spmf/dense.txt",
+    "40%"
+  ],
+  "monitor": [
+    "/usr/bin/time",
+    "-l"
+  ],
+  "seconds": 0.2914138750638813,
+  "peak_rss_mib": 56.890625,
+  "exit_code": 0,
+  "status": "ok",
+  "timeout_seconds": 30
+}

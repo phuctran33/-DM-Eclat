@@ -1,6 +1,6 @@
 name = "EclatProject"
 uuid = "be123ba8-7c83-4b05-8ec8-8a6c7273b85c"
-authors = ["TODO: thành viên nhóm"]
+authors = ["Nguyễn Đức Hưng", "Trần Thiên Phúc"]
 version = "0.1.0"
 
 [deps]

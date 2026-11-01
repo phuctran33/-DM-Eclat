@@ -1,63 +1,363 @@
 \section{Chương 2: Thực nghiệm và đánh giá}
 \label{sec:evaluation}
 
-\subsection{Câu hỏi thực nghiệm và thiết lập}
-\todo{A nêu câu hỏi: correctness, ảnh hưởng minsup, dense/sparse, BitVector,
-scalability và transaction length. B review tính công bằng.}
-\todo{Điền CPU, RAM, OS, Julia/Java/SPMF, thread count, seed, warm-up, số lần lặp,
-median/spread, timeout và phạm vi timer. Phân biệt internal read+mine với
-end-to-end wall-clock; không so hai phạm vi khác nhau như một metric.}
+\subsection{Mục tiêu và câu hỏi thực nghiệm}
+Thực nghiệm trả lời năm câu hỏi: kết quả có khớp toàn bộ SPMF hay không; minsup
+làm thay đổi runtime và output như thế nào; BitVector có lợi trên dữ liệu nào;
+peak RAM thay đổi ra sao; và số giao dịch/độ rộng transaction tác động thế nào
+khi giữ minsup tương đối. Phân tích dùng dữ liệu được chạy bằng chính hai backends
+ở Chương~\ref{sec:implementation}. Không lấy số runtime hoặc memory của paper làm
+số đo của nhóm. Các bảng LaTeX và hình được sinh trực tiếp từ CSV bởi
+\path{scripts/plot_results.py}; dữ liệu gốc, stderr/stdout và lệnh cho từng process
+được giữ để kiểm tra lại kết luận.
 
-\subsection{Dữ liệu benchmark}
-\begin{table}[htbp]
+\subsection{Phần cứng, phần mềm và cấu hình}
+Máy đo là Apple M1, 8 logical CPUs, RAM 8 GiB, macOS 14.6.1 arm64. Julia 1.10.10
+chạy với một Julia thread, không dùng distributed execution; Java 23.0.1 chạy
+SPMF 2.64b. Controller dùng Python 3.14.0 và hình dùng Matplotlib 3.11.2. JAR
+tham chiếu được tải từ archive chính thức và pin SHA-256; Java 21 trở lên đọc được
+class version của JAR này. Bản JAR latest tại thời điểm thiết lập không chạy trên
+Java 23 nên không được dùng. Phiên bản và hash đầy đủ nằm trong
+\path{results/raw/environment.json} và manifest reference, không chỉ dựa vào tên
+file \texttt{spmf.jar}.
+
+Bản mã thuật toán/harness cho lần đo được lưu bằng commit và source hashes trong
+\path{results/raw/protocol.json}. Seed là 42. Mỗi cấu hình có một preflight và năm
+repetitions; timeout mỗi process 120 giây. SPMF dùng \texttt{-Xmx2g}. Grid gồm
+24 cấu hình benchmark, 5 subsets và 6 widths; output không giới hạn độ dài hay số
+lượng. Các trường hợp không hoàn tất có status riêng, không dùng runtime/pattern
+count bằng 0 để biểu diễn timeout. Các ngưỡng chính ở Bảng~\ref{tab:thresholds}
+được pilot trước trên bốn CSDL; pilot không gộp vào dữ liệu đo chính thức.
+
+\begin{table}[tb]
 \centering
-\caption{Thống kê trên đúng file benchmark dùng trong thí nghiệm; các ô chờ đo.}
-\label{tab:datasets}
-\begin{tabular}{lrrr}
-\toprule
-CSDL & $n$ & $m$ & Width TB \\
-\midrule
-Chess & -- & -- & -- \\
-Mushroom & -- & -- & -- \\
-Retail & -- & -- & -- \\
-T10I4D100K & -- & -- & -- \\
-\bottomrule
-\end{tabular}
+\caption{Grid minsup cố định; nguồn: \texttt{configs/experiments.toml}.}
+\label{tab:thresholds}
+\input{generated/thresholds}
 \end{table}
-Trong Bảng~\ref{tab:datasets}, $n$ là số giao dịch, $m$ là số item phân biệt và width
-là số item/giao dịch. \todo{Bổ sung nguồn snapshot HF/Kaggle, version/hash, license,
-preprocessing và đặc điểm dense/sparse; tính số từ file thật.}
 
-\subsection{Đối chiếu correctness với SPMF}
-\todo{B so đầy đủ itemset/support cho từng CSDL/minsup; bảng n_patterns,
-missing, extra, wrong support và exact match rate. Nêu denominator, trường hợp
-output rỗng và phân tích mọi sai khác. Không chỉ so tổng số pattern.}
+\subsection{Nguồn dữ liệu, chuẩn hóa và thống kê thực}
+Bốn CSDL được tải từ kho FIMI học thuật của Zaki~\cite{fimi}. Ưu tiên tìm snapshot
+HF/Kaggle nhưng không xác định được một bản chung phù hợp cho đủ bốn CSDL; sử
+dụng nguồn học thuật gốc, pin nội dung bằng raw SHA-256. Đây là snapshot theo hash,
+không phải tuyên bố một revision HF/Kaggle chưa xác minh. Acquisition script từ
+chối checksum khác để tránh chạy trên dữ liệu đã đổi. Dữ liệu raw và normalized
+không commit vào Git; repo giữ URL, hash, license notes và mã tải tái lập.
 
-\subsection{Runtime và output size theo minsup}
-\todo{A chèn bốn đồ thị runtime (basic, BitVector, SPMF), 5--7 ngưỡng giảm dần/tập;
-median + spread, đơn vị, legend, caption và tham chiếu từng hình trong lời văn.
-Chèn output-size curves, giải thích bằng intersection và candidate/output growth.}
+Server trả gzip ngay tại URL kết thúc bằng \texttt{.dat}; script nhận diện magic
+bytes trước giải nén. Chess/Mushroom vốn có ID dương. Retail và T10I4D100K có ID
+0, nên cộng 1 cho \emph{mọi} item ID của hai CSDL đó để giữ hợp đồng parser. Đây
+là song ánh nên không đổi containment, support hoặc số patterns. Không bỏ dòng,
+không deduplicate transactions, không sửa parser để nhận input invalid. Cả Julia
+và SPMF nhận cùng byte file normalized; input SHA-256 được ghi vào từng row đo.
 
-% Example only: replace path after a real run; do not insert fabricated figures.
-% \begin{figure}[htbp]
-% \centering\includegraphics[width=\columnwidth]{figures/runtime-chess.pdf}
-% \caption{Runtime trên Chess theo minsup, cùng phạm vi đo; TODO số lần lặp.}
-% \label{fig:runtime-chess}
-% \end{figure}
+\begin{table*}[tb]
+\centering
+\caption{Thống kê tính từ đúng file normalized: $n$ transactions, $m$ distinct items,
+TB/Max là số item/giao dịch; nguồn: \texttt{results/raw/dataset\_statistics.csv}.}
+\label{tab:datasets}
+\input{generated/datasets}
+\end{table*}
 
-\subsection{Peak RAM và hiệu quả tối ưu}
-\todo{A đo peak RSS basic/BitVector tại minsup trung bình của từng dataset.
-Nêu công cụ OS và vòng đời process; không coi allocations là peak memory hoặc
-so RSS với heap log. Bổ sung speedup và memory reduction từ số đo thật.}
+Bảng~\ref{tab:datasets} cho thấy không thể coi bốn CSDL có cùng đặc tính. Chess và
+Mushroom có width cố định lần lượt 37 và 23, với mật độ cao. Retail có nhiều item
+hiếm, width trung bình khoảng 10.31 nhưng vocabulary 16,470 items. T10I4D100K có
+100,000 giao dịch trong đúng snapshot này; không thay con số đó bằng thống kê của
+một phiên bản đã lọc ở nguồn khác. Mật độ được tính bằng
+\begin{equation}
+ \rho=\frac{\sum_i |t_i|}{nm}=\frac{\overline{\ell}}{m},
+ \label{eq:density}
+\end{equation}
+trong đó $\overline{\ell}$ là mean width. File manifest ghi điều kiện dùng dữ liệu
+Retail và attribution Tom Brijs và trích dẫn công trình được donor yêu cầu~\cite{brijs1999}; các nguồn
+còn lại không được gán giấy phép do nhóm tự suy đoán. Chỉ chia sẻ mã acquisition và thống kê, không tái phát hành raw.
 
-\subsection{Scalability và độ dài giao dịch}
-\todo{Retail: nested subsets 10/25/50/75/100\%, relative minsup cố định, tính
-absolute count theo n thực. Vẽ runtime theo n, kèm output size và giới hạn sampling.}
-\todo{Synthetic: n, m, seed, minsup cố định; transaction widths tăng dần; trình bày
-runtime/output, mô tả generator mẫu và khác biệt với generator trong paper.}
+\subsection{Đối chiếu correctness trước timing}
+Với mỗi case, chạy ba backends trên cùng file, tính absolute threshold bằng
+(\ref{eq:threshold}), parse toàn bộ output về map canonical. Với hai maps $A,R$,
+định nghĩa số khớp $M=|\{X\in\operatorname{keys}(A)\cap\operatorname{keys}(R):
+A[X]=R[X]\}|$ và
+\begin{equation}
+ \operatorname{match\_rate}=\frac{M}{|\operatorname{keys}(A)\cup\operatorname{keys}(R)|}.
+ \label{eq:match}
+\end{equation}
+Hai maps rỗng cho rate 1. Comparator còn đếm missing, extra và wrong support;
+exact equality yêu cầu cả ba bằng 0. Duplicate lines bị reject trước bước so sánh,
+không được dictionary ghi đè để che lỗi.
 
-\subsection{Thảo luận, hạn chế và tối ưu tiếp theo}
-\todo{Giải thích xu hướng bằng mô tả thuật toán và complexity; nêu trường hợp
-BitVector có lợi/bất lợi, JIT/JVM, I/O, warm-up, timeout/OOM và giới hạn phần cứng.}
-\todo{Đề xuất ít nhất 2 hướng tối ưu cụ thể có cơ sở: ví dụ adaptive list/bitset,
-buffer reuse, ordering/early-stop. Phân biệt điều đã đo với giả thuyết tương lai.}
+SPMF nhận double cho relative threshold. Để tránh sai số ceiling tại biên, controller
+gửi một giá trị ở giữa cùng absolute-count bin,
+\begin{equation}
+ \theta_{\mathrm{SPMF}}=\frac{2\tau-1}{2n}.
+ \label{eq:spmf-bin}
+\end{equation}
+Với $n>0$, $\lceil\theta_{\mathrm{SPMF}}n\rceil=\tau$, nên tiêu chuẩn frequent
+hoàn toàn giống ngưỡng đã khai báo; không giảm absolute minsup. Chuỗi tham số thật
+nằm trong command log. Toy references tại 40\% dùng trực tiếp 40\%; bộ test riêng
+xác minh count-bin conversion trên các kích thước benchmark và boundary values.
+
+\begin{table}[tb]
+\centering
+\caption{Đối chiếu toàn bộ map trên grid bốn benchmark, mỗi ngưỡng có Basic/SPMF
+và BitVector/SPMF; nguồn: \texttt{results/correctness/comparisons.csv}.}
+\label{tab:correctness}
+\input{generated/correctness}
+\end{table}
+
+Bảng~\ref{tab:correctness} thống kê các phép đối chiếu, không phải chỉ tỉ lệ bằng
+nhau về tổng số patterns. Sau preflight, mỗi output của các timed repetitions còn
+được so lại toàn bộ với map đã xác minh; worker warm cũng kiểm mỗi repetition.
+Thiếu/thừa/sai support làm runner dừng diễn giải hiệu năng của case đó. Với lỗi
+process hoặc timeout ở preflight, runner giữ bằng chứng lần thử thực và chuyển
+sang case khác, không tạo năm repetitions giả. Năm toy references, oracle vét cạn
+và randomized tests là lớp kiểm tra độc lập với grid thực nghiệm này.
+
+\subsection{Hai phạm vi thời gian và tính công bằng}
+\textit{End-to-end.} Controller đo wall-clock từ ngay trước khi tạo process mới
+đến khi process kết thúc và controller nhận kết quả. Cả ba backends đều đọc input,
+mining đầy đủ và ghi output trong phạm vi đó; startup/JIT của Julia và startup JVM
+được tính. Một preflight làm ấm file cache và xác minh kết quả nhưng không được tính
+là repetition. Timer bao gồm overhead nhỏ của OS monitor/controller; cơ chế wait
+có timeout của Python có thể thêm tối đa khoảng 50 ms ở cuối lần chạy. Do đó đây
+là chi phí thực thi CLI do harness quan sát, không phải timer chỉ của thuật toán.
+Không so internal timer trong log SPMF với thời gian Julia ở phạm vi khác.
+
+\textit{Internal read+mine.} Trong process Julia riêng cho mỗi case/backend,
+worker compile ví dụ nhỏ rồi warm-up toàn bộ case một lần. Sau đó năm lần đo đọc
+lại file, validation, verticalization và DFS bằng \texttt{@timed}; mỗi lần có
+\texttt{GC.gc()} trước timer. Ghi output, kiểm equality và GC chủ động ở ngoài
+phạm vi này. Bảng internal chỉ so hai backend Julia. Worker giữ map tham chiếu của
+warm-up để kiểm lặp; không gán RSS của cả batch cho từng lần internal. Chưa có
+Java warm harness tương đương nên không đưa SPMF vào đường cong internal.
+
+Mỗi điểm đồ thị biểu diễn median năm lần; error bars là min--max, không diễn giải
+thành confidence interval. Hai phạm vi được vẽ ở hai panels với đơn vị rõ ràng.
+Tỉ số tối ưu được tính chỉ với cùng metric scope và các phép đo hợp lệ:
+\begin{equation}
+ S=T_{\mathrm{Basic}}/T_{\mathrm{BitVector}}.
+ \label{eq:speedup}
+\end{equation}
+$S>1$ có lợi cho BitVector; $S<1$ được giữ nguyên, không bỏ khỏi báo cáo.
+
+\subsection{Runtime theo minimum support}
+Hình~\ref{fig:runtime-chess}--\ref{fig:runtime-t10} trình bày đủ sáu ngưỡng mỗi CSDL.
+Panel trên dùng chung boundary end-to-end cho Basic, BitVector và SPMF. Panel dưới
+làm rõ chi phí đọc+mine trong runtime Julia đã warm. Khác biệt giữa hai panels
+cho biết startup/compilation/serialization có thể che một phần cải thiện của phép
+giao. Vì chúng đo những công việc khác nhau, không lấy hiệu hai median để khẳng
+định chính xác thời gian JIT hoặc thời gian ghi file.
+
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/runtime-chess.pdf}
+\caption{Chess: end-to-end (giây) và warm read+mine (ms), median và min--max của
+năm lần; nguồn: \texttt{results/raw/benchmark\_runs.csv}.}
+\label{fig:runtime-chess}
+\end{figure}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/runtime-mushroom.pdf}
+\caption{Mushroom: cùng hai phạm vi đo của Hình~\ref{fig:runtime-chess}, năm lần
+mỗi điểm, output đầy đủ. Nguồn: raw benchmark CSV.}
+\label{fig:runtime-mushroom}
+\end{figure}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/runtime-retail.pdf}
+\caption{Retail: runtime theo minsup; error bars min--max, không coi timer JVM
+nội bộ là một phần của panel warm Julia. Nguồn: raw benchmark CSV.}
+\label{fig:runtime-retail}
+\end{figure}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/runtime-T10I4D100K.pdf}
+\caption{T10I4D100K: runtime trên 100,000 transactions; panel trên giây, panel
+dưới ms; năm repetitions. Nguồn: raw benchmark CSV.}
+\label{fig:runtime-t10}
+\end{figure}
+
+\begin{table}[tb]
+\centering
+\caption{Warm read+mine tại minsup trung bình: Chess 85\%, Mushroom 50\%, Retail
+3\%, T10I4D100K 1\%. $S$ theo (\ref{eq:speedup}); nguồn: \texttt{optimization.csv}.}
+\label{tab:optimization}
+\setlength{\tabcolsep}{3pt}
+\input{generated/medium-runtime}
+\end{table}
+\begin{table}[tb]
+\centering
+\caption{Median end-to-end tại cùng các ngưỡng của Bảng~\ref{tab:optimization};
+nguồn: \texttt{results/raw/end\_to\_end\_medium.csv}.}
+\label{tab:e2e}
+\input{generated/medium-e2e}
+\end{table}
+
+Bảng~\ref{tab:optimization} và Bảng~\ref{tab:e2e} giúp đánh giá cùng ngưỡng dưới hai
+góc nhìn. Ở các ngưỡng trung bình, median warm của Basic/BitVector lần lượt là
+82.50/16.16 ms trên Chess, 46.48/26.92 ms trên Mushroom, 231.34/255.48 ms trên
+Retail và 1723.08/552.79 ms trên T10I4D100K. Tỉ số tương ứng xấp xỉ
+$5.10\times$, $1.73\times$, $0.91\times$ và $3.12\times$; giá trị dưới 1 của
+Retail được giữ để phản ánh median BitVector chậm hơn tại 3\%.
+Với Chess, tid-lists của nhiều items dài và phần search/output tăng khi
+hạ minsup, nên packed AND giảm nhiều công việc quét TID. Với Retail ở ngưỡng cao,
+số frequent patterns nhỏ, chi phí đọc/validation/verticalization chiếm phần lớn;
+count trước rồi dựng bitmap cũng thêm một lượt dữ liệu. Kết quả này cần được giải
+thích bằng (\ref{eq:list-cost})--(\ref{eq:bit-cost}), thay vì mặc định bitmap thắng
+trên mọi CSDL thưa. SPMF là cài đặt Java trưởng thành, có representation và overhead
+riêng; end-to-end tốt hơn không tự chứng minh một phép AND của Java nhanh hơn Julia.
+
+\subsection{Số frequent itemsets theo minsup}
+Hình~\ref{fig:output-size} dùng đúng các outputs đã kiểm chứng, không truncate.
+Trên sáu ngưỡng từ cao xuống thấp, Chess tăng từ 77 lên 48,731 patterns;
+Mushroom từ 51 lên 1,189; Retail từ 16 lên 580; T10I4D100K từ 155 lên 2,001.
+Các CSDL dùng grids minsup khác nhau, nên không quy toàn bộ chênh lệch counts
+giữa CSDL cho riêng density.
+Khi hạ $\tau$ trên một CSDL cố định, một itemset đã frequent không thể trở thành
+infrequent, nên output size không giảm. Tuy nhiên số frequent singletons không
+đủ dự đoán số patterns: những kết hợp nhiều item trên dữ liệu dày có thể cùng đạt
+ngưỡng và phát triển theo tổ hợp. Ngược lại, nhiều item hiếm của Retail không thể
+được mở rộng ở các ngưỡng cao của grid. Minsup bằng nhau về tỉ lệ cũng không làm
+candidate space của các CSDL bằng nhau.
+
+\begin{figure*}[tb]
+\centering\includegraphics[width=.83\textwidth]{figures/output-size.pdf}
+\caption{Số tất cả frequent itemsets theo minsup trên bốn CSDL. Counts lấy từ
+output Basic đã khớp toàn bộ BitVector/SPMF; nguồn: raw/summary CSV.}
+\label{fig:output-size}
+\end{figure*}
+
+Việc giảm support vừa giữ thêm candidates vừa làm thay đổi độ dài tidsets có thể
+giữ trong các lớp. Với Basic, rất nhiều giao lists dài tại các prefix ngắn có thể
+chi phối tổng thời gian; tại prefix sâu, lists co lại và có thể trở nên hiệu quả.
+Với BitVector, mỗi giao vẫn có $\lceil n/w\rceil$ words, nên lợi thế phụ thuộc cả
+số joins chứ không chỉ số patterns cuối. Báo cáo chưa instrument riêng candidate
+count theo độ sâu; các giải thích trên là cơ chế phù hợp với mã và số đo, không
+phải kết quả profiling từng phase đã thực hiện.
+
+\subsection{Peak RAM và hiệu quả bộ nhớ}
+Peak RSS đo bằng \texttt{/usr/bin/time -l} của macOS trên từng process end-to-end,
+chuyển bytes sang MiB bằng $2^{20}$. Monitor bao trọn startup, compilation,
+horizontal input, vertical data, intermediate tidsets, Patterns và writer. Đây là
+maximum resident set size của OS, không phải Julia allocation count hay SPMF heap
+log. Năm peak values được aggregate median tại minsup trung bình; raw CSV giữ
+mọi lần. Worker internal ghi RSS là NA vì không có peak riêng cho từng repetition.
+
+\begin{table}[tb]
+\centering
+\caption{Peak RSS tại cùng ngưỡng trung bình; giảm âm nghĩa BitVector dùng RSS
+lớn hơn. Nguồn: \texttt{results/raw/memory\_comparison.csv}.}
+\label{tab:memory}
+\setlength{\tabcolsep}{3pt}
+\input{generated/memory}
+\end{table}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/memory.pdf}
+\caption{Median maximum process RSS (MiB), năm process độc lập mỗi backend/CSDL;
+ngưỡng như Bảng~\ref{tab:optimization}. Nguồn: raw memory comparison CSV.}
+\label{fig:memory}
+\end{figure}
+
+Trong Bảng~\ref{tab:memory} và Hình~\ref{fig:memory}, mức giảm được tính
+$100(1-R_{\mathrm{BitVector}}/R_{\mathrm{Basic}})$ với $R$ là median peak RSS. Do
+đó các mức giảm trên Chess, Mushroom và Retail lần lượt khoảng 14.88\%, 4.63\%
+và 3.89\%. T10I4D100K có median 345.1 MiB của Basic so với 351.1 MiB của
+BitVector, tức mức giảm $-1.74\%$. Chênh lệch nhỏ ở một phiên đo chưa chứng minh
+một regression bộ nhớ ổn định; cần xem spread raw và lặp trên các phiên khác.
+Do
+runtime nền và JIT tham gia peak, phần trăm RSS giảm không bằng phần trăm payload
+tidsets giảm. Với từ điển item lớn, bitmap có thể tiết kiệm nhờ chỉ cấp cho $F_1$,
+nhưng khi nhiều items đều frequent mà $n$ lớn, mỗi bitmap vẫn phải phủ toàn bộ TIDs.
+Không ngoại suy các ngưỡng này thành cam kết tiết kiệm RAM ở minsup thấp tùy ý.
+
+\subsection{Scalability theo số transactions}
+Retail được hoán vị một lần bằng MersenneTwister seed 42; lấy prefixes của cùng
+hoán vị cho 10/25/50/75/100\%. Vì vậy các samples nested, kể cả subset 100\% được
+hoán vị so với file gốc. Minsup giữ ở 1\%; $\tau$ được tính lại theo $n$ thực của
+mỗi sample. Bảng~\ref{tab:scalability} giữ cả count output để không nhầm tăng input
+với tăng độ khó của search space.
+
+\begin{table}[tb]
+\centering
+\caption{Retail nested subsets, minsup 1\%, seed 42; thời gian warm median.
+Nguồn: raw benchmark CSV và \texttt{cases.json}.}
+\label{tab:scalability}
+\setlength{\tabcolsep}{3pt}
+\input{generated/scalability}
+\end{table}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/scalability.pdf}
+\caption{Retail: end-to-end (s), warm read+mine (ms) và output size theo $n$;
+relative minsup cố định 1\%, năm repetitions; nguồn: raw benchmark CSV.}
+\label{fig:scalability}
+\end{figure}
+
+Hình~\ref{fig:scalability} gồm ba panels để tách output khỏi runtime. Đọc và
+verticalization phải xử lý nhiều item occurrences hơn khi $n$ tăng; lists thường
+dài hơn và bitmaps cần nhiều words hơn. Nhưng sampling cũng thay support của
+các itemsets gần ngưỡng, trong khi ceiling có bước nhảy rời rạc. Vì vậy $|F|$ giữa
+các subsets có thể dao động dù input tăng: trong năm mẫu này counts nằm từ 157 đến 162,
+subset 100\% có 159 patterns như Retail gốc tại 1\%. Đường gần tuyến tính ở một grid cố định
+chỉ mô tả miền đo này; không chứng minh complexity của Eclat tuyến tính cho mọi D.
+
+\subsection{Ảnh hưởng của độ dài giao dịch}
+Generator của nhóm chọn đều không hoàn lại các items trong mỗi transaction bằng
+\texttt{randperm}, rồi sort; không phải IBM generator của paper. Thí nghiệm giữ
+$n=10{,}000$, $m=100$, seed 42 và $\theta=0.20$, thay width
+$\ell\in\{5,10,15,20,25,30\}$. Các CSDL khác width không được coi là nested.
+Không thêm planted patterns trong đợt chính; kết quả không có pattern vẫn được
+giữ vì nó kiểm tra rõ tác động của singleton filtering ở ngưỡng cố định.
+
+\begin{table}[tb]
+\centering
+\caption{Synthetic uniform: mọi tham số ngoài width cố định; warm median, output
+đầy đủ. Nguồn: raw benchmark CSV và generator seed 42.}
+\label{tab:length}
+\setlength{\tabcolsep}{3pt}
+\input{generated/length}
+\end{table}
+\begin{figure}[tb]
+\centering\includegraphics[width=\columnwidth]{figures/transaction-length.pdf}
+\caption{Synthetic width effects: end-to-end (s), warm read+mine (ms) và số
+patterns; $n=10{,}000,m=100,\theta=0.20$, seed 42. Nguồn: raw benchmark CSV.}
+\label{fig:length}
+\end{figure}
+
+Bảng~\ref{tab:length} và Hình~\ref{fig:length} cần đọc cùng xác suất sinh dữ liệu.
+Theo đối xứng, expected support tương đối của một item là $\ell/m$; của một cặp
+là $\ell(\ell-1)/(m(m-1))$. Khi width nhỏ hơn 20, expected singleton support dưới
+ngưỡng 20\%; ở width 20 các singletons gần boundary nên một phần có thể vượt
+ngưỡng do sampling. Ngay width 30, expected pair support chỉ khoảng 8.79\%, vẫn
+thấp hơn 20\%. Do đó dữ liệu này chủ yếu kiểm tra đọc, verticalization, lọc $F_1$
+và các pair intersections, không phải stress test các frequent patterns dài.
+Ít output không có nghĩa toàn bộ mining bằng 0 công việc: Basic vẫn dựng vertical
+lists cho mọi item, BitVector vẫn phải đếm singleton occurrences.
+
+\subsection{Giới hạn và các hướng tối ưu tiếp theo}
+Đợt đo chạy trên một máy cá nhân 8 GiB, không cố định CPU frequency/core affinity
+hay kiểm soát hoàn toàn nhiệt độ và tiến trình nền. Backend order cố định trong
+mỗi repetition có thể gây temporal bias; năm repetitions và min--max chỉ mô tả
+spread trong phiên này. Chưa đo trên máy khác hoặc fresh OS page cache. Các ngưỡng
+được chọn để toàn bộ output có thể kiểm chứng, không đại diện mọi miền minsup;
+chưa chạy đến vùng bùng nổ output không thể chứa trong RAM. Bất kỳ speedup nào
+chỉ áp dụng cùng dữ liệu, threshold và scope đã khai báo.
+
+End-to-end bao gồm startup/JIT/JVM, serialization và overhead controller; warm
+Julia không so trực tiếp với SPMF vì thiếu Java harness cùng boundary. RSS là peak
+của toàn process, không tách riêng tidset payload và không phản ánh chỉ lượng
+allocation đang sống. Các synthetic cases độc lập đều không thay thế dữ liệu có
+cấu trúc đồng xuất hiện mạnh; muốn nghiên cứu deep frequent patterns cần thêm
+planted generator với protocol riêng. Correctness full-map ở các cases đã chạy
+không phải chứng minh thực nghiệm cho mọi CSDL có thể có; lập luận invariant ở
+Chương~\ref{sec:implementation} bổ sung cho test.
+
+Hướng tối ưu thứ nhất là \emph{adaptive representation}: chọn sorted list cho
+tidsets rất thưa và bitmap cho masks dày, theo payload/cost model được đo. Cần
+thêm mixed-intersection dispatch và kiểm lại ownership/correctness; điểm cân bằng
+$n/64$ về TID payload chỉ là giá trị khởi đầu. Thứ hai là \emph{buffer reuse và
+fused AND/popcount}: giảm allocation của candidates bị prune, nhưng chỉ tái sử dụng
+buffer khi không còn parent/child tham chiếu. Có thể dùng buffer pool theo depth
+và đo GC/allocations cùng RSS để xác định lợi ích thực.
+
+Hướng thứ ba là ordering theo support để thử giảm số giao ở các prefix khó, hoặc
+early-abort phép giao list khi số TID tối đa còn có thể khớp không đủ $\tau$.
+Các thay đổi này chưa triển khai trong kết quả hiện tại; cần giữ canonical keys,
+cùng enumeration semantics và tạo protocol mới. Ở tầng đánh giá, randomize thứ tự
+backend, bổ sung Java warm harness và lặp qua nhiều phiên máy sẽ giúp kiểm tra
+độ ổn định của kết luận. Những hướng này là đề xuất từ cơ chế và số đo, không
+được tính là các tối ưu đã hoàn thành.

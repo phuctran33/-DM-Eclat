@@ -1,0 +1,37 @@
+ERROR: LoadError: Some tests did not pass: 0 passed, 0 failed, 1 errored, 0 broken.
+in expression starting at /Users/nguyenduchung/-DM-Eclat/tests/test_correctness.jl:14
+in expression starting at /Users/nguyenduchung/-DM-Eclat/tests/runtests.jl:13
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.7s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  0.6s
+Eclat: five different databases, selected backends: Error During Test at /Users/nguyenduchung/-DM-Eclat/tests/test_correctness.jl:14
+  Got exception outside of a @test
+  TODO ECLAT: implement the baseline from the paper before mining
+  Stacktrace:
+    [1] error(s::String)
+      @ Base ./error.jl:35
+    [2] mine(::EclatProject.ListBackend, transactions::Vector{Vector{Int64}}, min_count::Int64)
+      @ EclatProject ~/-DM-Eclat/src/algorithm/baseline.jl:16
+    [3] mine(transactions::Vector{Vector{Int64}}, min_count::Int64; backend::Symbol)
+      @ EclatProject ~/-DM-Eclat/src/utils.jl:89
+    [4] macro expansion
+      @ ~/-DM-Eclat/tests/test_correctness.jl:21 [inlined]
+    [5] macro expansion
+      @ ~/-DM-Eclat/.tools/julia-1.10.10/share/julia/stdlib/v1.10/Test/src/Test.jl:1577 [inlined]
+    [6] top-level scope
+      @ ~/-DM-Eclat/tests/test_correctness.jl:15
+    [7] include(fname::String)
+      @ Base.MainInclude ./client.jl:494
+    [8] top-level scope
+      @ ~/-DM-Eclat/tests/runtests.jl:14
+    [9] include(mod::Module, _path::String)
+      @ Base ./Base.jl:495
+   [10] exec_options(opts::Base.JLOptions)
+      @ Base ./client.jl:323
+   [11] _start()
+      @ Base ./client.jl:557
+Test Summary:                                      | Error  Total  Time
+Eclat: five different databases, selected backends |     1      1  0.7s

@@ -27,8 +27,9 @@ dữ liệu phải chuẩn hóa rõ ràng, không âm thầm đổi dữ liệu 
 
 `PreparedDataset` có `dataset_id,transactions,item_labels,row_ids,classes`.
 A gọi `mine(prepared.transactions, min_count)`; B giữ mapping/metadata để diễn giải.
-Stats/audit xuất riêng, không đổi return type. Preprocessing, miner và application
-functions vẫn TODO; khai báo schema không thay cho việc triển khai.
+Stats/audit xuất riêng, không đổi return type. Miner list/bitset và association_rules
+đã triển khai và kiểm chứng; preprocessing Groceries/DNA và DNA comparison của B
+vẫn TODO. Kiểm thử PreparedDataset → mine không thay cho cold-run ứng dụng thật.
 
-M1 A/B đọc schema đã chốt và hoàn thiện pseudocode. M2 hai backend giữ cùng
-ordering/candidate policy để so sánh tối ưu có ý nghĩa.
+Pseudocode/invariants đã hoàn thiện trong docs/paper-notes.md và Chương 1. Hai
+backend dùng chung DFS và giữ cùng ordering/candidate policy để so sánh tối ưu.
