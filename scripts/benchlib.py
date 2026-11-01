@@ -10,13 +10,14 @@ import platform
 import re
 import signal
 import subprocess
+import sys
 import time
 import tomllib
 from decimal import Decimal
 from fractions import Fraction
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT = tomllib.loads((ROOT / "schemas/contracts.toml").read_text())
+CONTRACT = tomllib.loads((ROOT / "schemas/contracts.toml").read_text(encoding="utf-8"))
 NA = "NA"
 
 
@@ -93,7 +94,14 @@ def write_csv(path, rows, fields):
 def json_write(path, data):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+
+
+def require_measurement_platform():
+    """Measurement needs POSIX process groups; reject other OSes before writing."""
+    if sys.platform not in {"linux", "darwin"}:
+        raise ValueError("Benchmark measurement supports Linux/macOS only; "
+                         "Windows is unsupported. Run the controller on Linux or macOS.")
 
 
 def measure(command, log_prefix, timeout, cwd=ROOT):
@@ -102,6 +110,7 @@ def measure(command, log_prefix, timeout, cwd=ROOT):
     BSD/GNU time measure the complete child lifetime. A timeout kills the whole
     process group. SIGKILL alone is not called OOM without supporting evidence.
     """
+    require_measurement_platform()
     prefix = Path(log_prefix)
     prefix.parent.mkdir(parents=True, exist_ok=True)
     monitor = (["/usr/bin/time", "-l"] if platform.system() == "Darwin" else
@@ -117,10 +126,14 @@ def measure(command, log_prefix, timeout, cwd=ROOT):
             process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             timed_out = True
-            os.killpg(process.pid, signal.SIGKILL)
-            process.wait()
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass  # The process group may have exited just as the timer fired.
+            finally:
+                process.wait()
     seconds = time.perf_counter() - started
-    stderr = logpath(prefix, ".stderr").read_text(errors="replace")
+    stderr = logpath(prefix, ".stderr").read_text(encoding="utf-8", errors="replace")
     peak = NA
     mac = re.search(r"(\d+)\s+maximum resident set size", stderr)
     linux = re.search(r"Maximum resident set size \(kbytes\):\s*(\d+)", stderr)

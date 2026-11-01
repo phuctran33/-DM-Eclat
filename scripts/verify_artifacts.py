@@ -13,7 +13,7 @@ from benchmark_runner import aggregate
 
 
 def read(path):
-    with open(path) as stream:
+    with open(path, encoding="utf-8") as stream:
         return list(csv.DictReader(stream))
 
 
@@ -28,9 +28,9 @@ def main():
     assert list(rows[0])==CONTRACT["tables"]["benchmark_runs"]
     assert list(comparisons[0])==CONTRACT["tables"]["comparisons"]
     assert len({r["run_id"] for r in rows})==len(rows),"Duplicate run_id"
-    cases=json.loads((root/"raw/cases.json").read_text())
-    protocol=json.loads((root/"raw/protocol.json").read_text())
-    environment=json.loads((root/"raw/environment.json").read_text())
+    cases=json.loads((root/"raw/cases.json").read_text(encoding="utf-8"))
+    protocol=json.loads((root/"raw/protocol.json").read_text(encoding="utf-8"))
+    environment=json.loads((root/"raw/environment.json").read_text(encoding="utf-8"))
     if all(r["status"]=="ok" for r in rows):
         expected=len(cases)*protocol["config"]["repeats"]*5
         assert len(rows)==expected,(len(rows),expected)

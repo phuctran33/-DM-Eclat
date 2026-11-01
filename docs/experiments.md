@@ -95,13 +95,17 @@ không được gán OOM nếu không có thông báo hỗ trợ; timeout giết
 ## Chạy lại
 
 Cần Julia ≥1.9, Java ≥21, Python ≥3.11, curl. Controller chỉ dùng Python stdlib;
-plotting dùng `requirements-plot.txt`. Từ root repo, sau khi activate venv nếu dùng:
+plotting dùng `requirements-plot.txt`. Controller đo benchmark chỉ hỗ trợ Linux/macOS
+vì cần POSIX process groups để kết thúc toàn bộ tiến trình khi timeout; Windows
+được từ chối ngay ở preflight, trước khi tạo hay ghi output. Bước xuất biểu đồ/bảng
+dùng UTF-8 tường minh và có thể chạy trên Windows. Từ root repo, sau khi activate venv nếu dùng:
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 python3 scripts/prepare_spmf.py --references
 julia --project=. tests/runtests.jl
 python3 tests/test_benchmark.py -v
+python3 tests/test_plot_results.py -v
 python3 tests/smoke_benchmark.py
 python3 scripts/acquire_benchmarks.py
 julia --project=. scripts/benchmark_runner.jl --phase pilot --repeats 1 --output results/new-pilot
@@ -109,8 +113,13 @@ JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output resul
 python3 scripts/plot_results.py --results results/reproduced --report
 ```
 
-Dùng output directory mới để giữ bằng chứng đã publish. `--resume` chỉ chấp nhận
+Dùng output directory mới hoặc rỗng để giữ bằng chứng đã publish. Controller từ
+chối mọi output directory có sẵn nội dung trước khi sinh subsets/synthetic, ghi
+metadata, logs hay CSV, kể cả khi không có checkpoint (như checkout mới của repo).
+`--resume` chỉ chấp nhận
 checkpoint có cùng config, input, JAR, source hashes và runtime environment; cases đã xong không chạy lại.
+Resume đọc lại các input đã sinh và kiểm hash trước khi ghi; không sinh đè input
+khi checkpoint không hợp lệ hoặc signature đã thay đổi.
 Không dùng resume sau khi đổi mã/config. Có thể chạy riêng `--phase runtime`,
 `--phase scalability`, `--phase length` với output riêng. Wrapper `.jl` tự truyền
 Julia executable hiện tại; `PYTHON=/path/to/python` chọn interpreter phù hợp.

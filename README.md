@@ -83,6 +83,10 @@ trong [datasets.toml](configs/datasets.toml), giữ normalized hashes trong
 bỏ giao dịch. Ba backends nhận cùng normalized file. Đây là content-addressed FIMI
 snapshot; không gắn nhãn một HF/Kaggle revision chưa xác minh. Raw data bị ignore.
 
+Controller đo benchmark hỗ trợ Linux/macOS; Windows được từ chối trước khi ghi
+output. Thư mục output phải mới hoặc rỗng; dùng `--resume` với checkpoint hợp lệ
+để tiếp tục kết quả cũ. Xuất biểu đồ/bảng dùng UTF-8 và hỗ trợ Windows.
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate

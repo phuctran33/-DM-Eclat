@@ -15,7 +15,7 @@ SHORT = {"chess": "Chess", "mushroom": "Mushroom", "retail": "Retail", "T10I4D10
 
 
 def read_csv(path):
-    with open(path) as stream:
+    with open(path, encoding="utf-8") as stream:
         return list(csv.DictReader(stream))
 
 
@@ -27,9 +27,9 @@ def main():
     root = args.results
     rows = read_csv(root/"raw/summary.csv")
     stats = read_csv(ROOT/"results/raw/dataset_statistics.csv")
-    config = tomllib.loads((ROOT/"configs/experiments.toml").read_text())
+    config = tomllib.loads((ROOT/"configs/experiments.toml").read_text(encoding="utf-8"))
     comparisons = read_csv(root/"correctness/comparisons.csv")
-    cases = __import__("json").loads((root/"raw/cases.json").read_text())
+    cases = __import__("json").loads((root/"raw/cases.json").read_text(encoding="utf-8"))
     plots = root/"plots"
     plots.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({"font.size": 9, "axes.spines.top": False, "axes.spines.right": False,
@@ -131,7 +131,7 @@ def main():
         text+=header+r" \\"+"\n\\midrule\n"
         text+="\n".join(" & ".join(map(str,row))+r" \\" for row in body)+"\n"
         text+="\\bottomrule\n\\end{tabular}\n"
-        (generated/f"{name}.tex").write_text(text)
+        (generated/f"{name}.tex").write_text(text, encoding="utf-8", newline="\n")
     table("datasets",r"CSDL & $n$ & $m$ & TB & Max & Mật độ (\%)",
           [(SHORT[r["dataset"]],r["n_transactions"],r["n_items"],f"{float(r['average_width']):.2f}",r["max_width"],f"{100*float(r['density']):.3f}") for r in stats])
     table("medium-runtime",r"CSDL & $\tau$ & Basic (ms) & BitVector (ms) & $S$",

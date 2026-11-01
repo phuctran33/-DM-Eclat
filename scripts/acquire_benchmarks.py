@@ -13,9 +13,9 @@ def main():
     parser.add_argument("--raw-dir", type=Path, default=ROOT / ".tools/acquisition")
     parser.add_argument("--offline", action="store_true")
     args = parser.parse_args()
-    config = tomllib.loads((ROOT / "configs/datasets.toml").read_text())
+    config = tomllib.loads((ROOT / "configs/datasets.toml").read_text(encoding="utf-8"))
     manifest_path = ROOT / "data/manifest.csv"
-    with manifest_path.open() as stream:
+    with manifest_path.open(encoding="utf-8") as stream:
         reader = csv.DictReader(stream)
         fields = reader.fieldnames
         # Preserve B's provenance rows exactly.
@@ -42,7 +42,7 @@ def main():
             raise ValueError(f"Unexpected malformed source: {name}")
         output = ROOT / f"data/benchmark/{name}.txt"
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text("".join(" ".join(map(str, row)) + "\n" for row in normalized))
+        output.write_text("".join(" ".join(map(str, row)) + "\n" for row in normalized), encoding="utf-8", newline="\n")
         items = set(item for row in normalized for item in row)
         widths = list(map(len, normalized))
         stats.append(dict(dataset=name, n_transactions=len(rows), n_items=len(items),

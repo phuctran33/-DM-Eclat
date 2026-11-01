@@ -32,7 +32,7 @@ def main():
         result = measure(command, ROOT / f"results/reference/{name}", 30)
         if result["status"] != "ok":
             raise RuntimeError(f"SPMF reference failed: {name}")
-        n = sum(bool(line.strip()) and line[0] not in "#%@" for line in source.read_text().splitlines())
+        n = sum(bool(line.strip()) and line[0] not in "#%@" for line in source.read_text(encoding="utf-8").splitlines())
         rows.append(dict(schema_version="1.0.0", dataset=name, input_path=str(source.relative_to(ROOT)),
                          input_sha256=sha256(source), minsup="0.4", min_count=(2*n+4)//5, n_transactions=n,
                          output_path=str(destination.relative_to(ROOT)), output_sha256=sha256(destination),

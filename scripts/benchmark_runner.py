@@ -11,10 +11,11 @@ import subprocess
 import sys
 import tomllib
 from benchlib import (ROOT, CONTRACT, NA, compare, environment, json_write, measure,
-                      logpath, minimum_count, read_patterns, sha256, spmf_threshold, write_csv)
+                      logpath, minimum_count, read_patterns, require_measurement_platform,
+                      sha256, spmf_threshold, write_csv)
 
 
-def cases(config, phase, julia, output):
+def cases(config, phase, julia, output, resume=False):
     result = []
     if phase in ("pilot", "runtime", "all"):
         for dataset in config["datasets"]:
@@ -24,8 +25,9 @@ def cases(config, phase, julia, output):
     if phase in ("scalability", "all"):
         dataset = next(d for d in config["datasets"] if d["name"] == config["scalability_dataset"])
         directory = output / "subsets"
-        subprocess.run([julia, "--startup-file=no", "--project=.", "scripts/make_subsets.jl",
-                        dataset["path"], str(directory), str(config["seed"])], cwd=ROOT, check=True)
+        if not resume:
+            subprocess.run([julia, "--startup-file=no", "--project=.", "scripts/make_subsets.jl",
+                            dataset["path"], str(directory), str(config["seed"])], cwd=ROOT, check=True)
         fractions = [10, 25, 50, 75, 100]
         if [round(f * 100) for f in config["scalability_fractions"]] != fractions:
             raise ValueError("make_subsets protocol requires 10/25/50/75/100%")
@@ -35,12 +37,34 @@ def cases(config, phase, julia, output):
     if phase in ("length", "all"):
         for width in config["synthetic_lengths"]:
             path = output / f"synthetic/width_{width}.txt"
-            subprocess.run([julia, "--startup-file=no", "--project=.", "scripts/generate_synthetic.jl", str(path),
-                            str(config["synthetic_items"]), str(config["synthetic_transactions"]),
-                            str(width), str(config["seed"])], cwd=ROOT, check=True)
+            if not resume:
+                subprocess.run([julia, "--startup-file=no", "--project=.", "scripts/generate_synthetic.jl", str(path),
+                                str(config["synthetic_items"]), str(config["synthetic_transactions"]),
+                                str(width), str(config["seed"])], cwd=ROOT, check=True)
             result.append(dict(dataset=f"synthetic_width_{width}", path=path,
                                minsup=str(config["synthetic_minsup"]), experiment="length", x=width))
     return result
+
+
+def load_checkpoint(output, resume):
+    """Check output ownership before any mkdir, generated input, log or metadata."""
+    checkpoint_path = output / "raw/checkpoint.json"
+    if not resume:
+        if output.exists() and (not output.is_dir() or any(output.iterdir())):
+            raise ValueError(f"Existing results in {output}; use a different --output "
+                             "or --resume with a valid checkpoint")
+        return None
+    if not checkpoint_path.is_file():
+        raise ValueError("No checkpoint to resume in the selected output directory")
+    try:
+        checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise ValueError(f"Invalid checkpoint: {error}") from error
+    expected = {"signature": dict, "rows": list, "comparisons": list, "completed": list}
+    if not isinstance(checkpoint, dict) or any(
+            not isinstance(checkpoint.get(key), kind) for key, kind in expected.items()):
+        raise ValueError("Invalid checkpoint: expected signature, rows, comparisons and completed")
+    return checkpoint
 
 
 def aggregate(rows):
@@ -76,21 +100,25 @@ def main():
     parser.add_argument("--repeats", type=int)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    output = args.output.resolve()
+    try:
+        require_measurement_platform()
+        checkpoint = load_checkpoint(output, args.resume)
+    except ValueError as error:
+        parser.error(str(error))
     if not args.julia:
         parser.error("Julia unavailable; pass --julia /path/to/julia")
-    output = args.output.resolve()
-    config = tomllib.loads(args.config.read_text())
+    config = tomllib.loads(args.config.read_text(encoding="utf-8"))
     if args.repeats is not None:
         config["repeats"] = args.repeats
     if config["repeats"] < 1 or config["warmup_runs"] != 1:
         parser.error("Require repeats>=1 and warmup_runs=1 (preflight)")
     if set(config["backends"]) != {"list", "bitset", "spmf"}:
         parser.error("Correctness gate requires list, bitset, spmf")
-    output.mkdir(parents=True, exist_ok=True)
-    all_cases = cases(config, args.phase, args.julia, output)
+    all_cases = cases(config, args.phase, args.julia, output, resume=args.resume)
     for case in all_cases:
         case["input_sha256"] = sha256(case["path"])
-        with open(case["path"]) as stream:
+        with open(case["path"], encoding="utf-8") as stream:
             case["n_transactions"] = sum(bool(line.strip()) and line[0] not in "#%@" for line in stream)
     source_hashes = {str(p.relative_to(ROOT)): sha256(p) for directory in ["src", "scripts"]
                      for p in sorted((ROOT / directory).rglob("*")) if p.suffix in {".jl", ".py"}}
@@ -105,12 +133,7 @@ def main():
                      jar_sha256=sha256(args.jar), runtime={k: env.get(k, NA) for k in runtime_fields})
     checkpoint_path = output / "raw/checkpoint.json"
     rows, comparisons, completed = [], [], []
-    if args.resume and not checkpoint_path.exists():
-        parser.error("No checkpoint to resume in the selected output directory")
-    if checkpoint_path.exists():
-        if not args.resume:
-            parser.error(f"Existing results in {output}; use a different --output or --resume")
-        checkpoint = json.loads(checkpoint_path.read_text())
+    if checkpoint is not None:
         if checkpoint["signature"] != signature:
             parser.error("Resume refused: config, source, dataset, JAR or runtime environment changed")
         rows, comparisons, completed = checkpoint["rows"], checkpoint["comparisons"], checkpoint["completed"]
@@ -210,7 +233,7 @@ def main():
                    str(case["path"]), case["minsup"], backend, str(config["repeats"]), str(destination)]
             result = measure(cmd, log, config["timeout_seconds"])
             if result["status"] == "ok":
-                with logpath(log, ".stdout").open() as stream:
+                with logpath(log, ".stdout").open(encoding="utf-8") as stream:
                     internal = list(csv.DictReader(stream))
                 if len(internal) != config["repeats"] or read_patterns(destination) != maps[backend]:
                     raise RuntimeError(f"Invalid internal benchmark: {cell}/{backend}")
