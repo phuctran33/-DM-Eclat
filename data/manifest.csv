@@ -3,5 +3,5 @@ chess,M3,A,SPMF or FIMI,,,,,data/benchmark/chess.txt,pending
 mushroom,M3,A,SPMF or FIMI,,,,,data/benchmark/mushroom.txt,pending
 retail,M3,A,SPMF or FIMI,,,,,data/benchmark/retail.txt,pending
 T10I4D100K,M3,A,SPMF or FIMI,,,,,data/benchmark/T10I4D100K.txt,pending
-groceries,M2,B,TODO exact original version,,,,,data/applications/groceries.csv,pending
-splice,M2,B,https://doi.org/10.24432/C5M888,,,CC BY 4.0,,data/applications/splice.data,pending
+groceries,M2,B,https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/d20658ec6d336af2d4ddb5fd72b6f677dd46136e/groceries.csv,https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/d20658ec6d336af2d4ddb5fd72b6f677dd46136e/groceries.csv,d20658ec6d336af2d4ddb5fd72b6f677dd46136e,,2c4beb856d64e04ecd57844e662889e6a60b7a9519b3ee0e5d98078c694f41d7,data/applications/groceries.csv,verified_source
+splice,M2,B,https://doi.org/10.24432/C5M888,https://www.inf.u-szeged.hu/~tothl/gepitan/uci%20repository/molecular-biology/splice-junction-gene-sequences/splice.data,sha256:ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f,CC BY 4.0,ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f,data/applications/splice.data,verified_source

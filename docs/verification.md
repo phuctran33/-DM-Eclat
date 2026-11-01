@@ -1,3 +1,13 @@
+# Bổ sung kiểm chứng B — 01/11/2026
+
+Nhánh B từ main: 206 test Julia (0 fail/error/skip), 4 test Python, nguồn thật
+Groceries/Splice, 5 references SPMF, source isolation và notebook local đã pass.
+Xem [bàn giao B](HANDOFF_MEMBER_B.md) và [log](member-b-validation/README.md).
+Log baseline ngày 30/10 bên dưới được giữ làm lịch sử; không dùng trạng thái cũ
+để kết luận tình trạng preprocessing B hiện tại. Miner vẫn chờ A được duyệt.
+
+---
+
 # Kết quả kiểm tra template
 
 Ngày kiểm tra: **30/10/2026**. Môi trường: Windows, Julia **1.11.4**, repo-local

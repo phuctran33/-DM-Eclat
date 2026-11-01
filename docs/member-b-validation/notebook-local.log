@@ -1,0 +1,67 @@
+EXECUTING cell-001
+julia version 1.10.10
+ROOT: D:\-DM-Eclat SEED: 42
+EXECUTING member-b-preparation
+{"dataset": "groceries", "source_url": "https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/d20658ec6d336af2d4ddb5fd72b6f677dd46136e/groceries.csv", "source_revision": "d20658ec6d336af2d4ddb5fd72b6f677dd46136e", "source_sha256": "ff1be892fd6b9b57d1a7bc50de067798963dda607619645988b21789bf23ae3b", "adapter": "one source CSV row = one basket; long CSV, preserve every item", "n_source_baskets": 9835, "output_sha256": "2c4beb856d64e04ecd57844e662889e6a60b7a9519b3ee0e5d98078c694f41d7"}
+{"dataset": "splice", "source_url": "https://www.inf.u-szeged.hu/~tothl/gepitan/uci%20repository/molecular-biology/splice-junction-gene-sequences/splice.data", "source_revision": "sha256:ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f", "original_source": "https://doi.org/10.24432/C5M888", "original_download_url": "https://archive.ics.uci.edu/static/public/69/molecular+biology+splice+junction+gene+sequences.zip", "source_kind": "University of Szeged academic UCI mirror; original sample IDs preserved", "source_sha256": "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f", "adapter": "copy raw records without modification", "n_source_records": 3190, "output_sha256": "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f"}
+dataset=groceries, observations=9835, mapped_items=169
+class=ALL, reason=kept, count=9835
+class=ALL, reason=duplicate_item_rows_collapsed, count=0
+dataset=splice, observations=3185, mapped_items=48
+class=EI, reason=kept, count=765
+class=EI, reason=ambiguous_window, count=2
+class=IE, reason=kept, count=766
+class=IE, reason=ambiguous_window, count=2
+class=N, reason=kept, count=1654
+class=N, reason=ambiguous_window, count=1
+PASS all real Groceries/Splice observations, mapping, metadata, audits, CSV schemas, deterministic reruns and overwrite protection
+PASS DNA comparison CLI with real-data diagnostic candidates; no FIM claim
+groceries 9835 observations 169 mapped items
+splice 3185 observations 48 mapped items
+B preprocessing artifacts: D:\-DM-Eclat\.tools\notebook-runs\member-b-ht28ro_5
+EXECUTING cell-003
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.5s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  1.6s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  0.9s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  0.9s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.8s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.2s
+Test Summary:                                      | Pass  Total   Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  12.5s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.2s
+Eclat project template (algorithm implementation pending)
+Usage:
+  julia --project=. scripts/mine.jl --input FILE --output FILE --minsup 0.4 [--backend list|bitset]
+  julia --project=. scripts/mine.jl --input FILE --output FILE --min-count 2 [--backend list|bitset]
+Accepts relative decimals or percentages, e.g. 0.4 or 40%.
+Exactly one of --minsup / --min-count is required.
+
+EXECUTING cell-005
+PENDING: Eclat basic/BitVector chưa cài đặt; chưa kiểm chứng miner.
+5 references SPMF thật của B đã có trong repo; phiên này không tạo lại. Java >=21 cần thiết nếu tạo lại.
+EXECUTING cell-007
+PENDING M2: chưa kiểm chứng BitVector với basic/SPMF.
+Preprocessing B đã có; kết quả ứng dụng mined và rules thật chờ miner được duyệt.
+EXECUTING cell-009
+PENDING: chưa chạy benchmark thực; không có số đo để vẽ hoặc kết luận.
+EXECUTING cell-011
+TEMPLATE ONLY: chưa cold-run nghiệm thu đồ án, chưa có kết quả cuối.
+PASS all notebook B code cells locally; this is not remote Colab execution
+test_bad_checksum_preserves_existing_canonical (__main__.SourceTests.test_bad_checksum_preserves_existing_canonical) ... ok
+test_canonical_adapter_preserves_baskets_and_other_manifest_rows (__main__.SourceTests.test_canonical_adapter_preserves_baskets_and_other_manifest_rows) ... ok
+test_failed_download_never_promotes_partial_file (__main__.SourceTests.test_failed_download_never_promotes_partial_file) ... ok
+test_offline_missing_source (__main__.SourceTests.test_offline_missing_source) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.063s
+
+OK

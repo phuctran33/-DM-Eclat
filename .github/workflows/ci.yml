@@ -1,4 +1,4 @@
-name: Julia scaffold checks
+name: Julia and independent member B checks
 on: [push, pull_request]
 jobs:
   test:
@@ -11,6 +11,10 @@ jobs:
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python tests/test_application_sources.py
       - run: julia --project=. tests/runtests.jl
       - run: julia --project=. scripts/mine.jl --help
       # TODO after implementing both backends: set ECLAT_TEST_MINER=1.

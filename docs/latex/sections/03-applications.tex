@@ -2,8 +2,16 @@
 \label{sec:applications}
 
 \subsection{Groceries: chuyển đổi giao dịch và khai thác}
-\todo{B mô tả nguồn Groceries, snapshot/license, schema raw, thống kê trước/sau;
-giải thích một basket là một transaction, item mapping, duplicate policy.}
+Groceries gồm 9.835 giỏ hàng và 169 nhóm sản phẩm. Nhóm dùng CSV mirror
+được pin commit của kho dữ liệu \emph{Machine Learning with R}~\cite{groceries_source_b};
+nguồn gốc dữ liệu được mô tả bởi arules~\cite{groceries_documentation_b}.
+Adapter giữ nguyên mỗi dòng nguồn thành một basket ID riêng, sau đó chuyển thành
+43.367 cặp \texttt{basket\_id,item\_name}. Preprocessor Julia chuẩn hóa NFC,
+chữ thường và whitespace, tạo vocabulary theo thứ tự lexicographic, gộp item lặp
+trong cùng basket nhưng giữ các basket khác ID. Kiểm tra trên toàn bộ dữ liệu cho
+9.835 transactions, mapping 169 items và không có duplicate item rows bị gộp.
+Mapping, metadata và audit được xuất riêng, đối chiếu độc lập từng dòng bằng Python.
+
 \todo{Nêu minsup/minconf sau pilot và lý do; chạy basic/BitVector của nhóm,
 không dùng output thư viện FIM cho kết quả ứng dụng.}
 
@@ -23,13 +31,33 @@ nhân quả từ co-occurrence. Gắn artifact CSV và lệnh tái lập.}
 
 \subsection{Splice DNA: dữ liệu và mã hóa 12 vị trí}
 Dữ liệu UCI Splice~\cite{splice} có sequence DNA và ba nhãn EI, IE, N.
-\todo{B trình bày provenance và counts theo lớp từ file thực; giải thích EI/IE/N.}
+Nhóm lấy raw records từ bản lưu trữ UCI tại Đại học Szeged~\cite{splice_mirror_b},
+pin SHA-256 và giữ nguyên source IDs/thứ tự dòng. EI là ranh giới exon--intron,
+IE là intron--exon, N là không thuộc hai loại đó. Dữ liệu raw có 3.190 mẫu.
 Theo kế hoạch, mỗi sequence được chuyển thành transaction từ 12 vị trí.
 Schema v1.0.0 cố định cửa sổ $-6,\ldots,-1,+1,\ldots,+6$, chỉ số Julia 25:36;
 item là cặp (vị trí, base), 48 IDs theo thứ tự A/C/G/T, nhãn lớp giữ riêng.
-\todo{Giải thích ambiguity D/N/S/R, chính sách bỏ sample khi window chứa base mơ hồ,
-số sample bị loại theo lớp;
-phân biệt nhãn N với base N. Không coi tập base không vị trí là cùng representation.}
+Ký tự ambiguity ngoài A/C/G/T chỉ làm mẫu bị loại khi nằm trong cửa sổ đã chọn;
+không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại, còn 3.185 mẫu hợp lệ.
+Nhãn lớp N được giữ trong metadata, khác với ký tự base N biểu thị ambiguity.
+Bảng~\ref{tab:splice-preparation-b} trình bày counts đã được kiểm tra trên toàn bộ raw.
+
+\begin{table}[htbp]
+\centering
+\caption{Audit tiền xử lý Splice theo cửa sổ cố định 25:36.}
+\label{tab:splice-preparation-b}
+\begin{tabular}{lrrr}
+\toprule
+Lớp & Raw & Giữ & Loại \\
+\midrule
+EI & 767 & 765 & 2 \\
+IE & 768 & 766 & 2 \\
+N & 1.655 & 1.654 & 1 \\
+\midrule
+Tổng & 3.190 & 3.185 & 5 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Splice DNA: pattern 2--4 item và so sánh EI/IE/N}
 \todo{Chạy cài đặt nhóm theo lớp; minsup relative dùng denominator của lớp.

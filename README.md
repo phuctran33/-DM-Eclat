@@ -1,5 +1,11 @@
 # Đồ án Frequent Itemset Mining — Eclat / Julia
 
+> **Nhánh B từ main (`e1c9865`), không chứa code A chưa duyệt.**
+> Đã chạy **206 test Julia B + 4 test Python** và kiểm chứng toàn bộ dữ liệu
+> Groceries/Splice, tạo lại 5 reference SPMF thật. Xem
+> [bàn giao B](docs/HANDOFF_MEMBER_B.md) và [log/báo cáo](docs/member-b-validation/README.md).
+> Miner/rule generation và ứng dụng mined cuối cùng còn chờ A được duyệt.
+
 > **Trạng thái: project template.** Hạ tầng I/O, CLI, comparator và dữ liệu toy có sẵn.
 > Eclat basic, BitVector, Groceries, DNA và bộ điều phối benchmark còn TODO.
 > Chưa có kết quả SPMF, benchmark hoặc kết luận ứng dụng. Xem [tiến độ](docs/planning/STATUS.md).
@@ -140,3 +146,20 @@ README có Colab public và output test cuối; giữ commit history minh bạch
 Xem [ma trận yêu cầu](docs/requirements.md), [hướng dẫn báo cáo](docs/latex/README.md)
 và [checklist bàn giao](docs/planning/DELIVERY.md). Mọi người cần hiểu, giải thích
 được code và số liệu của nhóm; ghi nguồn và cách sử dụng AI theo yêu cầu môn học.
+
+
+## Chạy và kiểm chứng riêng phần B
+
+```text
+julia --project=. tests/runtests_b.jl
+python -B tests/test_application_sources.py
+python scripts/prepare_application_data.py --dataset all
+julia --project=. scripts/prepare_applications.jl groceries data/applications/groceries.csv data/applications/processed/groceries
+julia --project=. scripts/prepare_applications.jl splice data/applications/splice.data data/applications/processed/splice
+```
+
+Dùng thư mục output mới/rỗng. Máy local có Julia portable trong
+`.tools/julia-1.10.10/bin/julia.exe`; không cần sửa PATH hệ thống.
+Đã xác minh source isolation, dữ liệu đầy đủ và mọi code cell notebook local;
+remote Colab/CI chưa chạy. Notebook chọn nhánh B khi clone trên Colab, vì vậy cần
+publish nhánh hoặc dùng source local trước. Không gọi miner A chưa duyệt.

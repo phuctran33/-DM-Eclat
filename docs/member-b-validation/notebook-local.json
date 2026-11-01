@@ -1,0 +1,17 @@
+{
+  "execution": "local Python kernel, actual code cells",
+  "remote_colab": false,
+  "code_cells": [
+    "cell-001",
+    "member-b-preparation",
+    "cell-003",
+    "cell-005",
+    "cell-007",
+    "cell-009",
+    "cell-011"
+  ],
+  "preparation_enabled": true,
+  "miner_enabled": false,
+  "applications_mining_enabled": false,
+  "all_code_cells_succeeded": true
+}

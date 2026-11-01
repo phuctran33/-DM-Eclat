@@ -1,0 +1,9 @@
+PASS offline stdlib environment setup, schema=1.0.0
+    Updating `D:\-DM-Eclat\Project.toml`
+  [ea8e919c] ~ SHA ⇒ v0.7.0
+    Updating `D:\-DM-Eclat\Manifest.toml`
+  [9a3f8284] + Random
+  [ea8e919c] + SHA v0.7.0
+  [4ec0a83e] + Unicode
+  Installing known registries into `D:\-DM-Eclat\.tools\julia-depot`
+       Added `General` registry to D:\-DM-Eclat\.tools\julia-depot\registries
