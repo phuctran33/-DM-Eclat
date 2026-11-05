@@ -1,0 +1,201 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(../../.tools/ImplementationCheck.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(/usr/local/texlive/2025/texmf-dist/tex/latex/ieeetran/IEEEtran.cls
+Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+(/usr/local/texlive/2025/texmf-dist/tex/latex/psnfss/ot1ptm.fd)
+-- Using 210mm x 297mm (a4) paper.
+-- Using PDF output.
+-- This is a 10 point document.
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5enc.def
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5enc.dfu))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5ptm.fd))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/babel/babel.sty
+(/usr/local/texlive/2025/texmf-dist/tex/generic/babel/txtbabel.def)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/babel-vietnamese/vietnamese.ldf
+Loading definitions for the Vietnamese font encoding
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5enc.def)))
+(/usr/local/texlive/2025/texmf-dist/tex/generic/babel/locale/vi/babel-vietnames
+e.tex) (/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/algorithms/algorithm.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/float/float.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/base/ifthen.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/local/texlive/2025/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/local/texlive/2025/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/gettitlestring/gettitlestring.s
+ty (/usr/local/texlive/2025/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/local/texlive/2025/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/local/texlive/2025/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2025/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+
+(/usr/local/texlive/2025/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+)))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file ImplementationCheck.aux.
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5cmr.fd)
+-- Lines per column: 56 (exact).
+(/usr/local/texlive/2025/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/local/texlive/2025/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(./sections/01-implementation.tex
+
+LaTeX Warning: Citation `agrawal1994' on page 1 undefined on input line 7.
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/vntex/t5pcr.fd)
+
+LaTeX Warning: Citation `zaki2000' on page 1 undefined on input line 64.
+
+
+LaTeX Warning: Reference `alg:dfs' on page 1 undefined on input line 69.
+
+
+LaTeX Warning: Citation `spmf' on page 1 undefined on input line 70.
+
+
+[1{/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/l
+ocal/texlive/2025/texmf-dist/fonts/enc/dvips/vntex/t5.enc}]
+
+LaTeX Warning: Reference `eq:support' on page 2 undefined on input line 111.
+
+
+Underfull \hbox (badness 6141) in paragraph at lines 106--112
+[]\T5/ptm/m/n/10 Backend Basic ð $\T5/pcr/m/n/10 src / algorithm / baseline . j
+l$\T5/ptm/m/n/10 .
+
+
+LaTeX Warning: Reference `tab:trace' on page 2 undefined on input line 137.
+
+
+LaTeX Warning: Reference `tab:types' on page 2 undefined on input line 146.
+
+
+LaTeX Warning: Reference `sec:evaluation' on page 2 undefined on input line 174
+.
+
+
+Overfull \hbox (38.91869pt too wide) in paragraph at lines 169--175
+[]\T5/ptm/m/n/10 API l  \T5/pcr/m/n/10 mine(transactions,min_count;backend=:lis
+t)\T5/ptm/m/n/10 ,
+
+LaTeX Warning: Reference `eq:intersection' on page 2 undefined on input line 18
+7.
+
+
+[2]
+
+LaTeX Warning: Citation `juliaarrays' on page 3 undefined on input line 209.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 206--212
+[]\T5/ptm/m/n/10 Backend ð $\T5/pcr/m/n/10 src / algorithm / bitset . jl$ \T5/p
+tm/m/n/10 ^^_¸m
+
+Underfull \hbox (badness 1527) in paragraph at lines 206--212
+\T5/ptm/m/n/10 singletons tr÷îc, ch¿ c§p bitmap cho items ^^_¤t $\OML/cmm/m/it/
+10 ^^\$\T5/ptm/m/n/10 , sau
+
+Underfull \hbox (badness 1810) in paragraph at lines 228--231
+\T5/ptm/m/n/10 Verticalization c¦n $\OML/cmm/m/it/10 O\OT1/cmr/m/n/10 (\OML/cmm
+/m/it/10 L\OT1/cmr/m/n/10 )$ \T5/ptm/m/n/10 v  sort IDs c¦n $\OML/cmm/m/it/10 O
+\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 m [] m\OT1/cmr/m/n/10 )$\T5/ptm/m/n/10 .
+
+
+Underfull \hbox (badness 7133) in paragraph at lines 252--259
+[]\T5/ptm/m/n/10 Bë kiºm thû m°c ^^_ành bªt c£ hai backend v 
+
+Underfull \hbox (badness 3503) in paragraph at lines 252--259
+\T5/ptm/m/n/10 SPMF references. Oracle ^^_ëc lªp li»t k¶ måi subset
+
+Underfull \hbox (badness 1371) in paragraph at lines 252--259
+\T5/ptm/m/n/10 cõa tèi ^^_a 12 items rçi ^^_¸m trüc ti¸p tr¶n horizontal
+)
+No file ImplementationCheck.bbl.
+
+** Conference Paper **
+Before submitting the final camera ready copy, remember to:
+
+ 1. Manually equalize the lengths of two columns on the last page
+ of your paper;
+
+ 2. Ensure that any PostScript and/or PDF output post-processing
+ uses only Type 1 fonts and that every step in the generation
+ process uses the appropriate paper size.
+
+
+[3] (../../.tools/ImplementationCheck.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ImplementationCheck.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)</usr/local/texlive/2025/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type
+1/vntex/urwvn/ucrr8v.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/
+urwvn/utmb8v.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/urwvn/ut
+mbi8v.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/urwvn/utmr8v.pf
+b></usr/local/texlive/2025/texmf-dist/fonts/type1/vntex/urwvn/utmri8v.pfb>
+Output written on ../../.tools/ImplementationCheck.pdf (3 pages, 236256 bytes).
+Transcript written on ../../.tools/ImplementationCheck.log.

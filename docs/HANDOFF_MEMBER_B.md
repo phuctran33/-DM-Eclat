@@ -1,3 +1,8 @@
+> Cập nhật 05/11/2026: A đã merge vào main qua PR #1 (`b821235`). Nhánh B
+> cập nhật main để xử lý conflict PR #3, giữ cả code A và B. Các câu chờ A bên
+> dưới mô tả lịch sử lần bàn giao 01/11; pipeline ứng dụng mined cuối vẫn cần
+> hoàn thiện. Kiểm chứng sau tích hợp: member-b-validation/integration-main.log.
+
 # Bàn giao B — nhánh độc lập từ main
 
 Ngày kiểm chứng: **01/11/2026**. Nhánh: **feat/member-b-applications**.

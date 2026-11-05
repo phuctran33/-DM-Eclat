@@ -1,0 +1,9 @@
+[1/4] chess_s0.85: correctness preflight
+  complete: counts={'list': 2669, 'bitset': 2669, 'spmf': 2669}, failures={}
+[2/4] mushroom_s0.5: correctness preflight
+  complete: counts={'list': 153, 'bitset': 153, 'spmf': 153}, failures={}
+[3/4] retail_s0.03: correctness preflight
+  complete: counts={'list': 32, 'bitset': 32, 'spmf': 32}, failures={}
+[4/4] T10I4D100K_s0.01: correctness preflight
+  complete: counts={'list': 385, 'bitset': 385, 'spmf': 385}, failures={}
+Saved 20 measurements; 8 full-map comparisons

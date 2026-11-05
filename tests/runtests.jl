@@ -2,7 +2,7 @@ using Test
 using Random
 using EclatProject
 
-const TEST_BACKENDS = Symbol.(split(get(ENV, "ECLAT_TEST_BACKENDS", "list"), ','))
+const TEST_BACKENDS = Symbol.(split(get(ENV, "ECLAT_TEST_BACKENDS", "list,bitset"), ','))
 all(backend -> backend in [:list, :bitset], TEST_BACKENDS) ||
     error("ECLAT_TEST_BACKENDS must be list, bitset, or list,bitset")
 
@@ -14,16 +14,18 @@ include("test_application_export.jl")
 include("test_preparation_cli.jl")
 include("test_spmf_references_b.jl")
 
-if get(ENV, "ECLAT_TEST_MINER", "0") == "1"
+if get(ENV, "ECLAT_TEST_MINER", "1") == "1"
     include("test_correctness.jl")
+    include("test_rules.jl")
+    include("test_cli.jl")
 else
     @testset "Eclat correctness: pending implementation" begin
         @test_skip false
     end
-    @info "Core is a TODO. M1: ECLAT_TEST_MINER=1 (list). M2/full: also ECLAT_TEST_BACKENDS=list,bitset. Scaffold tests do not establish Eclat correctness."
+    @info "Miner tests explicitly disabled by ECLAT_TEST_MINER=0."
 end
 
-if get(ENV, "ECLAT_TEST_SPMF", "0") == "1"
+if get(ENV, "ECLAT_TEST_SPMF", "1") == "1"
     include("test_spmf.jl")
 else
     @testset "SPMF comparison: pending approved miner" begin

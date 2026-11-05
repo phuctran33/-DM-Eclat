@@ -1,0 +1,46 @@
+[
+  {
+    "name": "chess",
+    "url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/chess.dat",
+    "raw_sha256": "515c4c53a3cea5058295788ab2d2d65634ec53d4d061b09e6687e81882f25184",
+    "item_offset": 0,
+    "license": "Not specified on FIMI page; UCI-derived; no raw redistribution here",
+    "normalized_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+    "transformation": "gzip decode; add 0 to every item ID; normalize whitespace; retain all rows",
+    "raw_bytes": 14253,
+    "normalized_bytes": 339098
+  },
+  {
+    "name": "mushroom",
+    "url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/mushroom.dat",
+    "raw_sha256": "4a866d8c09818851a68670679f7a0eeb7c4379c21798b14b26465cdf7a588497",
+    "item_offset": 0,
+    "license": "Not specified on FIMI page; UCI-derived; no raw redistribution here",
+    "normalized_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+    "transformation": "gzip decode; add 0 to every item ID; normalize whitespace; retain all rows",
+    "raw_bytes": 34370,
+    "normalized_bytes": 562284
+  },
+  {
+    "name": "retail",
+    "url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.dat",
+    "raw_sha256": "4a512799ac811b813e7c88bf3e2082403b7e10502785e1330e04177b17b3da84",
+    "item_offset": 1,
+    "license": "FIMI: use with acknowledgement to Tom Brijs and copy of work to donor",
+    "normalized_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+    "transformation": "gzip decode; add 1 to every item ID; normalize whitespace; retain all rows",
+    "raw_bytes": 1636819,
+    "normalized_bytes": 4080775
+  },
+  {
+    "name": "T10I4D100K",
+    "url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/T10I4D100K.dat",
+    "raw_sha256": "eeb1420927b33b9875b44bc5393a6481e1479ba699a3fe8aafe8de37c92f605b",
+    "item_offset": 1,
+    "license": "IBM Quest synthetic; no explicit license on FIMI page; no raw redistribution here",
+    "normalized_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+    "transformation": "gzip decode; add 1 to every item ID; normalize whitespace; retain all rows",
+    "raw_bytes": 1374931,
+    "normalized_bytes": 3922248
+  }
+]

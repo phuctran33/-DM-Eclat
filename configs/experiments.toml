@@ -1,11 +1,12 @@
-# Proposed pilot grid, NOT measured or claimed optimal. Tune before final runs.
-# 6 points / dataset, descending relative support. Do not truncate output length.
+# Six predeclared levels per dataset; pilot uses memory_minsup.
 seed = 42
 warmup_runs = 1
 repeats = 5
+timeout_seconds = 120
 backends = ["list", "bitset", "spmf"]
 scalability_dataset = "retail"
 scalability_fractions = [0.10, 0.25, 0.50, 0.75, 1.00]
+scalability_minsup = "0.01"
 synthetic_lengths = [5, 10, 15, 20, 25, 30]
 synthetic_transactions = 10000
 synthetic_items = 100
