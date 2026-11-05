@@ -1,0 +1,2 @@
+# Python >=3.11; controller itself uses only the standard library.
+matplotlib==3.11.2

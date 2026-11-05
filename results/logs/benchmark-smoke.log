@@ -1,0 +1,7 @@
+[1/1] basic_s0.4: correctness preflight
+  complete: counts={'list': 7, 'bitset': 7, 'spmf': 7}, failures={}
+Saved 5 measurements; 2 full-map comparisons
+Saved 5 measurements; 2 full-map comparisons
+PASS: real toy grid (5 measurements), 2 exact maps, log isolation, safe resume
+PASS: deterministic synthetic rows and nested seeded subsets
+PASS: resume refuses changed runtime without overwriting measurements

@@ -1,0 +1,11 @@
+[ Info: Core is a TODO. M1: ECLAT_TEST_MINER=1 (list). M2/full: also ECLAT_TEST_BACKENDS=list,bitset. Scaffold tests do not establish Eclat correctness.
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.0s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  0.9s
+Test Summary:                             | Broken  Total  Time
+Eclat correctness: pending implementation |      1      1  0.0s
+Test Summary:                           | Broken  Total  Time
+SPMF comparison: pending reference runs |      1      1  0.0s

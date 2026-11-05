@@ -5,27 +5,39 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{algorithm,algpseudocode}
+\floatname{algorithm}{Thuật toán}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 
 % Compile with pdfLaTeX + BibTeX. IEEEtran and Vietnamese fonts (vntex) required.
-% This is a report template, not a finished 10–15-page report.
+% Chapters 1–2 implemented by A; Chapter 3 remains B's pending work.
 \newcommand{\todo}[1]{\textbf{[TODO: #1]}}
 
 \title{Khai thác tập phổ biến bằng Eclat:\\Cài đặt Julia, đánh giá và ứng dụng Groceries -- Splice DNA}
-\author{\IEEEauthorblockN{TODO: Họ tên A -- MSSV A \qquad Họ tên B -- MSSV B}
-\IEEEauthorblockA{Nhóm TODO -- Môn Khai phá dữ liệu và ứng dụng\\
+\author{\IEEEauthorblockN{Nguyễn Đức Hưng \qquad Trần Thiên Phúc}
+\IEEEauthorblockA{Môn Khai phá dữ liệu và ứng dụng\\
 Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM\\
-TODO: Lớp, giảng viên thực hành, email}}
+Bản review phần A; Chương 3 chưa hoàn tất}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-\todo{Viết 150--200 từ sau khi có kết quả: bài toán FIM; cài đặt Eclat bằng Julia;
-DFS prefix extension và BitVector; bốn benchmark; hai ứng dụng Groceries và UCI
-Splice DNA; kết quả định lượng thực và giới hạn. Không đưa speedup hoặc tỉ lệ
-khớp SPMF khi chưa có log đo.}
+Báo cáo trình bày ECLAT bằng Julia với hai biểu diễn tidsets: sorted lists và
+BitVector. Cả hai dùng cùng DFS prefix extension và trả mọi frequent itemset cùng
+support tuyệt đối. Phần cài đặt phân biệt rõ lịch DFS của nhóm với bottom-up trong
+paper Zaki (2000), đồng thời cung cấp parser/writer SPMF và threshold chính xác.
+Kiểm chứng kết hợp oracle vét cạn độc lập, dữ liệu ngẫu nhiên và output thực của
+SPMF. Thực nghiệm trên Chess, Mushroom, Retail và T10I4D100K dùng sáu ngưỡng mỗi
+CSDL, năm repetitions; so sánh end-to-end riêng với read+mine trong Julia đã warm.
+Peak RSS được đo bằng hệ điều hành, cùng thí nghiệm Retail nested subsets và
+synthetic transaction widths. Các bảng và hình sinh từ CSV/logs thực, không giới
+hạn output để giảm thời gian. Phân tích tập trung vào mật độ tidsets, chi phí
+intersection, allocation và ảnh hưởng runtime nền; không giả định BitVector luôn
+có lợi trên dữ liệu thưa. Đây là bản review Chương 1--2 của thành viên A; Chương 3
+về Groceries và Splice DNA thuộc thành viên B còn ở trạng thái template, nên PDF
+chưa phải báo cáo nghiệm thu cuối của nhóm.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -35,7 +47,11 @@ frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
 % Three main chapters as IEEE sections; do not use book/report \chapter commands.
 \input{sections/01-implementation}
 \input{sections/02-evaluation}
+\ifdefined\MemberAOnly
+% Explicit A-only review; the team's complete three-chapter source stays intact.
+\else
 \input{sections/03-applications}
+\fi
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

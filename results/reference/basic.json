@@ -1,0 +1,21 @@
+{
+  "command": [
+    "java",
+    "-jar",
+    "tools/spmf.jar",
+    "run",
+    "Eclat",
+    "data/toy/basic.txt",
+    "tests/reference/spmf/basic.txt",
+    "40%"
+  ],
+  "monitor": [
+    "/usr/bin/time",
+    "-l"
+  ],
+  "seconds": 0.29310079105198383,
+  "peak_rss_mib": 57.265625,
+  "exit_code": 0,
+  "status": "ok",
+  "timeout_seconds": 30
+}

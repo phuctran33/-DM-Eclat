@@ -1,82 +1,140 @@
-# Giao thức thực nghiệm — gói 04 và 07
+# Giao thức và tái lập thực nghiệm Member A
 
-Owner A, reviewer B. Module 2 pilot, module 3 chạy chính thức.
-Thông số khởi đầu ở `configs/experiments.toml`; đây là grid đề xuất, chưa có số đo.
+Cài đặt đo: commit trong `results/raw/environment.json`; mã nguồn tác động phép đo
+được hash trong `results/raw/protocol.json`. Figures/tables được render sau lần đo;
+chỉnh sửa trình vẽ không đổi CSV gốc. Bản đo 31/10/2026 dùng Apple M1, RAM 8 GiB,
+macOS 14.6.1 arm64, Julia 1.10.10/1 thread, Java 23.0.1, SPMF 2.64b, Python 3.14.0.
+Không coi các con số này là cấu hình bắt buộc của API Julia ≥1.9.
 
-## Dữ liệu và chuẩn hóa
+## Dữ liệu
 
-Dùng Chess, Mushroom, Retail, T10I4D100K. B chọn public snapshot ổn định HF/Kaggle,
-ghi original source, revision/version, license và SHA-256 trong `data/manifest.csv`.
-Chạy thống kê từ file thật: n transactions, m distinct items, mean/max width,
-density `mean_width/m`. Không chép số thống kê có thể bị lỗi định dạng trong bảng đề.
-SPMF và hai backend phải nhận **cùng byte input**, cùng threshold và xuất đầy đủ.
+`python3 scripts/acquire_benchmarks.py` tải bản FIMI từ nguồn học thuật gốc,
+kiểm raw SHA-256 trong `configs/datasets.toml`, giải gzip theo magic bytes và tạo
+file numeric SPMF. Không lấy một bản Hugging Face/Kaggle chưa xác minh để gọi là
+snapshot chuẩn: đã tìm nhưng không xác định được bộ bốn phù hợp. Bản FIMI được
+pin theo **nội dung**, không có revision Git do nguồn không cung cấp.
 
-## Correctness trước performance
+Retail và T10I4D100K: cộng **1 cho mọi item ID**, vì raw có 0 và shared parser chỉ
+nhận ID dương. Chess/Mushroom không đổi ID. Chỉ chuẩn hóa whitespace; không bỏ,
+gộp hay sắp lại transaction rows. Raw đã sorted/unique trong từng dòng; bất ngờ
+khác định dạng làm acquisition fail. Ba backend dùng cùng file normalized.
 
-Với mỗi dataset/minsup, parse output thành map canonical `itemset -> support`.
-Báo missing, extra, wrong_support và exact map equality. Quy ước template:
-`exact_match_rate = số key có support đúng / |keys(own) ∪ keys(reference)|`;
-hai output rỗng cho rate 1 và phải ghi output size 0. Tỉ lệ cao không thay gate
-khớp tuyệt đối. Không chỉ so n_patterns vì hai tập sai vẫn có thể bằng số lượng.
-`scripts/compare_spmf.jl` exit 1 khi có khác biệt, exit 2 khi lỗi dữ liệu/lệnh.
+Provenance, transformations, normalized hashes và số byte:
+`results/raw/dataset_provenance.json`; nguồn/license trong `data/manifest.csv`.
+`dataset_statistics.csv` tính từ file đang dùng: actual n, distinct m, mean/max
+width, density=mean_width/m. Không commit raw datasets hoặc JAR.
+FIMI không ghi license rõ cho mọi tập; ghi đúng trạng thái đó. Retail được credit
+Tom Brijs và trích Brijs et al. (KDD 1999, pp. 254–260), theo điều kiện tại
+https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf; việc gửi
+bản nghiên cứu cho donor chưa được tự động thực hiện.
 
-## Runtime / output size theo minsup
+## Correctness gate
 
-Mỗi dataset ít nhất 5–7 điểm giảm dần (config dùng 6), pilot trước để tránh output
-quá lớn. Chọn grid một lần cho các backend, giữ nguyên trong lần đo chính thức.
-Có thể điều chỉnh config sau pilot, nhưng không đổi riêng cho một thuật toán.
+Mỗi dataset/minsup chạy preflight list, bitset, SPMF với output đầy đủ, parse strict
+map `itemset -> absolute support`, reject duplicate output và so toàn bộ map.
+`results/correctness/comparisons.csv` giữ đúng header schema v1.0.0. Missing, extra,
+wrong_support phải đều 0. Match rate dùng số key có support đúng chia union keys;
+hai maps rỗng cho rate 1. Tỉ lệ 100% trên output rỗng không thay cho cases có output.
 
-Worker `scripts/benchmark_worker.jl INPUT MINSUP BACKEND REPEAT OUTPUT.txt`:
+Julia tính τ=ceil(θn) chính xác. SPMF nhận double; runner gửi θ'=(τ−0.5)/n để
+ceil(double(θ')*n)=τ, tránh boundary drift. Đây là **cùng absolute minsup**, không
+đổi tập frequent. Tham số thật ghi trong mỗi command JSON, kiểm count bins bằng test.
+Toy references thật giữ 40% như hợp đồng; regenerate bằng
+`python3 scripts/prepare_spmf.py --references`. Manifest có input/output/JAR hashes,
+Java/SPMF version và command. SPMF 2.64b cần Java ≥21; JAR latest yêu cầu Java mới
+hơn máy đo nên không dùng. Không đọc hoặc sao chép source thuật toán SPMF.
 
-- Compile/warm-up trên dữ liệu nhỏ trước đo; công bố warm-up policy và số lần lặp.
-- Timer nội bộ hiện bao gồm đọc file + verticalization/mining, loại ghi output.
-- `allocated_bytes` là lượng cấp phát, **không phải peak RAM**.
-- Chạy riêng từng tuple dataset/backend/minsup/repeat; lưu stdout CSV, stderr/log.
+Mỗi timed output được so toàn bộ với preflight đã xác minh; internal worker kiểm
+map ở mọi repetition. Lỗi equality không được diễn giải thành speedup. Preflight
+failed được ghi đúng lần thử thực, không biến thành năm repetitions giả; runner
+chuyển sang các cases còn lại. Mọi lỗi/timeout/OOM có log và trạng thái riêng.
 
-TODO A: viết runner đọc TOML, vòng lặp 5 lần, timeout/capture exit code, aggregation,
-SPMF execution và plotting. Worker hiện không phải runner tự động cho toàn bộ grid.
-Benchmark đang gọi miner TODO nên sẽ fail rõ ràng, không tạo số liệu giả.
+## Phạm vi đo
 
-Để so runtime với SPMF, chọn **một phạm vi đo chung** và ghi rõ: ví dụ external
-wall-clock từ lúc khởi động process tới khi ghi output xong, cùng file/disk, nhiều
-lần lặp. Đường external wall-clock bao gồm Julia startup/JIT và JVM startup; ghi
-nhãn rõ, không diễn giải chênh lệch là riêng chi phí miner. Nếu dùng warm runtime
-nội bộ, thêm Java harness/timer cùng ranh giới thay vì so trực tiếp log SPMF với
-timer Julia khác phạm vi. Tách cột internal và end-to-end, không gộp vào một metric.
+| Scope | Backends | Công việc trong timer |
+|---|---|---|
+| end_to_end | list, bitset, spmf | Process mới, runtime/JIT/JVM startup, read, mine, write, OS monitor/controller wait |
+| internal_read_mine | list, bitset | Sau warm-up đầy đủ case: read, validation, verticalization, DFS; không write/verification/GC chủ động |
 
-Mỗi đồ thị runtime có basic, BitVector, SPMF; thể hiện median và spread (IQR/min-max),
-đơn vị giây và minsup %. Đồ thị output size dùng đầy đủ itemset, thảo luận dense/sparse.
-Timeout/OOM là trạng thái riêng, không ghi 0 giây, 0 pattern hoặc bỏ im lặng.
+End-to-end dùng Python perf_counter quanh Popen/wait, chung boundary cho cả ba
+backend. Preflight là một warm-up process riêng (đồng thời làm ấm file cache);
+startup vẫn có trong mỗi timed process. Timeout-wait của Python có polling với
+độ trễ cuối có thể đến khoảng 50 ms; metric này là wall time harness quan sát,
+không timer chỉ của miner. Không trừ timer các phạm vi để suy thời gian JIT.
 
-## Peak RAM
+Internal: một process/case/backend; warm tiny case rồi warm toàn bộ dataset/case
+một lần; GC.gc() trước mỗi trong 5 lần @timed read+mine. Worker giữ reference map
+của warm-up, kiểm và serialize sau timer. Không dùng SPMF log timer để tạo đường
+internal vì chưa có Java warm harness tương đương. `allocated_bytes` là tổng
+allocation trong vùng @timed, không phải peak RSS.
 
-Tại `memory_minsup` trung bình cho mỗi dataset, đo **external process peak RSS**
-trên từng tiến trình riêng basic/BitVector. Có thể bổ sung SPMF nhưng phải cùng
-metric. Dùng OS monitor, giữ log: trên Linux `/usr/bin/time -v` cho max resident set;
-Windows có thể dùng process `PeakWorkingSet64` với cách thu thập đủ vòng đời tiến
-trình. Không suy RSS từ `@allocated`, và không so trực tiếp SPMF heap log với RSS.
-Worker ghi `peak_rss_mib=NA` tới khi monitor bổ sung số thực. Định nghĩa có tính
-warm-up/startup hay không vì peak process có thể bao gồm JIT.
+Raw rows giữ schema trong `schemas/contracts.toml`; run_id unique, seed 42,
+repetition và scope riêng. Aggregate median/min/max và n_ok/n_timeout/n_oom/n_error.
+Biểu đồ error bars dùng **min–max**, không gọi là confidence intervals. Speedup
+=median_basic/median_bitvector, chỉ cùng input/min_count/scope và số đo hợp lệ.
+Không dùng 0 cho metric thiếu. Không che các cấu hình thất bại hoặc output bằng 0.
 
-## Scalability Retail
+Peak RSS lấy bằng BSD `/usr/bin/time -l` trên macOS hoặc GNU `time -v` trên Linux,
+bao toàn vòng đời process end-to-end; đổi về MiB bằng đơn vị OS tương ứng. Có cả
+startup/JIT, input, active tidsets, output/writer. Batch internal không có RSS riêng
+cho từng repetition nên ghi NA. Không so RSS với heap log SPMF. SIGKILL đơn thuần
+không được gán OOM nếu không có thông báo hỗ trợ; timeout giết cả process group.
 
-`scripts/make_subsets.jl data/benchmark/retail.txt results/subsets 42` tạo nested
-samples 10/25/50/75/100% bằng một hoán vị cố định. Giữ relative minsup, không giữ
-absolute count; tính lại `ceil(relative*n_subset)` cho từng subset. Đo actual n,
-output size và runtime; sampling thay đổi phân bố/threshold nên giải thích giới hạn.
+## Các grid
 
-## Ảnh hưởng transaction length
+- Runtime/output: Chess, Mushroom, Retail, T10I4D100K; 6 ngưỡng/tập trong TOML;
+  list/bitset/spmf; 5 repetitions mỗi điểm. Memory lấy đúng memory_minsup có trong grid.
+- Retail scalability: nested prefixes của cùng randperm(MersenneTwister(42)),
+  10/25/50/75/100%; giữ θ=0.01, tính lại τ theo actual n. Subset 100% là hoán vị
+  của toàn bộ dữ liệu; không mặc định output size monotone giữa samples khác n.
+- Transaction length: n=10,000, m=100, widths=5/10/15/20/25/30, seed=42, θ=0.20.
+  Generator uniform không hoàn lại, không phải IBM generator và không có planted
+  patterns. E[singleton]=width/100; E[pair]=width(width−1)/(100·99), nên grid này
+  chủ yếu minh họa F1 filtering/pair intersections, không stress deep patterns.
 
-Sinh n=10,000, m=100, widths 5/10/15/20/25/30, seed=42, relative minsup=0.20 cố định.
-Lệnh: `julia --project=. scripts/generate_synthetic.jl OUTPUT 100 10000 15 42`.
-Generator mẫu chọn items đều không hoàn lại trong từng transaction; không phải IBM
-generator của paper. Theo dõi output size cùng runtime vì width tác động số candidate,
-support và output. Nếu kết quả quá đơn giản, thêm planted patterns có mô tả đầy đủ.
+## Chạy lại
 
-## Artifacts và phân tích
+Cần Julia ≥1.9, Java ≥21, Python ≥3.11, curl. Controller chỉ dùng Python stdlib;
+plotting dùng `requirements-plot.txt`. Controller đo benchmark chỉ hỗ trợ Linux/macOS
+vì cần POSIX process groups để kết thúc toàn bộ tiến trình khi timeout; Windows
+được từ chối ngay ở preflight, trước khi tạo hay ghi output. Bước xuất biểu đồ/bảng
+dùng UTF-8 tường minh và có thể chạy trên Windows. Từ root repo, sau khi activate venv nếu dùng:
 
-Lưu raw CSV, per-run logs, file output/correctness summary, hardware/runtime versions,
-JAR hash, config snapshot và dataset hashes. Hình cần caption và chú giải. Từ số liệu
-giải thích intersection cost, support density, active tidsets và output growth;
-đề xuất ≥2 tối ưu cụ thể (ví dụ adaptive list/bitset và buffer reuse/ordering), không
-đưa kết luận speedup trước khi đo.
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+python3 scripts/prepare_spmf.py --references
+julia --project=. tests/runtests.jl
+python3 tests/test_benchmark.py -v
+python3 tests/test_plot_results.py -v
+python3 tests/smoke_benchmark.py
+python3 scripts/acquire_benchmarks.py
+julia --project=. scripts/benchmark_runner.jl --phase pilot --repeats 1 --output results/new-pilot
+JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output results/reproduced
+python3 scripts/plot_results.py --results results/reproduced --report
+```
+
+Dùng output directory mới hoặc rỗng để giữ bằng chứng đã publish. Controller từ
+chối mọi output directory có sẵn nội dung trước khi sinh subsets/synthetic, ghi
+metadata, logs hay CSV, kể cả khi không có checkpoint (như checkout mới của repo).
+`--resume` chỉ chấp nhận
+checkpoint có cùng config, input, JAR, source hashes và runtime environment; cases đã xong không chạy lại.
+Resume đọc lại các input đã sinh và kiểm hash trước khi ghi; không sinh đè input
+khi checkpoint không hợp lệ hoặc signature đã thay đổi.
+Không dùng resume sau khi đổi mã/config. Có thể chạy riêng `--phase runtime`,
+`--phase scalability`, `--phase length` với output riêng. Wrapper `.jl` tự truyền
+Julia executable hiện tại; `PYTHON=/path/to/python` chọn interpreter phù hợp.
+
+## Artifacts và giới hạn
+
+`raw/benchmark_runs.csv`, `raw/summary.csv`, `raw/cases.json`, `raw/environment.json`,
+`raw/protocol.json`; `correctness/comparisons.csv`; `plots/*.pdf,*.png`; các logs
+stdout/stderr/command JSON và output-verification hash cho từng process. Full outputs,
+subsets, synthetic và checkpoint giữ local (ignored); logs benchmark được đóng gói
+archive để repo không có hàng nghìn file nhỏ. Extract bằng
+`tar -xzf results/logs/benchmark-logs.tar.gz -C results/logs`.
+
+Đọc phân tích trong Chương 2. Giới hạn: một máy, không core/frequency isolation,
+fixed backend order, cache được làm ấm, 5 reps trong cùng phiên, Java heap cap 2 GiB,
+không Java warm harness, chưa stress tới OOM/output explosion; không claim độ phức
+tạp tuyến tính chỉ vì scalability plot. Adaptive tidsets, fused AND/popcount và
+buffer pool là đề xuất tiếp, chưa nằm trong các số đo này.

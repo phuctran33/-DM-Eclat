@@ -1,0 +1,47 @@
+ERROR: LoadError: Some tests did not pass: 62 passed, 2 failed, 0 errored, 0 broken.
+in expression starting at /Users/nguyenduchung/-DM-Eclat/tests/test_rules.jl:1
+in expression starting at /Users/nguyenduchung/-DM-Eclat/tests/runtests.jl:13
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.6s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  2.2s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  1.6s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.1s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.2s
+Association rules and PreparedDataset integration: Test Failed at /Users/nguyenduchung/-DM-Eclat/tests/test_rules.jl:25
+  Expression: any((r->begin
+            #= /Users/nguyenduchung/-DM-Eclat/tests/test_rules.jl:25 =#
+            length(r.consequent) == 2
+        end), rules)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/-DM-Eclat/.tools/julia-1.10.10/share/julia/stdlib/v1.10/Test/src/Test.jl:672 [inlined]
+ [2] macro expansion
+   @ ~/-DM-Eclat/tests/test_rules.jl:25 [inlined]
+ [3] macro expansion
+   @ ~/-DM-Eclat/.tools/julia-1.10.10/share/julia/stdlib/v1.10/Test/src/Test.jl:1577 [inlined]
+ [4] top-level scope
+   @ ~/-DM-Eclat/tests/test_rules.jl:2
+Association rules and PreparedDataset integration: Test Failed at /Users/nguyenduchung/-DM-Eclat/tests/test_rules.jl:25
+  Expression: any((r->begin
+            #= /Users/nguyenduchung/-DM-Eclat/tests/test_rules.jl:25 =#
+            length(r.consequent) == 2
+        end), rules)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/-DM-Eclat/.tools/julia-1.10.10/share/julia/stdlib/v1.10/Test/src/Test.jl:672 [inlined]
+ [2] macro expansion
+   @ ~/-DM-Eclat/tests/test_rules.jl:25 [inlined]
+ [3] macro expansion
+   @ ~/-DM-Eclat/.tools/julia-1.10.10/share/julia/stdlib/v1.10/Test/src/Test.jl:1577 [inlined]
+ [4] top-level scope
+   @ ~/-DM-Eclat/tests/test_rules.jl:2
+Test Summary:                                     | Pass  Fail  Total  Time
+Association rules and PreparedDataset integration |   62     2     64  2.1s

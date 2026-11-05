@@ -11,6 +11,35 @@ function brute_force(transactions, min_count)
     return result
 end
 
+@testset "Edge cases, input ownership and packed-word boundaries" begin
+    cases = [Vector{Int}[], [Int[]], [[91]], [[1, 1001], [1, 1001]],
+             [Int[], [2, 900], [900]], [collect(1:8) for _ in 1:3]]
+    rng = MersenneTwister(123)
+    append!(cases, [[findall(rand(rng, 5) .< 0.6) for _ in 1:n]
+                    for n in [63, 64, 65, 127, 128, 129]])
+    for transactions in cases
+        before = deepcopy(transactions)
+        for threshold in unique([1, max(1, length(transactions)), length(transactions) + 1])
+            expected = isempty(transactions) ? Dict{Itemset,Int}() : brute_force(transactions, threshold)
+            for backend in TEST_BACKENDS
+                patterns = mine(transactions, threshold; backend=backend)
+                @test Dict(p.items => p.support for p in patterns) == expected
+                @test length(patterns) == length(expected)
+                @test all(p -> issorted(p.items) && !isempty(p.items), patterns)
+                @test transactions == before
+            end
+        end
+    end
+    for backend in TEST_BACKENDS
+        for invalid in [[[2, 1]], [[1, 1]], [[0]], [[-2]]]
+            @test_throws ArgumentError mine(invalid, 1; backend=backend)
+        end
+    end
+    for (a, b) in [(Int[], [1]), ([1, 3, 7], [2, 3, 7, 8]), ([1], Int[])]
+        @test EclatProject.intersect_tids(a, b) == sort!(intersect(a, b))
+    end
+end
+
 @testset "Eclat: five different databases, selected backends" begin
     fixtures = ["basic", "dense", "sparse", "duplicates", "boundary"]
     for name in fixtures

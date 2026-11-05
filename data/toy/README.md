@@ -10,6 +10,6 @@
 
 Các file `*.expected.txt` được liệt kê bằng exhaustive subset counting độc lập,
 ở **minsup 40%**; chúng không phải output chạy SPMF. Test miner còn dùng oracle
-brute-force ở nhiều ngưỡng và dữ liệu ngẫu nhiên. B phải tạo reference SPMF thật
-trong `tests/reference/spmf/` và so toàn bộ `(itemset, support)` trước gate M1.
+brute-force ở nhiều ngưỡng và dữ liệu ngẫu nhiên. References SPMF thật đã được tạo trong `tests/reference/spmf/`, pin bằng manifest;
+full tests so toàn bộ `(itemset, support)` cho cả hai backends.
 Không đọc các file expected như transaction database.
