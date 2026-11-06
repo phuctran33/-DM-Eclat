@@ -1,0 +1,4 @@
+PASS all real Groceries/Splice observations, mapping, metadata, audits, CSV schemas, deterministic reruns and overwrite protection
+PASS DNA comparison CLI with real-data diagnostic candidates; no FIM claim
+groceries 9835 observations 169 mapped items
+splice 3185 observations 48 mapped items

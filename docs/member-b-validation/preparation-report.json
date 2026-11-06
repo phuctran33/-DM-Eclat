@@ -1,0 +1,98 @@
+{
+  "scope": "B preprocessing/export; no mining implementation",
+  "schema_version": "1.0.0",
+  "datasets": {
+    "groceries": {
+      "n_observations": 9835,
+      "n_mapped_items": 169,
+      "source_sha256": "2c4beb856d64e04ecd57844e662889e6a60b7a9519b3ee0e5d98078c694f41d7",
+      "output_hashes": {
+        "items.csv": "0285916758ffb88d552cdfc8cddb764e2213191311a603bee514d6d9b55d0ad5",
+        "observations.csv": "a0e20e3ed069f030983b1c3c3a8bfbf81b2712211ab7e99a9cefd3b9fbb02d4d",
+        "preparation_audit.csv": "a105bfc6c137860b51d5f201f27ebafc435bb2db4ddbfda6d6e7fff6492ed210",
+        "transactions.txt": "b90672f9fc38571c32434b2ad8edfa99e86b5ff7c8ab952501969e0ddacd9b9b"
+      },
+      "audit": [
+        {
+          "class_label": "ALL",
+          "reason": "kept",
+          "count": 9835
+        },
+        {
+          "class_label": "ALL",
+          "reason": "duplicate_item_rows_collapsed",
+          "count": 0
+        }
+      ],
+      "checks": [
+        "all transactions",
+        "complete mapping",
+        "all metadata",
+        "audit",
+        "CSV schemas",
+        "byte determinism",
+        "overwrite guard"
+      ],
+      "stdout": "dataset=groceries, observations=9835, mapped_items=169\nclass=ALL, reason=kept, count=9835\nclass=ALL, reason=duplicate_item_rows_collapsed, count=0\n"
+    },
+    "splice": {
+      "n_observations": 3185,
+      "n_mapped_items": 48,
+      "source_sha256": "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f",
+      "output_hashes": {
+        "items.csv": "814d02fe6dd3488a6759a1b56e0bb4c3458df3bca593d7f6c359b8c652a04f64",
+        "observations.csv": "aa20e0781e9bb103fff722275b84459379d9c9ebf61f91ecd15080b029c02d33",
+        "preparation_audit.csv": "1af664421a833118f5246239f59daaaf03e589d485ac3a5396a6a95bb65254bf",
+        "transactions.txt": "72c60b4f042acb3ab73450947176c605a051ee9b94e8d0294814b10b9a678cea"
+      },
+      "audit": [
+        {
+          "class_label": "EI",
+          "reason": "kept",
+          "count": 765
+        },
+        {
+          "class_label": "EI",
+          "reason": "ambiguous_window",
+          "count": 2
+        },
+        {
+          "class_label": "IE",
+          "reason": "kept",
+          "count": 766
+        },
+        {
+          "class_label": "IE",
+          "reason": "ambiguous_window",
+          "count": 2
+        },
+        {
+          "class_label": "N",
+          "reason": "kept",
+          "count": 1654
+        },
+        {
+          "class_label": "N",
+          "reason": "ambiguous_window",
+          "count": 1
+        }
+      ],
+      "checks": [
+        "all transactions",
+        "complete mapping",
+        "all metadata",
+        "audit",
+        "CSV schemas",
+        "byte determinism",
+        "overwrite guard"
+      ],
+      "stdout": "dataset=splice, observations=3185, mapped_items=48\nclass=EI, reason=kept, count=765\nclass=EI, reason=ambiguous_window, count=2\nclass=IE, reason=kept, count=766\nclass=IE, reason=ambiguous_window, count=2\nclass=N, reason=kept, count=1654\nclass=N, reason=ambiguous_window, count=1\n"
+    }
+  },
+  "julia_version": "julia version 1.10.10",
+  "dna_comparison_diagnostic": {
+    "candidate_origin": "manually supplied positions, not mined",
+    "all_class_counts_verified": true,
+    "n_candidates": 2
+  }
+}

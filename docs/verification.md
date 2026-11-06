@@ -1,3 +1,17 @@
+# Tích hợp sau khi A được duyệt — 05/11/2026
+
+PR #1 đã merge vào main tại b821235. Nhánh B cập nhật main để giải quyết
+conflict PR #3; không sửa implementation miner hoặc evidence benchmark của A.
+Bộ test chung bao gồm miner/rules/CLI/SPMF của A và preparation/export của B.
+Bằng chứng kiểm tra sau tích hợp: member-b-validation/integration-main.log.
+
+B đã kiểm chứng riêng ngày 01/11: 206 checks Julia, 4 tests Python, toàn bộ
+Groceries/Splice, oracle SPMF, source isolation và notebook local. Xem
+[handoff](HANDOFF_MEMBER_B.md), [evidence](member-b-validation/README.md).
+Các log sau đây là lịch sử A; không đồng nhất runtime/số test lịch sử với lần tích hợp.
+
+---
+
 # Nhật ký kiểm chứng Member A
 
 Ngày: **31/10/2026**, Asia/Saigon. Workspace được clone sạch từ

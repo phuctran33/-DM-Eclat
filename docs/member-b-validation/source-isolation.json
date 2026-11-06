@@ -1,0 +1,11 @@
+{
+  "scope": "actual staged Git tree extracted via git archive, no previous processed data",
+  "git_tree_during_validation": "fdc76253cd011e5243d45fa9accabd0bb6592fb0",
+  "reused": "Julia runtime/depot and two checksum-pinned raw source caches only",
+  "julia_b_checks": 206,
+  "python_source_tests": 4,
+  "real_data_audit": "pass",
+  "output_hashes_equal_original_run": true,
+  "newline_portability_verified": true,
+  "miner_or_rules_implementation_used": false
+}

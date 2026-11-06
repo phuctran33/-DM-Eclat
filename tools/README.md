@@ -16,3 +16,17 @@ source Java thuật toán vào miner; binary chỉ dùng cho oracle/benchmark. P
 năm references nằm trong `tests/reference/spmf/manifest.csv`, logs trong
 `results/reference/`. Không đồng nhất số version ECLAT in trong banner với version
 SPMF distribution.
+
+## References độc lập của B
+
+```text
+python scripts/prepare_references_b.py --java PATH_TO_JAVA_21
+```
+
+Script B kiểm full map bằng vét cạn và chuẩn hóa CRLF thành LF; lưu cả raw và
+canonical hashes trong docs/member-b-validation/spmf/. Manifest chính hiện dùng
+provenance B; logs lịch sử A tại results/reference/ giữ nguyên. Cả hai dùng cùng
+JAR pin và có output hashes giống nhau. Máy Windows có Java 8 mặc định có thể
+truyền đường dẫn Java 21 có sẵn trong CLion; không cần đổi PATH.
+Controller benchmark và script A khi dùng --references chỉ hỗ trợ Linux/macOS;
+script B tái tạo references hỗ trợ Windows.

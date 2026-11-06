@@ -1,0 +1,9 @@
+test_bad_checksum_preserves_existing_canonical (__main__.SourceTests.test_bad_checksum_preserves_existing_canonical) ... ok
+test_canonical_adapter_preserves_baskets_and_other_manifest_rows (__main__.SourceTests.test_canonical_adapter_preserves_baskets_and_other_manifest_rows) ... ok
+test_failed_download_never_promotes_partial_file (__main__.SourceTests.test_failed_download_never_promotes_partial_file) ... ok
+test_offline_missing_source (__main__.SourceTests.test_offline_missing_source) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.148s
+
+OK

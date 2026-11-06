@@ -27,9 +27,18 @@ dữ liệu phải chuẩn hóa rõ ràng, không âm thầm đổi dữ liệu 
 
 `PreparedDataset` có `dataset_id,transactions,item_labels,row_ids,classes`.
 A gọi `mine(prepared.transactions, min_count)`; B giữ mapping/metadata để diễn giải.
-Stats/audit xuất riêng, không đổi return type. Miner list/bitset và association_rules
-đã triển khai và kiểm chứng; preprocessing Groceries/DNA và DNA comparison của B
-vẫn TODO. Kiểm thử PreparedDataset → mine không thay cho cold-run ứng dụng thật.
+Stats/audit xuất riêng, không đổi return type. Nhánh B đã triển khai và kiểm thử
+preprocessing Groceries/Splice, DNA comparison và CSV export. Miner list/bitset và
+association_rules của A đã vào main qua PR #1; nhánh B đã cập nhật từ main.
+Kiểm chứng pipeline ứng dụng mined cuối cùng vẫn là bước tiếp theo.
 
-Pseudocode/invariants đã hoàn thiện trong docs/paper-notes.md và Chương 1. Hai
-backend dùng chung DFS và giữ cùng ordering/candidate policy để so sánh tối ưu.
+API bổ sung B: prepare_groceries/prepare_splice trả NamedTuple(dataset,source_ids,audit)
+để xuất artifacts; groceries_transactions/splice_transactions vẫn trả PreparedDataset.
+write_prepared_dataset, write_dna_comparisons và write_association_rules xuất đúng
+schema. Hàm cuối nhận luật đã có, không thực hiện mining/rule generation.
+compare_dna_patterns còn kiểm mapping, metadata và support khai báo khớp observations.
+
+M1 A/B đọc schema đã chốt và hoàn thiện pseudocode. M2 hai backend giữ cùng
+ordering/candidate policy để so sánh tối ưu có ý nghĩa.
+
+Hai backend dùng chung DFS, ordering và candidate policy; xem docs/paper-notes.md.

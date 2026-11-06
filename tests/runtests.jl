@@ -9,6 +9,10 @@ all(backend -> backend in [:list, :bitset], TEST_BACKENDS) ||
 include("test_io.jl")
 include("test_support.jl")
 include("test_schema.jl")
+include("test_applications.jl")
+include("test_application_export.jl")
+include("test_preparation_cli.jl")
+include("test_spmf_references_b.jl")
 
 if get(ENV, "ECLAT_TEST_MINER", "1") == "1"
     include("test_correctness.jl")
@@ -24,7 +28,7 @@ end
 if get(ENV, "ECLAT_TEST_SPMF", "1") == "1"
     include("test_spmf.jl")
 else
-    @testset "SPMF comparison: pending reference runs" begin
+    @testset "SPMF comparison: pending approved miner" begin
         @test_skip false
     end
 end

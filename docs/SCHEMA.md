@@ -229,6 +229,6 @@ không thay đổi.
 | B / M3 | Benchmark correctness, Chương 3, Colab và bàn giao |
 
 Shared types/validation, hai miner backends, rule generation và benchmark harness
-đã triển khai. Preprocessing Groceries/DNA và DNA comparison của B vẫn TODO.
+đã triển khai. Preprocessing Groceries/DNA, comparison và export của B đã có.
 Benchmark URLs/raw hashes và phép chuyển ID được xác minh trong configs/datasets.toml
-và data/manifest.csv. Provenance của hai ứng dụng vẫn do B hoàn thiện.
+và data/manifest.csv. Provenance hai ứng dụng đã pin trong data/manifest.csv; kết quả ứng dụng mined cuối còn cần hoàn thiện.

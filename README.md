@@ -6,8 +6,11 @@ frequent itemset cùng support tuyệt đối, giữ nguyên **schema A/B v1.0.0
 Bằng chứng đo, test và giới hạn tại [verification](docs/verification.md),
 [experiments](docs/experiments.md) và [handoff](docs/HANDOFF_MEMBER_A.md).
 
-Phần Member B — **Trần Thiên Phúc**: Groceries/DNA preprocessing, ứng dụng thực tế,
-Colab cold-run và Chương 3 vẫn pending; không xem miner pass là hoàn thành các phần đó.
+Phần Member B — **Trần Thiên Phúc**: đã triển khai Groceries/Splice preprocessing,
+mapping/metadata/audit, CSV export và so sánh patterns được cung cấp. Đã kiểm chứng
+206 checks Julia B + 4 tests Python trên dữ liệu thật; xem [bàn giao B](docs/HANDOFF_MEMBER_B.md)
+và [evidence](docs/member-b-validation/README.md). Kết quả khai thác ứng dụng, diễn giải
+Chương 3 và Colab cold-run còn cần hoàn thiện sau tích hợp.
 [Report nguồn](docs/latex/Report.tex) giữ đủ cấu trúc ba chương.
 [PDF review phần A](docs/Member-A-review.pdf) là tài liệu kiểm tra Chương 1–2,
 chưa thay thế `docs/Report.pdf` cuối của nhóm.
@@ -159,3 +162,18 @@ CLI round trip and failure paths |   10     10  12.5s
 Test Summary:                               | Pass  Total  Time
 Exact agreement with SPMF on five databases |   25     25  0.1s
 ```
+
+## Chuẩn bị dữ liệu ứng dụng (B)
+
+```bash
+python -B tests/test_application_sources.py
+julia --project=. tests/runtests_b.jl
+python scripts/prepare_application_data.py --dataset all
+julia --project=. scripts/prepare_applications.jl groceries data/applications/groceries.csv data/applications/processed/groceries
+julia --project=. scripts/prepare_applications.jl splice data/applications/splice.data data/applications/processed/splice
+```
+
+Output directory phải mới/rỗng. Groceries có 9.835 giỏ/169 items; Splice giữ
+3.185/3.190 mẫu, window 25:36 và mapping cố định 48 IDs. Nguồn/hash/audit và
+cách kiểm chéo dữ liệu nằm trong bàn giao B. Rule exporter nhận luật có sẵn;
+DNA comparison nhận patterns có sẵn, chưa thay cho pipeline khai thác ứng dụng cuối.

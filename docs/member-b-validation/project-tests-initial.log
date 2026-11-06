@@ -1,0 +1,23 @@
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.6s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  1.7s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  0.9s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  0.9s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.8s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.2s
+Test Summary:                                      | Pass  Total   Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  13.0s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   63     63  0.3s
+Test Summary:                             | Broken  Total  Time
+Eclat correctness: pending implementation |      1      1  0.0s
+Test Summary:                           | Broken  Total  Time
+SPMF comparison: pending approved miner |      1      1  0.0s
+[ Info: Core is a TODO. M1: ECLAT_TEST_MINER=1 (list). M2/full: also ECLAT_TEST_BACKENDS=list,bitset. Scaffold tests do not establish Eclat correctness.

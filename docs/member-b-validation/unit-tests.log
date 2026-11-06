@@ -1,0 +1,18 @@
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.4s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  1.6s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  1.2s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  1.1s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.8s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.2s
+Test Summary:                                      | Pass  Total      Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  17m00.8s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.3s
