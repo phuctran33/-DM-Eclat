@@ -5,3 +5,7 @@
 *.jpeg binary
 # Captured tool stdout is verbatim evidence, including TeX's trailing spaces.
 results/logs/*.log whitespace=-blank-at-eol,-blank-at-eof
+
+# Preserve captured M2 tool output as evidence.
+results/applications/verification/*.log whitespace=-blank-at-eol,-blank-at-eof
+docs/member-b-validation/M2-*.log whitespace=-blank-at-eol,-blank-at-eof

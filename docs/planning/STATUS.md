@@ -1,20 +1,17 @@
-# Trạng thái tích hợp A/B — 05/11/2026
+# Trạng thái M2 B — 10/11/2026
 
-A đã được merge vào main qua PR #1 (`b821235`); B cập nhật main để giải quyết
-conflict PR #3. Các bằng chứng lịch sử A/B được giữ riêng theo ngày và runtime.
+Nhánh feat/member-b-m2-applications từ main 1f7a980, sau khi PR A/B trước được merge.
 
-| Thành phần | Trạng thái | Tiếp theo |
+| Thành phần | Đã thực hiện | Còn lại |
 |---|---|---|
-| Schema A/B v1.0.0 | Giữ nguyên contracts/shared types | Dùng chung PreparedDataset/Pattern |
-| Eclat list/BitVector và rules | A đã merge; 622 checks A đạt khi review | Full suite A+B: 762 pass |
-| Năm references SPMF | A/B chạy độc lập, cùng output hashes | Manifest chính giữ provenance B; logs hai bên giữ nguyên |
-| Benchmark acquisition/harness | A đã triển khai; 35 cases/875 bản đo/70 maps | Giữ nguyên bằng chứng và phạm vi đo |
-| Groceries preparation/export | B đã kiểm 9.835 baskets/169 items | Nối miner/rules, top-10 và diễn giải |
-| Splice preparation/comparison | B giữ 3.185/3.190 mẫu, 48 IDs | Khai thác patterns thật theo lớp và diễn giải |
-| Chương 1–2 | A có nguồn và PDF review | Cân trang báo cáo nhóm |
-| Chương 3 | B có số liệu nguồn/tiền xử lý | Bổ sung kết quả khai thác thật |
-| Notebook | Gộp setup B, miner/benchmark A | 7 cells local đạt; cần remote Colab cold-run |
-| Report.pdf cuối và nghiệm thu M2/M3 | Chưa hoàn tất | Hai ứng dụng, Colab và báo cáo cuối |
+| Core A và schema v1 | Giữ nguyên core/schema | Review nhóm |
+| Groceries B | Hai backend: 1.001 patterns, 22 rules, top-10 và diễn giải ≥3 luật | Reviewer A nghiệm thu |
+| Splice B | 381/209/48 patterns EI/IE/N, 463 comparisons, counts độc lập | Reviewer A nghiệm thu |
+| Correctness ứng dụng | Hai backend khớp; 4 live SPMF maps khớp 100%; 787 Julia checks | Giữ log CI/local |
+| Notebook M2 | Defaults chạy prep/miner/apps/SPMF; public Colab link, Linux CI | Xác nhận Run all trên Google Colab thực |
+| Chương 3 | Bảng/kết quả mined và phân tích thực, bỏ TODO kết quả ứng dụng | Review nội dung/cân trang M3 |
+| Benchmark/Chương 1–2 A | Giữ nguyên evidence đã duyệt | Nghiệm thu toàn nhóm M3 |
+| Report.pdf cuối/Colab final | Chưa tuyên bố hoàn tất | M3: PDF 10–15 trang, remote cold-run, nộp bài |
 
-Lịch sử kiểm chứng: docs/verification.md, docs/member-b-validation/ và
-results/logs/. Không dùng candidates DNA thủ công trong test làm kết quả Eclat.
+Chi tiết và lệnh tái lập: docs/M2_MEMBER_B.md. Checklist kế hoạch chỉ tick sau
+reviewer xác nhận; code/tests pass không thay remote Colab hoặc nghiệm thu toàn nhóm.

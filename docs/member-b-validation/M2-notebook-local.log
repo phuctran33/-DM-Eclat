@@ -1,0 +1,136 @@
+EXECUTE cell-001
+julia version 1.10.10
+SPMF 2.64b; openjdk version "21.0.9" 2025-10-21; SHA256=c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250
+openjdk version "21.0.9" 2025-10-21
+OpenJDK Runtime Environment JBR-21.0.9+1-1163.86-jcef (build 21.0.9+1-b1163.86)
+OpenJDK 64-Bit Server VM JBR-21.0.9+1-1163.86-jcef (build 21.0.9+1-b1163.86, mixed mode, sharing)
+ROOT: D:\-DM-Eclat SEED: 42
+EXECUTE member-b-preparation
+{"dataset": "groceries", "source_url": "https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/d20658ec6d336af2d4ddb5fd72b6f677dd46136e/groceries.csv", "source_revision": "d20658ec6d336af2d4ddb5fd72b6f677dd46136e", "source_sha256": "ff1be892fd6b9b57d1a7bc50de067798963dda607619645988b21789bf23ae3b", "adapter": "one source CSV row = one basket; long CSV, preserve every item", "n_source_baskets": 9835, "output_sha256": "2c4beb856d64e04ecd57844e662889e6a60b7a9519b3ee0e5d98078c694f41d7"}
+{"dataset": "splice", "source_url": "https://www.inf.u-szeged.hu/~tothl/gepitan/uci%20repository/molecular-biology/splice-junction-gene-sequences/splice.data", "source_revision": "sha256:ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f", "original_source": "https://doi.org/10.24432/C5M888", "original_download_url": "https://archive.ics.uci.edu/static/public/69/molecular+biology+splice+junction+gene+sequences.zip", "source_kind": "University of Szeged academic UCI mirror; original sample IDs preserved", "source_sha256": "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f", "adapter": "copy raw records without modification", "n_source_records": 3190, "output_sha256": "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f"}
+dataset=groceries, observations=9835, mapped_items=169
+class=ALL, reason=kept, count=9835
+class=ALL, reason=duplicate_item_rows_collapsed, count=0
+dataset=splice, observations=3185, mapped_items=48
+class=EI, reason=kept, count=765
+class=EI, reason=ambiguous_window, count=2
+class=IE, reason=kept, count=766
+class=IE, reason=ambiguous_window, count=2
+class=N, reason=kept, count=1654
+class=N, reason=ambiguous_window, count=1
+PASS all real Groceries/Splice observations, mapping, metadata, audits, CSV schemas, deterministic reruns and overwrite protection
+PASS DNA comparison CLI with real-data diagnostic candidates; no FIM claim
+groceries 9835 observations 169 mapped items
+splice 3185 observations 48 mapped items
+B preprocessing artifacts: D:\-DM-Eclat\.tools\notebook-runs\member-b-e3a6omyr
+EXECUTE cell-003
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  1.3s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  1.4s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  0.7s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  0.7s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.6s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.1s
+Test Summary:                                      | Pass  Total   Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  10.6s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.2s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  1.5s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.1s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.2s
+Test Summary:                                     | Pass  Total  Time
+Association rules and PreparedDataset integration |   94     94  1.6s
+Test Summary:                    | Pass  Total  Time
+CLI round trip and failure paths |   10     10  7.2s
+Groceries: 7 frequent patterns, 9 rules, 3 top rules; min_count=2
+Splice EI: 3 patterns; min_count=3
+Splice IE: 3 patterns; min_count=3
+Splice N: 0 patterns; min_count=3
+DNA comparisons: 2; output=C:\Users\PHUCTR~1\AppData\Local\Temp\jl_JsbAee\result
+Test Summary:                                         | Pass  Total  Time
+M2: complete mining applications and output ownership |   25     25  2.1s
+Test Summary:                               | Pass  Total  Time
+Exact agreement with SPMF on five databases |   25     25  0.0s
+python : test_bad_checksum_preserves_existing_canonical 
+(__main__.SourceTests.test_bad_checksum_preserves_existing_canonical) ... ok
+At line:14 char:180
++ ... t\.tools\julia-depot'; python -B scripts/run_notebook.py 2>&1 | Tee-O ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_bad_checks...nonical) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_canonical_adapter_preserves_baskets_and_other_manifest_rows 
+(__main__.SourceTests.test_canonical_adapter_preserves_baskets_and_other_manifest_rows) ... ok
+test_failed_download_never_promotes_partial_file 
+(__main__.SourceTests.test_failed_download_never_promotes_partial_file) ... ok
+test_offline_missing_source (__main__.SourceTests.test_offline_missing_source) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.075s
+
+OK
+Eclat frequent itemset miner
+Usage:
+  julia --project=. scripts/mine.jl --input FILE --output FILE --minsup 0.4 [--backend list|bitset]
+  julia --project=. scripts/mine.jl --input FILE --output FILE --min-count 2 [--backend list|bitset]
+Accepts relative decimals or percentages, e.g. 0.4 or 40%.
+Exactly one of --minsup / --min-count is required.
+
+EXECUTE cell-005
+transactions=5, min_count=2, patterns=7
+reference=7, own=7, exact_matches=7
+missing=0, extra=0, wrong_support=0
+exact_match_rate=1.0; identical=true
+JAR SPMF đã kiểm SHA-256; live verification hai ứng dụng thực hiện ở cell tiếp theo.
+EXECUTE cell-007
+transactions=5, min_count=2, patterns=7
+reference=7, own=7, exact_matches=7
+missing=0, extra=0, wrong_support=0
+exact_match_rate=1.0; identical=true
+Groceries: 1001 frequent patterns, 22 rules, 10 top rules; min_count=50
+Splice EI: 381 patterns; min_count=153
+Splice IE: 209 patterns; min_count=154
+Splice N: 48 patterns; min_count=331
+DNA comparisons: 463; output=D:\-DM-Eclat\.tools\notebook-runs\integrated-335sus7b\applications
+SPMF PASS groceries 1001
+SPMF PASS splice_EI 381
+SPMF PASS splice_IE 209
+SPMF PASS splice_N 48
+PASS independent complete rule/DNA count audit: 22 rules; 463 DNA candidates; 864 nonzero infrequent class counts
+Ứng dụng đã kiểm: 22 luật; 463 DNA patterns
+{'rank': '1', 'antecedent_ids': '30 124 167', 'consequent_ids': '103', 'antecedent_labels': 'citrus fruit | root vegetables | whole milk', 'consequent_labels': 'other vegetables', 'length': '4', 'support_count': '57', 'antecedent_count': '90', 'consequent_count': '1903', 'n_transactions': '9835', 'support': '0.005795627859684799', 'confidence': '0.6333333333333333', 'lift': '3.2731651777894553'}
+{'rank': '2', 'antecedent_ids': '110 124 167', 'consequent_ids': '103', 'antecedent_labels': 'pip fruit | root vegetables | whole milk', 'consequent_labels': 'other vegetables', 'length': '4', 'support_count': '54', 'antecedent_count': '88', 'consequent_count': '1903', 'n_transactions': '9835', 'support': '0.005490594814438231', 'confidence': '0.6136363636363636', 'lift': '3.1713681746524625'}
+{'rank': '3', 'antecedent_ids': '110 163', 'consequent_ids': '103', 'antecedent_labels': 'pip fruit | whipped/sour cream', 'consequent_labels': 'other vegetables', 'length': '3', 'support_count': '55', 'antecedent_count': '91', 'consequent_count': '1903', 'n_transactions': '9835', 'support': '0.005592272496187087', 'confidence': '0.6043956043956044', 'lift': '3.12361049355269'}
+{'rank': '4', 'antecedent_ids': '100 124', 'consequent_ids': '103', 'antecedent_labels': 'onions | root vegetables', 'consequent_labels': 'other vegetables', 'length': '3', 'support_count': '56', 'antecedent_count': '93', 'consequent_count': '1903', 'n_transactions': '9835', 'support': '0.0056939501779359435', 'confidence': '0.6021505376344086', 'lift': '3.11200763932444'}
+{'rank': '5', 'antecedent_ids': '124 158 168', 'consequent_ids': '167', 'antecedent_labels': 'root vegetables | tropical fruit | yogurt', 'consequent_labels': 'whole milk', 'length': '4', 'support_count': '56', 'antecedent_count': '80', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.0056939501779359435', 'confidence': '0.7', 'lift': '2.739554317548746'}
+{'rank': '6', 'antecedent_ids': '103 110 124', 'consequent_ids': '167', 'antecedent_labels': 'other vegetables | pip fruit | root vegetables', 'consequent_labels': 'whole milk', 'length': '4', 'support_count': '54', 'antecedent_count': '80', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.005490594814438231', 'confidence': '0.675', 'lift': '2.6417130919220053'}
+{'rank': '7', 'antecedent_ids': '15 163', 'consequent_ids': '167', 'antecedent_labels': 'butter | whipped/sour cream', 'consequent_labels': 'whole milk', 'length': '3', 'support_count': '66', 'antecedent_count': '100', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.006710726995424504', 'confidence': '0.66', 'lift': '2.5830083565459607'}
+{'rank': '8', 'antecedent_ids': '110 163', 'consequent_ids': '167', 'antecedent_labels': 'pip fruit | whipped/sour cream', 'consequent_labels': 'whole milk', 'length': '3', 'support_count': '59', 'antecedent_count': '91', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.005998983223182512', 'confidence': '0.6483516483516484', 'lift': '2.537420796473721'}
+{'rank': '9', 'antecedent_ids': '15 168', 'consequent_ids': '167', 'antecedent_labels': 'butter | yogurt', 'consequent_labels': 'whole milk', 'length': '3', 'support_count': '92', 'antecedent_count': '144', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.009354346720894764', 'confidence': '0.6388888888888888', 'lift': '2.500386877127824'}
+{'rank': '10', 'antecedent_ids': '15 124', 'consequent_ids': '167', 'antecedent_labels': 'butter | root vegetables', 'consequent_labels': 'whole milk', 'length': '3', 'support_count': '81', 'antecedent_count': '127', 'consequent_count': '2513', 'n_transactions': '9835', 'support': '0.008235892221657347', 'confidence': '0.6377952755905512', 'lift': '2.4961068585089814'}
+{'rank': '1', 'pattern_ids': '27 32', 'pattern_labels': 'pos=+1;base=G | pos=+2;base=T', 'length': '2', 'count_EI': '758', 'count_IE': '108', 'count_N': '98', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.9908496732026144', 'support_IE': '0.1409921671018277', 'support_N': '0.0592503022974607', 'support_span': '0.9315993709051538'}
+{'rank': '2', 'pattern_ids': '17 23', 'pattern_labels': 'pos=-2;base=A | pos=-1;base=G', 'length': '2', 'count_EI': '388', 'count_IE': '762', 'count_N': '127', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.5071895424836601', 'support_IE': '0.9947780678851175', 'support_N': '0.07678355501813784', 'support_span': '0.9179945128669796'}
+{'rank': '3', 'pattern_ids': '27 32 43', 'pattern_labels': 'pos=+1;base=G | pos=+2;base=T | pos=+5;base=G', 'length': '3', 'count_EI': '651', 'count_IE': '22', 'count_N': '15', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.8509803921568627', 'support_IE': '0.028720626631853787', 'support_N': '0.009068923821039904', 'support_span': '0.8419114683358229'}
+{'rank': '4', 'pattern_ids': '27 43', 'pattern_labels': 'pos=+1;base=G | pos=+5;base=G', 'length': '2', 'count_EI': '655', 'count_IE': '71', 'count_N': '102', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.8562091503267973', 'support_IE': '0.0926892950391645', 'support_N': '0.06166868198307134', 'support_span': '0.794540468343726'}
+{'rank': '5', 'pattern_ids': '32 43', 'pattern_labels': 'pos=+2;base=T | pos=+5;base=G', 'length': '2', 'count_EI': '651', 'count_IE': '46', 'count_N': '94', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.8509803921568627', 'support_IE': '0.06005221932114883', 'support_N': '0.056831922611850064', 'support_span': '0.7941484695450126'}
+{'rank': '6', 'pattern_ids': '23 27 32', 'pattern_labels': 'pos=-1;base=G | pos=+1;base=G | pos=+2;base=T', 'length': '3', 'count_EI': '618', 'count_IE': '108', 'count_N': '25', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.807843137254902', 'support_IE': '0.1409921671018277', 'support_N': '0.015114873035066506', 'support_span': '0.7927282642198354'}
+{'rank': '7', 'pattern_ids': '14 17 23', 'pattern_labels': 'pos=-3;base=C | pos=-2;base=A | pos=-1;base=G', 'length': '3', 'count_EI': '174', 'count_IE': '604', 'count_N': '38', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.22745098039215686', 'support_IE': '0.7885117493472585', 'support_N': '0.022974607013301087', 'support_span': '0.7655371423339574'}
+{'rank': '8', 'pattern_ids': '23 32', 'pattern_labels': 'pos=-1;base=G | pos=+2;base=T', 'length': '2', 'count_EI': '618', 'count_IE': '249', 'count_N': '86', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.807843137254902', 'support_IE': '0.32506527415143605', 'support_N': '0.05199516324062878', 'support_span': '0.7558479740142732'}
+{'rank': '9', 'pattern_ids': '14 17', 'pattern_labels': 'pos=-3;base=C | pos=-2;base=A', 'length': '2', 'count_EI': '195', 'count_IE': '604', 'count_N': '101', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.2549019607843137', 'support_IE': '0.7885117493472585', 'support_N': '0.06106408706166868', 'support_span': '0.7274476622855899'}
+{'rank': '10', 'pattern_ids': '23 27', 'pattern_labels': 'pos=-1;base=G | pos=+1;base=G', 'length': '2', 'count_EI': '624', 'count_IE': '363', 'count_N': '146', 'n_EI': '765', 'n_IE': '766', 'n_N': '1654', 'support_EI': '0.8156862745098039', 'support_IE': '0.47389033942558745', 'support_N': '0.08827085852478839', 'support_span': '0.7274154159850155'}
+Artifacts: D:\-DM-Eclat\.tools\notebook-runs\integrated-335sus7b\applications
+EXECUTE cell-009
+Benchmark pipeline đã có; RUN_BENCHMARKS đang tắt.
+EXECUTE cell-011
+Chưa nghiệm thu cuối: cần kết quả ứng dụng mined, Report.pdf và remote Colab cold-run.
+PASS 7 actual notebook code cells; runtime=local/CI, not remote Colab

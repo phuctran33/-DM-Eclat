@@ -42,3 +42,12 @@ M1 A/B đọc schema đã chốt và hoàn thiện pseudocode. M2 hai backend gi
 ordering/candidate policy để so sánh tối ưu có ý nghĩa.
 
 Hai backend dùng chung DFS, ordering và candidate policy; xem docs/paper-notes.md.
+
+## Orchestration M2
+
+`groceries_application(dataset; minsup="0.005", minconf="0.60", top_k=10)`
+trả patterns/rules/top10/min_count/minconf. `dna_application(dataset; minsup="0.20")`
+trả patterns_by_class/comparisons/min_counts. Cả hai mine đầy đủ bằng list và
+BitVector, kiểm toàn map trước khi xuất kết quả; schema shared types không đổi.
+CLI `scripts/run_applications.jl` đọc configs/applications.toml, output mới/rỗng,
+export atomic kèm run.toml. Kiểm chứng bằng scripts/verify_application_results.py.

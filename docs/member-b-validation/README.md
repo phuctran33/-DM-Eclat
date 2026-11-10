@@ -34,3 +34,14 @@ implementation A, preparation/export B, provenance từng bên và CI chung.
 
 Các log 01/11 vẫn là lịch sử kiểm chứng riêng B. Chưa chạy lại full benchmark,
 remote Colab hoặc tạo kết quả ứng dụng mined cuối trong lần xử lý conflict này.
+
+## M2 B — 10/11/2026
+
+M2-tests.log: full suite **787 pass**. M2-notebook-local.log: 7 actual code cells,
+preparation/miner/optimized/apps/SPMF bật; local exit 0. PowerShell có thể render
+Python unittest stderr dưới dạng NativeCommandError dù subprocess exit 0; đây
+là định dạng shell trong raw log, không phải test failure.
+M2-summary.json: tóm tắt trạng thái/runtime/hash notebook. Minor display-import
+và status-text changes sau log local được kiểm lại bằng CI notebook từ checkout sạch.
+Kết quả thật và 4 live SPMF maps: results/applications/validation.json.
+Chạy local và CI Linux không đồng nghĩa chạy trên remote Google Colab.

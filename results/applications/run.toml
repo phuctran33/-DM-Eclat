@@ -1,0 +1,110 @@
+backend_verification = "complete itemset/support maps: list == bitset"
+config_sha256 = "9204f2214642440806b48b62b7896946d6f2f05910d692304b7cd6fedaf08152"
+julia_version = "1.10.10"
+pattern_policy = "mine complete outputs; filter DNA lengths 2-4 only for comparison"
+result_kind = "mined by group Eclat, not manually supplied candidates"
+schema_version = "1.0.0"
+seed = 42
+
+[artifact_sha256]
+"dna_patterns.csv" = "865e09f4d301fc37b6746f3c0499b10a7df3f22a95652a32324a4254a5722639"
+"groceries_rules.csv" = "a9cb8f9a837daf8f5a39e22c6c5215a3f4d126784bc01dd2a59abfbafb63e2c3"
+"groceries_top10.csv" = "f530253f7aa5ee38adee97faa393f4c0121850ce39debb0bf4a806892fd99594"
+"patterns/groceries.txt" = "a9cd2befe9292c7d2891fe9e4535838582b943017556424d71ffffefb51962dd"
+"patterns/splice_EI.txt" = "a40d28c55c7d8e639465d4d72b218c59a4dbc2d66477870d0c7ae4c58fd5b38d"
+"patterns/splice_IE.txt" = "6bc029094bf4e1e7120d1f19308fc353f739b810fa129654e7f1a3ea85cf9b93"
+"patterns/splice_N.txt" = "5546fba2810fb64e2e79ac1ca3c05587421ea7a937a204ca94f05219ce3c8acb"
+"prepared/groceries/items.csv" = "0285916758ffb88d552cdfc8cddb764e2213191311a603bee514d6d9b55d0ad5"
+"prepared/groceries/observations.csv" = "a0e20e3ed069f030983b1c3c3a8bfbf81b2712211ab7e99a9cefd3b9fbb02d4d"
+"prepared/groceries/preparation_audit.csv" = "a105bfc6c137860b51d5f201f27ebafc435bb2db4ddbfda6d6e7fff6492ed210"
+"prepared/groceries/transactions.txt" = "b90672f9fc38571c32434b2ad8edfa99e86b5ff7c8ab952501969e0ddacd9b9b"
+"prepared/splice/items.csv" = "814d02fe6dd3488a6759a1b56e0bb4c3458df3bca593d7f6c359b8c652a04f64"
+"prepared/splice/observations.csv" = "aa20e0781e9bb103fff722275b84459379d9c9ebf61f91ecd15080b029c02d33"
+"prepared/splice/preparation_audit.csv" = "1af664421a833118f5246239f59daaaf03e589d485ac3a5396a6a95bb65254bf"
+"prepared/splice/transactions.txt" = "72c60b4f042acb3ab73450947176c605a051ee9b94e8d0294814b10b9a678cea"
+"prepared/splice/transactions_EI.txt" = "4ec94bcd88edbeb8a37b9ced7f9898c0401d131e7024bca11b13f54ff627ae32"
+"prepared/splice/transactions_IE.txt" = "0426daaa40ed53aaad8989cb22a2f2ad3375890b6414e3049afeb1dfe28b2f43"
+"prepared/splice/transactions_N.txt" = "1c7e3fb1582770d355506d09cb64aee872f56ae31c393c0a8be2ec275bcd067b"
+
+[config]
+schema_version = "1.0.0"
+seed = 42
+
+    [config.dna]
+    ambiguity_policy = "drop_sample_if_window_has_non_ACGT"
+    base_order = ["A", "C", "G", "T"]
+    classes = ["EI", "IE", "N"]
+    display_pattern_lengths = [2, 3, 4]
+    input = "data/applications/splice.data"
+    label_is_mined_item = false
+    malformed_row_policy = "error"
+    minsup = "0.20"
+    positions_1based = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+    positions_status = "frozen_v1"
+    row_order = "source_line"
+
+    [config.groceries]
+    input = "data/applications/groceries.csv"
+    input_columns = ["basket_id", "item_name"]
+    input_format = "csv_long"
+    interpret_at_least = 3
+    item_normalization = "NFC_lowercase_strip_collapse_whitespace"
+    minconf = "0.60"
+    minsup = "0.005"
+    row_order = "basket_id_lexicographic"
+    top_k = 10
+
+[input_sha256]
+groceries = "2c4beb856d64e04ecd57844e662889e6a60b7a9519b3ee0e5d98078c694f41d7"
+splice = "ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f"
+
+[source_sha256]
+"scripts/benchmark_runner.jl" = "89c1792b36c775c40919c50c714ecfd3e575ecaf078fddb8f58786df50db16bd"
+"scripts/benchmark_worker.jl" = "a110ebda5b988de83f6b94f0899ce974a4587aa532fd5e7c1791ccefa0a6c318"
+"scripts/compare_dna.jl" = "bc1bea36a16661e8283d427eeaeb933217d3b7cfa329fb87cd142cfa42ce145f"
+"scripts/compare_spmf.jl" = "c3a2098e31817fe6999a2565ada7352b8df554a2d3a89e22e8d88c87bac0ff1d"
+"scripts/generate_synthetic.jl" = "82d40dfd05d14f15c9d42403e2d915f39a093b6b45f5048e7c5a57e7358bfec6"
+"scripts/make_subsets.jl" = "aee8e0048052f8099f6d023d54627c5834ce41fbf4428120c710d8d1cedec7d3"
+"scripts/mine.jl" = "a6a4896f64709af57848707ec364be115c0aaac5e85d56467ce166d1cae3ff41"
+"scripts/prepare_applications.jl" = "14eccee706a047465b056d7006a84185059f224d12dd56546a866c45571787a4"
+"scripts/run_applications.jl" = "9194edf670fbc2e3de4fc2004b3dbca177f5b56440f7c1ed5a36db5e3eb0a863"
+"src/EclatProject.jl" = "0f4ffd9d609e5eb432a0fb1fb2c14f7860fb3552cb9e5c1af955e4a994dcc61a"
+"src/algorithm/baseline.jl" = "502504e038628bcacad133f215c8e7ea2fede6e4e7817f9bddf24633b3658b12"
+"src/algorithm/bitset.jl" = "78d42d15f101855d858c84020177c5ac8ff7fbc42b7f2882ce18107e03d796f9"
+"src/applications/dna.jl" = "ec432d29739ad69ce043899d56ed25b38f0aebe2f0c00628c74dea3bc49ca8aa"
+"src/applications/export_rules.jl" = "5c979df65825fe1a7f6b420fce7a203c31a3e0a2cd2d39947b1353921c70cc95"
+"src/applications/groceries.jl" = "fc7f1ff3fad450a377c8c3dddc646143baff1aada5d1fd9ff3c843e4a262943f"
+"src/applications/io.jl" = "8f845d6d39d4e099eab876a4e3d3cd085e5429b3d3aabe15ad33f87a200f8ee6"
+"src/applications/pipelines.jl" = "dd953f7e05ebda493b942c5c3ef9a4f65da44c0a82f07f34e551c3fab55f9006"
+"src/applications/rules.jl" = "ece94cf36864c388cfae604515cbd1bf6a34cec7e5ebbb27598f7b247810e9cf"
+"src/schemas.jl" = "ec0964ae776ff47393e07e47cc437007d46b49e10506d469f24b1b0dc49ad10b"
+"src/structures.jl" = "15efb29ca33d2797674d31477f8baa6fc5d5af38fb32381f0acf285c20ec77f2"
+"src/utils.jl" = "b41a98c464c1ea1b2baf858b6632f347c46107d039615f251aa8396e112afa20"
+
+[statistics.dna]
+n_comparisons = 463
+n_items = 48
+n_transactions = 3185
+
+    [statistics.dna.classes.EI]
+    min_count = 153
+    n_patterns = 381
+    n_transactions = 765
+
+    [statistics.dna.classes.IE]
+    min_count = 154
+    n_patterns = 209
+    n_transactions = 766
+
+    [statistics.dna.classes.N]
+    min_count = 331
+    n_patterns = 48
+    n_transactions = 1654
+
+[statistics.groceries]
+min_count = 50
+n_items = 169
+n_patterns = 1001
+n_rules = 22
+n_top_rules = 10
+n_transactions = 9835
