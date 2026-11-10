@@ -2,8 +2,10 @@ name: ECLAT and applications correctness
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Julia 1.9 needs the pre-glibc-2.41 executable-stack policy; pin the LTS image.
+    runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         julia-version: ['1.9', '1.11']
     steps:
@@ -39,7 +41,7 @@ jobs:
       - run: python tests/test_plot_results.py -v
 
   applications-notebook:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2

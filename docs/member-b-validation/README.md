@@ -45,3 +45,8 @@ M2-summary.json: tóm tắt trạng thái/runtime/hash notebook. Minor display-i
 và status-text changes sau log local được kiểm lại bằng CI notebook từ checkout sạch.
 Kết quả thật và 4 live SPMF maps: results/applications/validation.json.
 Chạy local và CI Linux không đồng nghĩa chạy trên remote Google Colab.
+
+CI đầu của commit M2 bị lỗi ở setup Julia 1.9 trên ubuntu-latest (image Ubuntu 26):
+libopenlibm.so yêu cầu executable stack, runtime chưa khởi động nên chưa chạy test.
+Đã pin hai Julia jobs vào ubuntu-24.04 và tắt fail-fast để hai phiên bản được
+kiểm độc lập. Không thay miner hoặc bỏ test Julia 1.9 để né lỗi.
