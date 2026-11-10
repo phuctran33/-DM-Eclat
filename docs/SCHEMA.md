@@ -231,4 +231,4 @@ không thay đổi.
 Shared types/validation, hai miner backends, rule generation và benchmark harness
 đã triển khai. Preprocessing Groceries/DNA, comparison và export của B đã có.
 Benchmark URLs/raw hashes và phép chuyển ID được xác minh trong configs/datasets.toml
-và data/manifest.csv. Provenance hai ứng dụng đã pin trong data/manifest.csv; kết quả ứng dụng mined cuối còn cần hoàn thiện.
+và data/manifest.csv. Provenance hai ứng dụng đã pin trong data/manifest.csv; hai pipeline ứng dụng mined M2 đã triển khai; xem docs/M2_MEMBER_B.md.

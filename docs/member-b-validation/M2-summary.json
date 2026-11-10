@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-10",
+  "timezone": "Asia/Saigon",
+  "julia": "1.10.10",
+  "julia_checks": 787,
+  "notebook_code_cells": 7,
+  "local_notebook_exit_code": 0,
+  "local_shell": "PowerShell; merged stderr may include NativeCommandError formatting for successful Python unittest stderr",
+  "remote_colab_executed": false,
+  "complete_backend_maps_equal": true,
+  "live_spmf_cases": 4,
+  "all_live_spmf_identical": true,
+  "artifact_hashes_equal_across_two_runs": true,
+  "groceries_patterns": 1001,
+  "groceries_rules": 22,
+  "dna_patterns_by_class": {
+    "EI": 381,
+    "IE": 209,
+    "N": 48
+  },
+  "dna_comparison_rows": 463,
+  "nonzero_infrequent_class_counts": 864,
+  "notebook_sha256": "394fc768e68f842d5a3b155f68aa1422d001d6fe6f68bbfb628135195fe475b6"
+}

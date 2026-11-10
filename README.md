@@ -6,11 +6,31 @@ frequent itemset cùng support tuyệt đối, giữ nguyên **schema A/B v1.0.0
 Bằng chứng đo, test và giới hạn tại [verification](docs/verification.md),
 [experiments](docs/experiments.md) và [handoff](docs/HANDOFF_MEMBER_A.md).
 
-Phần Member B — **Trần Thiên Phúc**: đã triển khai Groceries/Splice preprocessing,
-mapping/metadata/audit, CSV export và so sánh patterns được cung cấp. Đã kiểm chứng
-206 checks Julia B + 4 tests Python trên dữ liệu thật; xem [bàn giao B](docs/HANDOFF_MEMBER_B.md)
-và [evidence](docs/member-b-validation/README.md). Kết quả khai thác ứng dụng, diễn giải
-Chương 3 và Colab cold-run còn cần hoàn thiện sau tích hợp.
+Phần Member B — **Trần Thiên Phúc**: đã hoàn thiện pipeline M2 Groceries/DNA,
+kiểm chứng hai backend và Java SPMF. Groceries: **1.001 patterns, 22 luật**, top-10
+và diễn giải 3 luật; DNA: **463 patterns so sánh ba lớp**. Xem
+[bàn giao M2 B](docs/M2_MEMBER_B.md) và [kết quả CSV](results/applications/).
+
+[**Mở notebook M2 trên Google Colab**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb)
+→ Runtime → Run all. Mặc định chạy preprocessing, miner, hai ứng dụng và live SPMF;
+khởi tạo tự tải Julia có kiểm checksum/cài Java 21. Notebook local và Linux CI
+được kiểm riêng; chưa ghi nhận một phiên remote Colab thực trong evidence hiện tại.
+
+Chạy toàn bộ M2 ngay trên máy (tự tìm Julia portable/Java 21 đã có):
+
+```powershell
+python -B scripts/run_notebook.py
+```
+
+```bash
+python scripts/prepare_application_data.py --dataset all
+julia --project=. scripts/run_applications.jl --output results/applications-rerun
+python -B scripts/verify_application_results.py --output results/applications-rerun --java /path/to/java21
+```
+
+Output phải mới/rỗng để giữ kết quả đã publish. Full Julia hiện **787 pass**,
+SPMF khớp 100% trên Groceries/EI/IE/N. Log cuối: [M2 validation](docs/member-b-validation/M2-tests.log).
+
 [Report nguồn](docs/latex/Report.tex) giữ đủ cấu trúc ba chương.
 [PDF review phần A](docs/Member-A-review.pdf) là tài liệu kiểm tra Chương 1–2,
 chưa thay thế `docs/Report.pdf` cuối của nhóm.

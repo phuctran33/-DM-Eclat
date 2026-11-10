@@ -1,74 +1,128 @@
 \section{Chương 3: Ứng dụng thực tế}
 \label{sec:applications}
 
-\subsection{Groceries: chuyển đổi giao dịch và khai thác}
+\subsection{Groceries: dữ liệu và phương pháp}
 Groceries gồm 9.835 giỏ hàng và 169 nhóm sản phẩm. Nhóm dùng CSV mirror
-được pin commit của kho dữ liệu \emph{Machine Learning with R}~\cite{groceries_source_b};
+pin commit của kho \emph{Machine Learning with R}~\cite{groceries_source_b};
 nguồn gốc dữ liệu được mô tả bởi arules~\cite{groceries_documentation_b}.
-Adapter giữ nguyên mỗi dòng nguồn thành một basket ID riêng, sau đó chuyển thành
-43.367 cặp \texttt{basket\_id,item\_name}. Preprocessor Julia chuẩn hóa NFC,
-chữ thường và whitespace, tạo vocabulary theo thứ tự lexicographic, gộp item lặp
-trong cùng basket nhưng giữ các basket khác ID. Kiểm tra trên toàn bộ dữ liệu cho
-9.835 transactions, mapping 169 items và không có duplicate item rows bị gộp.
-Mapping, metadata và audit được xuất riêng, đối chiếu độc lập từng dòng bằng Python.
+Adapter giữ mỗi dòng nguồn thành basket ID riêng rồi tạo 43.367 cặp
+\texttt{basket\_id,item\_name}. Julia chuẩn hóa NFC, chữ thường, whitespace,
+tạo mapping lexicographic và loại item lặp trong cùng giỏ; hai giỏ khác ID
+có nội dung giống nhau vẫn là hai giao dịch. Dữ liệu này không có dòng trùng
+item cần gộp. Mapping, metadata và audit được xuất riêng và kiểm chéo độc lập.
 
-\todo{Nêu minsup/minconf sau pilot và lý do; chạy basic/BitVector của nhóm,
-không dùng output thư viện FIM cho kết quả ứng dụng.}
-
-Với $A,B$ là hai itemset khác rỗng, rời nhau, xét luật $A\Rightarrow B$:
+Ngưỡng pilot đã chốt được giữ nguyên: minsup $0{,}005$, minconf $0{,}60$;
+absolute threshold $\lceil0{,}005\times9835\rceil=50$. Pilot sinh đủ luật
+để trình bày top-10, không điều chỉnh ngưỡng để tối đa lift sau khi xem kết quả.
+Cả hai backend mine đầy đủ, trả cùng 1.001 tập phổ biến/support. Với $A,B$
+khác rỗng, rời nhau, $n$ là số giỏ và $\sigma$ là absolute support:
 \begin{align}
 \operatorname{supp}(A\Rightarrow B)&=\sigma(A\cup B)/n,\\
 \operatorname{conf}(A\Rightarrow B)&=\sigma(A\cup B)/\sigma(A),\\
 \operatorname{lift}(A\Rightarrow B)&=\operatorname{conf}(A\Rightarrow B)/(\sigma(B)/n).
 \end{align}
-$n$ là số basket; $\sigma$ được định nghĩa tại Eq.~\ref{eq:support}.
-\todo{A/B giải thích lọc minsup/minconf, sinh luật, tie-break và chọn top-10 theo lift.}
+Sinh mọi split đủ confidence bằng count ratio chính xác, không giới hạn một item
+ở hậu kiện. Có 22 luật; sort giảm lift, confidence, support, rồi tăng union length
+và IDs. Top-10 là đúng prefix của bảng đầy đủ, không chọn tay luật minh họa.
+
+\begin{table*}[t]
+\centering\small
+\caption{Top-10 Groceries theo lift; support/confidence hiển thị phần trăm,
+rank và metric gốc không làm tròn trước khi lọc/sort.}
+\label{tab:groceries-top10-m2}
+\input{generated/applications-top10}
+\end{table*}
 
 \subsection{Groceries: kết quả và ý nghĩa kinh doanh}
-\todo{B điền bảng top-10, decoded product names, support, confidence, lift và counts.
-Giải thích ít nhất 3 luật với gợi ý thực tế; phân tích support thấp và tránh suy
-nhân quả từ co-occurrence. Gắn artifact CSV và lệnh tái lập.}
+Bảng~\ref{tab:groceries-top10-m2} cho thấy luật hạng 1:
+citrus fruit, root vegetables, whole milk $\Rightarrow$ other vegetables.
+Có 57/90 giỏ thỏa hậu kiện, confidence $63{,}33\%$, cao hơn tỷ lệ nền
+$1903/9835=19{,}35\%$, lift $3{,}273$. Có thể thử gợi ý/bố trí nhóm rau khi
+giỏ đã có trái cây, rau củ và sữa; toàn luật chỉ xuất hiện ở 57 giỏ nên chưa
+đủ để áp dụng đại trà.
 
-\subsection{Splice DNA: dữ liệu và mã hóa 12 vị trí}
-Dữ liệu UCI Splice~\cite{splice} có sequence DNA và ba nhãn EI, IE, N.
-Nhóm lấy raw records từ bản lưu trữ UCI tại Đại học Szeged~\cite{splice_mirror_b},
-pin SHA-256 và giữ nguyên source IDs/thứ tự dòng. EI là ranh giới exon--intron,
-IE là intron--exon, N là không thuộc hai loại đó. Dữ liệu raw có 3.190 mẫu.
-Theo kế hoạch, mỗi sequence được chuyển thành transaction từ 12 vị trí.
-Schema v1.0.0 cố định cửa sổ $-6,\ldots,-1,+1,\ldots,+6$, chỉ số Julia 25:36;
-item là cặp (vị trí, base), 48 IDs theo thứ tự A/C/G/T, nhãn lớp giữ riêng.
-Ký tự ambiguity ngoài A/C/G/T chỉ làm mẫu bị loại khi nằm trong cửa sổ đã chọn;
-không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại, còn 3.185 mẫu hợp lệ.
-Nhãn lớp N được giữ trong metadata, khác với ký tự base N biểu thị ambiguity.
-Bảng~\ref{tab:splice-preparation-b} trình bày counts đã được kiểm tra trên toàn bộ raw.
+Luật hạng 5: root vegetables, tropical fruit, yogurt $\Rightarrow$ whole milk,
+confidence $56/80=70\%$, lift $2{,}740$, so với tỷ lệ nền sữa $25{,}55\%$.
+Gợi ý sữa theo nhóm giỏ này là giả thuyết bán chéo cần A/B test.
+Luật hạng 9: butter, yogurt $\Rightarrow$ whole milk có $92/144=63{,}89\%$,
+lift $2{,}500$, support $0{,}9354\%$. Support cao hơn luật hạng 1 nhưng lift
+thấp hơn nên đứng sau theo tiêu chí đã chọn; tiền kiện ngắn có thể thuận tiện
+hơn khi thiết kế thử nghiệm thực tế.
+
+Lift là tương quan so với độc lập trong dữ liệu quan sát, không phải mức tăng
+doanh thu hay tác động nhân quả của khuyến mãi. Các luật có item chồng lấn,
+không phải bằng chứng độc lập. Support thấp và lựa chọn top trên cùng dữ liệu
+có thể làm thứ hạng không ổn định; cần kiểm trên giai đoạn/dữ liệu khác.
+
+\subsection{Splice DNA: mã hóa và audit}
+UCI Splice~\cite{splice} có 3.190 sequences với nhãn EI (exon--intron),
+IE (intron--exon), N (neither). Raw records từ kho học thuật Đại học
+Szeged~\cite{splice_mirror_b}, pin SHA-256, giữ source IDs/thứ tự dòng.
+Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$; mỗi item là
+(vị trí, base), 48 IDs cố định theo A/C/G/T. Nhãn giữ riêng, không đưa vào miner.
+Mẫu bị loại nếu có ambiguity trong cửa sổ; ambiguity ngoài cửa sổ không làm
+mẫu bị loại. Không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại;
+Bảng~\ref{tab:splice-preparation-b} cho audit và threshold theo từng lớp.
 
 \begin{table}[htbp]
 \centering
-\caption{Audit tiền xử lý Splice theo cửa sổ cố định 25:36.}
+\caption{Audit Splice; count threshold bằng ceil của 20\% số mẫu giữ mỗi lớp.}
 \label{tab:splice-preparation-b}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Lớp & Raw & Giữ & Loại \\
+Lớp & Raw & Giữ & Loại & Ngưỡng \\
 \midrule
-EI & 767 & 765 & 2 \\
-IE & 768 & 766 & 2 \\
-N & 1.655 & 1.654 & 1 \\
-\midrule
-Tổng & 3.190 & 3.185 & 5 \\
+EI & 767 & 765 & 2 & 153 \\
+IE & 768 & 766 & 2 & 154 \\
+N & 1.655 & 1.654 & 1 & 331 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Splice DNA: pattern 2--4 item và so sánh EI/IE/N}
-\todo{Chạy cài đặt nhóm theo lớp; minsup relative dùng denominator của lớp.
-Mine đầy đủ, sau đó lọc độ dài 2--4 để trình bày; thống nhất candidate across classes.}
-\todo{B điền bảng decoded patterns, count và relative support từng lớp,
-chênh lệch support, criterion chọn. Đếm trực tiếp candidate nếu không có trong
-frequent output lớp khác; không tự gán support 0.}
-\todo{Diễn giải co-occurrence quanh splice, imbalance, window/threshold selection
-và ambiguity; không kết luận cơ chế sinh học hoặc accuracy classifier chưa đo.}
+\subsection{Splice DNA: kết quả so sánh ba lớp}
+List/BitVector mine đầy đủ từng lớp, lần lượt trả 381/209/48 patterns.
+EI có patterns dài tới 6, chứng minh không giới hạn output ở 4 item.
+Sau mining, hợp candidates frequent ở ít nhất một lớp rồi lọc 2--4 item:
+463 rows. Mỗi candidate được đếm trực tiếp lại trên cả EI/IE/N, kể cả khi
+không frequent ở một lớp. Có 864 cặp candidate/lớp dưới ngưỡng nhưng count
+khác 0; gán absence thành 0 sẽ làm sai chênh lệch support.
+Sort giảm span $\max(s_{EI},s_{IE},s_N)-\min(s_{EI},s_{IE},s_N)$, rồi giảm
+max support, tăng length và IDs; $s_c$ là count chia số mẫu giữ của lớp $c$.
+Bảng~\ref{tab:dna-m2} trích bảng đã sort và có đại diện 2, 3, 4 item.
 
-\subsection{Khả năng tái lập, hạn chế và kết luận}
-\todo{B mô tả cold-run Colab: raw data, code chuẩn bị, mapping/config, miner, bảng,
-figures. A/B tổng hợp kết quả thật hai ứng dụng, giới hạn và bước tiếp theo.
-Kết luận ngắn bao quát cả ba chương, không thay kết luận bằng checklist công việc.}
+\begin{table}[htbp]
+\centering\small
+\caption{Support (\%) của patterns mined thật; rank theo bảng đầy đủ 463 rows.}
+\label{tab:dna-m2}
+\input{generated/applications-dna}
+\end{table}
+
+$(+1,G),(+2,T)$ gặp ở EI $758/765=99{,}08\%$, IE $108/766=14{,}10\%$,
+N $98/1654=5{,}93\%$: co-occurrence bên phải ranh giới khác biệt lớn giữa
+các nhãn. $(-2,A),(-1,G)$ gặp ở IE $762/766=99{,}48\%$, EI
+$388/765=50{,}72\%$, N $127/1654=7{,}68\%$, cho mô tả tương ứng ở bên trái.
+Pattern 4 item hạng 13 có counts EI/IE/N $514/22/2$;
+điều kiện cụ thể hơn đi kèm support EI giảm còn $67{,}19\%$.
+Đây là association mô tả, không phải accuracy classifier, p-value hay chứng
+minh cơ chế sinh học. Lớp N đông hơn nên phải dùng denominator riêng.
+Cửa sổ, ngưỡng, loại ambiguity và chọn pattern trên cùng mẫu giới hạn khả năng
+khái quát; muốn dự báo cần đánh giá trên tập độc lập.
+
+\subsection{Kiểm chứng và khả năng tái lập}
+Mọi output được sinh bằng Eclat của nhóm. Python độc lập kiểm count của mọi
+pattern emitted, mọi split luật đủ ngưỡng, metric, labels, ranking/top-10 và
+candidate union DNA. Java SPMF 2.64b pin JAR đối chiếu toàn bộ map của
+Groceries/EI/IE/N: 1.001/381/209/48 patterns đều khớp 100\%.
+Absolute thresholds đồng nhất; argument cho SPMF nằm trong cùng count bin
+để tránh lệch ranh giới khi nhân số thực. Không giới hạn độ dài output.
+CLI xuất CSV, patterns và mapping/audit cùng \texttt{run.toml} ghi config,
+runtime, source/input/output hashes; output phải mới/rỗng. Hai lần chạy có
+cùng artifact hashes. Notebook thực hiện tải nguồn có kiểm hash, Julia helpers,
+miner, rules/comparison và SPMF; Linux CI chạy từ checkout sạch.
+Local/CI không được gọi là phiên Google Colab đã nghiệm thu; remote Colab và
+đóng gói PDF cuối là các bước bàn giao cần xác nhận riêng.
+
+Hai ứng dụng cho thấy cùng frequent-itemset engine có thể mô tả giỏ hàng và
+co-occurrence vị trí/base, nhưng ý nghĩa ứng dụng phụ thuộc chuẩn hóa, metadata,
+ngưỡng và denominator. Kết quả mined cần kiểm chứng đầy đủ trước diễn giải;
+correlation không tự xác lập tác động kinh doanh hay cơ chế sinh học.

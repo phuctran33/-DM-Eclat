@@ -1,3 +1,5 @@
+> M2 10/11/2026: pipeline mined thật đã triển khai. Xem [M2_MEMBER_B.md](M2_MEMBER_B.md) cho trạng thái hiện tại; phần dưới giữ nguyên lịch sử bàn giao trước M2.
+
 > Cập nhật 05/11/2026: A đã merge vào main qua PR #1 (`b821235`). Nhánh B
 > cập nhật main để xử lý conflict PR #3, giữ cả code A và B. Các câu chờ A bên
 > dưới mô tả lịch sử lần bàn giao 01/11; pipeline ứng dụng mined cuối vẫn cần

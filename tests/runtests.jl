@@ -18,6 +18,7 @@ if get(ENV, "ECLAT_TEST_MINER", "1") == "1"
     include("test_correctness.jl")
     include("test_rules.jl")
     include("test_cli.jl")
+    include("test_application_pipeline.jl")
 else
     @testset "Eclat correctness: pending implementation" begin
         @test_skip false

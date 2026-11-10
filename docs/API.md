@@ -30,7 +30,7 @@ A gọi `mine(prepared.transactions, min_count)`; B giữ mapping/metadata để
 Stats/audit xuất riêng, không đổi return type. Nhánh B đã triển khai và kiểm thử
 preprocessing Groceries/Splice, DNA comparison và CSV export. Miner list/bitset và
 association_rules của A đã vào main qua PR #1; nhánh B đã cập nhật từ main.
-Kiểm chứng pipeline ứng dụng mined cuối cùng vẫn là bước tiếp theo.
+Pipeline ứng dụng mined M2 đã triển khai và kiểm chứng; xem docs/M2_MEMBER_B.md.
 
 API bổ sung B: prepare_groceries/prepare_splice trả NamedTuple(dataset,source_ids,audit)
 để xuất artifacts; groceries_transactions/splice_transactions vẫn trả PreparedDataset.
@@ -42,3 +42,12 @@ M1 A/B đọc schema đã chốt và hoàn thiện pseudocode. M2 hai backend gi
 ordering/candidate policy để so sánh tối ưu có ý nghĩa.
 
 Hai backend dùng chung DFS, ordering và candidate policy; xem docs/paper-notes.md.
+
+## Orchestration M2
+
+`groceries_application(dataset; minsup="0.005", minconf="0.60", top_k=10)`
+trả patterns/rules/top10/min_count/minconf. `dna_application(dataset; minsup="0.20")`
+trả patterns_by_class/comparisons/min_counts. Cả hai mine đầy đủ bằng list và
+BitVector, kiểm toàn map trước khi xuất kết quả; schema shared types không đổi.
+CLI `scripts/run_applications.jl` đọc configs/applications.toml, output mới/rỗng,
+export atomic kèm run.toml. Kiểm chứng bằng scripts/verify_application_results.py.

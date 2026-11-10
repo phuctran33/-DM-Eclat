@@ -34,3 +34,27 @@ implementation A, preparation/export B, provenance từng bên và CI chung.
 
 Các log 01/11 vẫn là lịch sử kiểm chứng riêng B. Chưa chạy lại full benchmark,
 remote Colab hoặc tạo kết quả ứng dụng mined cuối trong lần xử lý conflict này.
+
+## M2 B — 10/11/2026
+
+M2-tests.log: full suite **787 pass**. M2-notebook-local.log: 7 actual code cells,
+preparation/miner/optimized/apps/SPMF bật; local exit 0. PowerShell có thể render
+Python unittest stderr dưới dạng NativeCommandError dù subprocess exit 0; đây
+là định dạng shell trong raw log, không phải test failure.
+M2-summary.json: tóm tắt trạng thái/runtime/hash notebook. Minor display-import
+và status-text changes sau log local được kiểm lại bằng CI notebook từ checkout sạch.
+Kết quả thật và 4 live SPMF maps: results/applications/validation.json.
+Chạy local và CI Linux không đồng nghĩa chạy trên remote Google Colab.
+
+CI đầu của commit M2 bị lỗi ở setup Julia 1.9 trên ubuntu-latest (image Ubuntu 26):
+libopenlibm.so yêu cầu executable stack, runtime chưa khởi động nên chưa chạy test.
+Đã pin hai Julia jobs vào ubuntu-24.04 và tắt fail-fast để hai phiên bản được
+kiểm độc lập. Không thay miner hoặc bỏ test Julia 1.9 để né lỗi.
+
+## Chạy trực tiếp trên máy, tự tìm runtime
+
+M2-machine-run.log/json ghi lần chạy `python -B scripts/run_notebook.py` không
+đặt ECLAT_JULIA/ECLAT_JAVA/JULIA_DEPOT_PATH thủ công. Tự tìm Julia 1.10.10 portable
+và Java 21.0.9 JBR của CLion; 787 Julia checks, 4 live SPMF maps và 7 code cells
+đều đạt. Cả 18 artifact hashes giống kết quả đã publish. Không cần cài package
+hoặc thay PATH/Java mặc định của máy.
