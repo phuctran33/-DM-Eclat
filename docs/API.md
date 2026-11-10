@@ -30,7 +30,7 @@ A gọi `mine(prepared.transactions, min_count)`; B giữ mapping/metadata để
 Stats/audit xuất riêng, không đổi return type. Nhánh B đã triển khai và kiểm thử
 preprocessing Groceries/Splice, DNA comparison và CSV export. Miner list/bitset và
 association_rules của A đã vào main qua PR #1; nhánh B đã cập nhật từ main.
-Kiểm chứng pipeline ứng dụng mined cuối cùng vẫn là bước tiếp theo.
+Pipeline ứng dụng mined M2 đã triển khai và kiểm chứng; xem docs/M2_MEMBER_B.md.
 
 API bổ sung B: prepare_groceries/prepare_splice trả NamedTuple(dataset,source_ids,audit)
 để xuất artifacts; groceries_transactions/splice_transactions vẫn trả PreparedDataset.
