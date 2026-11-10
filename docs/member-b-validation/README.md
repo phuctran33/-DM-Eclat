@@ -50,3 +50,11 @@ CI đầu của commit M2 bị lỗi ở setup Julia 1.9 trên ubuntu-latest (im
 libopenlibm.so yêu cầu executable stack, runtime chưa khởi động nên chưa chạy test.
 Đã pin hai Julia jobs vào ubuntu-24.04 và tắt fail-fast để hai phiên bản được
 kiểm độc lập. Không thay miner hoặc bỏ test Julia 1.9 để né lỗi.
+
+## Chạy trực tiếp trên máy, tự tìm runtime
+
+M2-machine-run.log/json ghi lần chạy `python -B scripts/run_notebook.py` không
+đặt ECLAT_JULIA/ECLAT_JAVA/JULIA_DEPOT_PATH thủ công. Tự tìm Julia 1.10.10 portable
+và Java 21.0.9 JBR của CLion; 787 Julia checks, 4 live SPMF maps và 7 code cells
+đều đạt. Cả 18 artifact hashes giống kết quả đã publish. Không cần cài package
+hoặc thay PATH/Java mặc định của máy.

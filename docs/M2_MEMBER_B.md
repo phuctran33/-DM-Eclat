@@ -94,6 +94,19 @@ khả năng khái quát; muốn dự báo phải có đánh giá trên tập đ�
 - Hai lần pipeline phải có cùng artifact hashes; runtime metadata có thể khác
   giữa Julia/OS. Notebook chạy actual cells, không giả lập flag thành công.
 
+## Chạy trên máy này bằng một lệnh
+
+```powershell
+python -B scripts/run_notebook.py
+```
+
+Notebook tự tìm Julia portable trong `.tools` và Java >=21 có sẵn (gồm JBR của
+CLion trên Windows). Không cần đổi Java mặc định hoặc PATH hệ thống. Python
+3.11+ chỉ dùng stdlib cho M2; pandas/IPython là tùy chọn hiển thị bảng. Trên máy
+này đã có đủ runtime/JAR, không cần cài thêm package. Lệnh chạy đủ 7 code cells,
+full tests, preprocessing, hai pipeline và bốn Java SPMF đối chiếu; output mỗi
+lần ở thư mục mới `.tools/notebook-runs/`.
+
 ## Chạy lại
 
 ```text

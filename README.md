@@ -16,6 +16,12 @@ và diễn giải 3 luật; DNA: **463 patterns so sánh ba lớp**. Xem
 khởi tạo tự tải Julia có kiểm checksum/cài Java 21. Notebook local và Linux CI
 được kiểm riêng; chưa ghi nhận một phiên remote Colab thực trong evidence hiện tại.
 
+Chạy toàn bộ M2 ngay trên máy (tự tìm Julia portable/Java 21 đã có):
+
+```powershell
+python -B scripts/run_notebook.py
+```
+
 ```bash
 python scripts/prepare_application_data.py --dataset all
 julia --project=. scripts/run_applications.jl --output results/applications-rerun

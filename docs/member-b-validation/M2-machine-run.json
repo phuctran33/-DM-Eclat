@@ -1,0 +1,17 @@
+{
+  "command": "python -B scripts/run_notebook.py",
+  "exit_code": 0,
+  "explicit_ECLAT_JULIA": false,
+  "explicit_ECLAT_JAVA": false,
+  "explicit_JULIA_DEPOT_PATH": false,
+  "julia": "1.10.10",
+  "java": "21.0.9 CLion JBR",
+  "julia_checks": 787,
+  "live_spmf_cases": 4,
+  "notebook_cells": 7,
+  "artifact_hashes_match_published": true,
+  "artifact_count": 18,
+  "system_path_modified": false,
+  "additional_packages_installed": [],
+  "notebook_sha256": "33efeac6ee0880ec1325bd5bce7481a77f5a913769005bd64acc27ada7e8ee08"
+}
