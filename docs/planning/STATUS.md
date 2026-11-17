@@ -1,7 +1,7 @@
 # Trạng thái M3 B — 17/11/2026
 
-M2 merge main e204a7f (PR #4). M3 B ở nhánh local feat/member-b-m3-delivery,
-**chưa push**.
+M2 merge main e204a7f (PR #4). M3 B bàn giao qua nhánh PR feat/member-b-m3-delivery,
+**chờ review/merge vào main**.
 
 | Thành phần | Bằng chứng | Còn lại |
 |---|---|---|
@@ -11,9 +11,9 @@ M2 merge main e204a7f (PR #4). M3 B ở nhánh local feat/member-b-m3-delivery,
 | Correctness B M3 | Bốn benchmark medium: list = bitset = SPMF | Maps/logs đã lưu |
 | Report.pdf | 10 trang nội dung + 1 bibliography, IEEE Việt, 10 nguồn | A review PDF |
 | Notebook M3 local | 7/7 cells, final gate pass trên mining mới | Đã lưu log/summary |
-| Colab M3 từ bundle local | 7/7 cells, Julia1.12.6/790 checks, 8 SPMF maps/final gate pass | Kiểm public URL sau publish |
+| Colab M3 từ bundle local | 7/7 cells, Julia1.12.6/790 checks, 8 SPMF maps/final gate pass | Kiểm public main sau merge |
 | Colab M2 public | Bằng chứng thật 17/11, source07c0f28 | Giữ lịch sử |
-| Public M3 / nộp bài | Chưa push theo yêu cầu | Publish khi yêu cầu, kiểm link/Moodle |
+| Public main M3 / nộp bài | Nhánh M3 chờ review/merge | Kiểm CI, public main Colab sau merge và Moodle |
 
 Chi tiết docs/M3_MEMBER_B.md. Chỉ tick checklist sau reviewer xác nhận;
 local/CI không thay Colab. Mốc kế hoạch nội bộ không phải deadline Moodle.

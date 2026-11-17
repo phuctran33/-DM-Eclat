@@ -1,4 +1,4 @@
-> M3 17/11/2026: PDF và gate bàn giao đã hoàn thiện local, chưa push. Xem [M3_MEMBER_B.md](M3_MEMBER_B.md); phần dưới giữ lịch sử M1/M2.
+> M3 17/11/2026: PDF và gate bàn giao đã hoàn thiện, bàn giao qua nhánh PR feat/member-b-m3-delivery; chờ review/merge. Xem [M3_MEMBER_B.md](M3_MEMBER_B.md); phần dưới giữ lịch sử M1/M2.
 
 > Cập nhật review 17/11/2026: đã chạy Colab thật 7/7 cells, 790 checks, bốn SPMF maps khớp; evidence tại [colab/README.md](member-b-validation/colab/README.md). Chờ reviewer xác nhận gói 05/06; nội dung dưới là lịch sử.
 

@@ -1,7 +1,7 @@
 # Kiểm chứng M3 B — 17/11/2026
 
-M2 đã merge (main e204a7f). Nhánh M3 local feat/member-b-m3-delivery,
-chưa push. Run all local 7/7 cells: 790 Julia checks, 4 source tests,
+M2 đã merge (main e204a7f). Nhánh PR M3 feat/member-b-m3-delivery,
+chờ review/merge vào main. Run all local 7/7 cells: 790 Julia checks, 4 source tests,
 6 delivery tests; ứng dụng mine mới và bốn live benchmark maps đều khớp Java SPMF.
 Audit A: 46 hashes, 35 cases/875 measurements/70 comparisons pass.
 Report.pdf: IEEE Việt, 10 trang nội dung + 1 bibliography, 10 nguồn.

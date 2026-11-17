@@ -21,13 +21,13 @@ B — Trần Thiên Phúc: kiểm chứng, Groceries/Splice DNA, notebook, Chư�
 - [Colab M3 thực](docs/member-b-validation/m3/colab/README.md) cũng đã **pass 7/7 cells**:
   source bundle local trên VM sạch, Julia 1.12.6, 790 checks, tám live SPMF maps,
   gate PDF/data pass. Có notebook output/log/summary; không phải public main M3.
-- Nhánh **feat/member-b-m3-delivery** đang local, **chưa push** theo yêu cầu.
+- Bàn giao qua nhánh PR **feat/member-b-m3-delivery**, chờ review/merge vào main.
   Public main chứa M2 đã merge. [Colab M2 thực](docs/member-b-validation/colab/README.md):
   7/7 cells, Julia 1.12.6, 790 checks; giữ riêng với bằng chứng M3.
 
 [**Mở Colab từ public main**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb).
-Link này chạy M2 cho đến khi M3 được publish. Kiểm thử M3 chưa push bằng notebook
-và Git bundle local theo [hướng dẫn M3](docs/M3_MEMBER_B.md).
+Link này chạy M2 cho đến khi PR M3 được merge. Trước merge, kiểm thử M3 bằng notebook
+và Git bundle theo [hướng dẫn M3](docs/M3_MEMBER_B.md); đây là cách phiên Colab đã kiểm thực thi source.
 
 ## Chạy toàn bộ trên máy
 

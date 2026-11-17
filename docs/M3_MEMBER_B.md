@@ -1,7 +1,7 @@
 # Bàn giao Module 3 — Trần Thiên Phúc
 
-Nhánh local feat/member-b-m3-delivery từ main e204a7f sau merge PR #4.
-**Chưa push**. Core/schema và số liệu đo A giữ nguyên.
+Nhánh PR feat/member-b-m3-delivery từ main e204a7f sau merge PR #4.
+Chờ review/merge M3 vào main. Core/schema và số liệu đo A giữ nguyên.
 
 ## Đã hoàn thành
 
@@ -38,9 +38,9 @@ Mỗi lần tạo output mới .tools/notebook-runs. Gate từ chối dùng resu
   source ee2d46d upload từ Git bundle vào VM sạch; Julia 1.12.6, 790 checks,
   bốn ứng dụng + bốn benchmark SPMF pass, final PDF/data gate pass.
   Có notebook output/log/summary đã kiểm source từng cell và execution 1–7.
-  Đây là bản local chạy trên Colab; public main M3 vẫn chờ publish.
+  Đây là bản local chạy trên Colab; public main M3 vẫn chờ merge.
 
-## Colab bản chưa push
+## Cách kiểm source trước khi merge
 
 Commit local rồi xuất bundle (có history để audit frozen source A):
 
@@ -52,8 +52,8 @@ Mở Colab, upload notebooks/demo.ipynb, kết nối runtime mới; Files → Up
 .tools/eclat-m3-source.bundle vào /content. Runtime → Run all.
 Notebook ghi rõ dùng source local; tải datasets/SPMF và mine outputs mới.
 Không đưa portable binaries/raw data/secrets vào bundle.
-Sau publish M3 có thể chạy trực tiếp public main; cần kiểm link sau publish.
-Hiện chưa tuyên bố public main đã chứa/chạy M3; không push để vượt yêu cầu của bạn.
+Sau merge M3 có thể chạy trực tiếp public main; cần kiểm lại link sau merge.
+Phiên Colab đã lưu dùng bundle source ee2d46d; chưa tuyên bố public main đã chạy M3.
 
 ## Nhóm cần xác nhận
 
@@ -70,8 +70,8 @@ tài liệu/evidence, giữ nguyên code notebook/Julia/PDF đã kiểm.
 Raw outputs SPMF giữ native line endings bằng gitattributes để hash đúng khi checkout
 Windows/Linux; đã kiểm cả Git blobs so với artifact_sha256 trong review.json.
 
-## Phần ngoài phạm vi chưa push
+## Phần còn chờ review/merge
 
 Đã xong triển khai/kiểm thử của B. Chờ A review PDF/gói 09.
-CI M3 và kiểm public URL M3 sẽ thực hiện sau khi được yêu cầu publish;
-không tự push, không tự xác nhận reviewer và không nộp Moodle.
+CI M3 được kích hoạt khi push/PR; trạng thái đọc từ GitHub Actions, không suy từ local tests.
+Kiểm lại public main Colab sau merge. Không tự xác nhận reviewer hoặc nộp Moodle.

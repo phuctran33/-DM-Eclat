@@ -45,4 +45,4 @@ Nhóm đã chọn Julia theo đề và kế hoạch; không được bỏ ứng 
   không gọi các URL này là HF/Kaggle. Raw datasets không commit.
 - Report.pdf và test stdout cuối đã có; đối chiếu [M3 B](M3_MEMBER_B.md).
 - Nhóm cần xác nhận deadline Moodle chính thức, Group ID/MSSV nếu yêu cầu,
-  review PDF và public notebook M3 sau publish. Hiện M3 chưa push theo yêu cầu.
+  review PDF và chạy lại public notebook M3 sau merge; nhánh M3 đang bàn giao để review.
