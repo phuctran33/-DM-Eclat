@@ -1,0 +1,73 @@
+COLAB_RUNTIME: Linux-6.6.159+-x86_64-with-glibc2.39 3.13.18
+COLAB_JULIA: julia version 1.12.6
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  4.7s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  1.5s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  4.3s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  2.4s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  2.9s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  2.5s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.6s
+Test Summary:                                      | Pass  Total   Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  32.3s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.6s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  5.6s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.1s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.4s
+Test Summary:                                     | Pass  Total  Time
+Association rules and PreparedDataset integration |   94     94  4.6s
+Test Summary:                    | Pass  Total   Time
+CLI round trip and failure paths |   10     10  21.5s
+M2: complete mining applications and output ownership: Error During Test at /content/eclat-m2-1794907005189404220/tests/test_application_pipeline.jl:4
+  Got exception outside of a @test
+  IOError: readdir("/tmp/jl_JICO3l/src"): no such file or directory (ENOENT)
+  Stacktrace:
+    [1] iterate(c::Channel{Tuple{String, Vector{String}, Vector{String}}}, state::Nothing)
+      @ Base ./channels.jl:724
+    [2] iterate
+      @ ./channels.jl:707 [inlined]
+    [3] run_applications(config_path::String, output::String; root::String)
+      @ Main /content/eclat-m2-1794907005189404220/scripts/run_applications.jl:58
+    [4] run_applications
+      @ /content/eclat-m2-1794907005189404220/scripts/run_applications.jl:8 [inlined]
+    [5] (::var"#125#126")(dir::String)
+      @ Main /content/eclat-m2-1794907005189404220/tests/test_application_pipeline.jl:47
+    [6] mktempdir(fn::var"#125#126", parent::String; prefix::String)
+      @ Base.Filesystem ./file.jl:936
+    [7] mktempdir(fn::Function, parent::String)
+      @ Base.Filesystem ./file.jl:932
+    [8] top-level scope
+      @ /content/eclat-m2-1794907005189404220/tests/test_application_pipeline.jl:5
+    [9] macro expansion
+      @ /usr/local/share/julia/stdlib/v1.12/Test/src/Test.jl:1777 [inlined]
+   [10] macro expansion
+      @ /content/eclat-m2-1794907005189404220/tests/test_application_pipeline.jl:5 [inlined]
+   [11] include(mapexpr::Function, mod::Module, _path::String)
+      @ Base ./Base.jl:307
+   [12] top-level scope
+      @ /content/eclat-m2-1794907005189404220/tests/runtests.jl:21
+   [13] include(mod::Module, _path::String)
+      @ Base ./Base.jl:306
+   [14] exec_options(opts::Base.JLOptions)
+      @ Base ./client.jl:317
+   [15] _start()
+      @ Base ./client.jl:550
+Test Summary:                                         | Pass  Error  Total   Time
+M2: complete mining applications and output ownership |   15      1     16  10.2s
+RNG of the outermost testset: Xoshiro(0x681fe4d4bb289655, 0x104b3151c4d85096, 0x8a9037e24a2df99b, 0x8694812479078516, 0xfbe21834cbcc0bb8)
+
+ERROR: LoadError: Some tests did not pass: 15 passed, 0 failed, 1 errored, 0 broken.
+in expression starting at /content/eclat-m2-1794907005189404220/tests/test_application_pipeline.jl:4
+in expression starting at /content/eclat-m2-1794907005189404220/tests/runtests.jl:17
+
+DIAGNOSTIC_TEST_EXIT: 1

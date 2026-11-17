@@ -84,7 +84,7 @@ khả năng khái quát; muốn dự báo phải có đánh giá trên tập đ�
 
 ## Kiểm chứng
 
-- Full Julia suite: **787 pass**, gồm 25 checks mới cho mining application/end-to-end
+- Full Julia suite: **790 pass**, gồm 28 checks ứng dụng cho mining application/end-to-end
   artifacts, lớp N dưới ngưỡng nhưng count khác 0, guard output và config sai.
 - Python audit kiểm mọi count emitted, mọi split luật đủ ngưỡng, labels/ranking,
   top-10 prefix và toàn bộ union candidates DNA bằng phép đếm độc lập. Không dùng FIM library.

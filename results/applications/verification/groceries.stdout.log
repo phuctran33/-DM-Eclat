@@ -2,6 +2,6 @@
 =============  ECLAT v0.96r18 - STATS =============
  Transactions count from database : 9835
  Frequent itemsets count : 1001
- Total time ~ 60 ms
- Maximum memory usage : 13.694038391113281 mb
+ Total time ~ 67 ms
+ Maximum memory usage : 13.736610412597656 mb
 ===================================================

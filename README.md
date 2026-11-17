@@ -6,10 +6,15 @@ frequent itemset cùng support tuyệt đối, giữ nguyên **schema A/B v1.0.0
 Bằng chứng đo, test và giới hạn tại [verification](docs/verification.md),
 [experiments](docs/experiments.md) và [handoff](docs/HANDOFF_MEMBER_A.md).
 
-Phần Member B — **Trần Thiên Phúc**: đã hoàn thiện pipeline M2 Groceries/DNA,
+Phần Member B — **Trần Thiên Phúc**: đã triển khai và kiểm chứng pipeline M2 Groceries/DNA,
 kiểm chứng hai backend và Java SPMF. Groceries: **1.001 patterns, 22 luật**, top-10
 và diễn giải 3 luật; DNA: **463 patterns so sánh ba lớp**. Xem
 [bàn giao M2 B](docs/M2_MEMBER_B.md) và [kết quả CSV](results/applications/).
+
+**Trạng thái nghiệm thu:** code/kết quả hai ứng dụng, Chương 3 nguồn và notebook
+M2 đã có; local/CI đã chạy thành công. Chưa chốt nghiệm thu M2 vì còn cần bằng
+chứng `Runtime → Run all` trên Google Colab thực và reviewer xác nhận gói 05/06.
+Build PDF cuối, cân trang và rà rubric thuộc M3; không phải phần core cần làm lại.
 
 [**Mở notebook M2 trên Google Colab**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb)
 → Runtime → Run all. Mặc định chạy preprocessing, miner, hai ứng dụng và live SPMF;
@@ -28,8 +33,8 @@ julia --project=. scripts/run_applications.jl --output results/applications-reru
 python -B scripts/verify_application_results.py --output results/applications-rerun --java /path/to/java21
 ```
 
-Output phải mới/rỗng để giữ kết quả đã publish. Full Julia hiện **787 pass**,
-SPMF khớp 100% trên Groceries/EI/IE/N. Log cuối: [M2 validation](docs/member-b-validation/M2-tests.log).
+Output phải mới/rỗng để giữ kết quả đã publish. Full Julia hiện **790 pass**,
+SPMF khớp 100% trên Groceries/EI/IE/N. Log cuối: [M2 validation](docs/member-b-validation/PR4-tests.log).
 
 [Report nguồn](docs/latex/Report.tex) giữ đủ cấu trúc ba chương.
 [PDF review phần A](docs/Member-A-review.pdf) là tài liệu kiểm tra Chương 1–2,
@@ -67,7 +72,8 @@ rules = association_rules(patterns, 3; minconf=1//2)
 
 Rules gồm mọi antecedent/consequent hợp lệ, consequent có thể nhiều item; support
 của subset thiếu là lỗi. Helper giữ ranking và counts theo schema, không phụ thuộc
-mappings Groceries/DNA chưa hoàn tất của B.
+mapping ứng dụng. Mapping Groceries/DNA đã hoàn tất; pipeline M2 nối các helpers
+để khai thác, decode và xuất bảng kết quả thực tế.
 
 ## Correctness và SPMF
 
@@ -91,11 +97,14 @@ rules/PreparedDataset và CLI. Để ghi rõ cấu hình final:
 ECLAT_TEST_MINER=1 ECLAT_TEST_SPMF=1 ECLAT_TEST_BACKENDS=list,bitset julia --project=. tests/runtests.jl
 ```
 
-**622 Julia checks pass, 0 fail/error/skip**; controller 5/5 tests pass. Stdout thật
-của lần kiểm thử cuối và tổng pass/fail/skip nằm trong
-[final-tests.log](results/logs/final-tests.log). References/hash provenance ở
-[manifest](tests/reference/spmf/manifest.csv); output tự tính của toy fixtures không
-được gọi là reference SPMF.
+**Full suite M2: 790 Julia checks pass**, không fail/error/skip; có thêm 4 Python
+source tests và bốn đối chiếu ứng dụng với Java SPMF khớp toàn map. Log của full
+suite hiện tại: [M2-tests.log](docs/member-b-validation/PR4-tests.log). Notebook đã
+chạy local bằng một lệnh và qua kernel Jupyter thật; bằng chứng local không thay
+phiên Colab thật. [final-tests.log](results/logs/final-tests.log) là log lịch sử
+**622 checks của A ngày 31/10**, được giữ nguyên để truy vết, không phải tổng test
+M2 mới nhất. References/hash provenance ở [manifest](tests/reference/spmf/manifest.csv);
+output tự tính của toy fixtures không được gọi là reference SPMF.
 
 ## Dữ liệu và thực nghiệm
 
@@ -150,17 +159,23 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
 ```
 
 Cần IEEEtran, vntex, babel-vietnamese, algorithm/algpseudocode trong TeX Live.
-`MemberAReview.tex` chỉ đưa Chương 1–2; `Report.tex` vẫn gồm Chương 3 của B với trạng
-thái pending được ghi rõ. Các hình/bảng được tạo từ CSV, có caption/label/reference;
-PDF cuối 10–15 trang và `docs/Report.pdf` cần B hoàn thiện ứng dụng/Chương 3 rồi cả
-nhóm rà soát, không tự đánh dấu xong.
+`MemberAReview.tex` chỉ đưa Chương 1–2. `Report.tex` gồm cả ba chương; Chương 3
+đã có kết quả mined thật, top-10/diễn giải ba luật Groceries, bảng DNA 2–4 item và
+phân tích giới hạn. Các hình/bảng lấy từ CSV, có caption/label/reference. M3 còn
+build/rà PDF cuối 10–15 trang và đặt tại `docs/Report.pdf`, không ghi lại ứng dụng
+hoặc core chỉ vì chưa đóng gói PDF.
 
-[Colab template](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb)
-chưa cold-run. Notebook của B còn cờ/tế bào template; để dùng miner ngay, import
-API hoặc CLI ở trên. [Status](docs/planning/STATUS.md) phân biệt phần đã chạy với
-việc còn lại. Các mốc module trong kế hoạch là lịch nội bộ, không suy ra hạn Moodle.
+[Notebook M2](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb)
+đã triển khai đầy đủ: mặc định bật preparation, miner, hai backend, applications và
+live SPMF. Chỉ `RUN_BENCHMARKS` và `FINAL_DELIVERY_VALIDATION` dành cho M3 đang tắt.
+Notebook local/CI chạy thành công; **remote Colab vẫn chờ bằng chứng phiên chạy thật**.
+[Status](docs/planning/STATUS.md) phân biệt implementation/kết quả, nghiệm thu Colab
+và bàn giao M3. Các mốc module trong kế hoạch là lịch nội bộ, không suy ra hạn Moodle.
 
-## Stdout kiểm thử cuối (31/10/2026)
+## Log lịch sử của A (31/10/2026)
+
+Đoạn dưới là 622 checks của lần A bàn giao, giữ để truy vết. Full suite M2 hiện
+có 790 checks; xem log M2 ở trên. Không dùng đoạn lịch sử làm trạng thái mới nhất.
 
 ```text
 Test Summary:                     | Pass  Total  Time
@@ -195,5 +210,8 @@ julia --project=. scripts/prepare_applications.jl splice data/applications/splic
 
 Output directory phải mới/rỗng. Groceries có 9.835 giỏ/169 items; Splice giữ
 3.185/3.190 mẫu, window 25:36 và mapping cố định 48 IDs. Nguồn/hash/audit và
-cách kiểm chéo dữ liệu nằm trong bàn giao B. Rule exporter nhận luật có sẵn;
-DNA comparison nhận patterns có sẵn, chưa thay cho pipeline khai thác ứng dụng cuối.
+cách kiểm chéo dữ liệu nằm trong bàn giao B. Các lệnh trên chỉ chạy bước preparation.
+Pipeline M2 đầy đủ đã có ở `scripts/run_applications.jl`: gọi miner nhóm bằng cả
+hai backend, sinh luật Groceries và hợp/đếm candidates DNA rồi export. Rule exporter
+và DNA comparison là các helpers được pipeline này sử dụng; không còn là phần
+ứng dụng chờ triển khai.

@@ -54,11 +54,11 @@ function run_applications(config_path::AbstractString, output::AbstractString; r
             hashes[replace(relpath(path,staging),'\\'=>'/')] = file_hash(path)
         end
         code_hashes=Dict()
-        for directory in [joinpath(root,"src"),joinpath(root,"scripts")]
+        for directory in [joinpath(APPLICATION_ROOT,"src"),joinpath(APPLICATION_ROOT,"scripts")]
             for (folder,_,files) in walkdir(directory), name in files
                 endswith(name,".jl") || continue
                 path=joinpath(folder,name)
-                code_hashes[replace(relpath(path,root),'\\'=>'/')] = file_hash(path)
+                code_hashes[replace(relpath(path,APPLICATION_ROOT),'\\'=>'/')] = file_hash(path)
             end
         end
         metadata=Dict("schema_version"=>SCHEMA_VERSION,"seed"=>config["seed"],"julia_version"=>string(VERSION),

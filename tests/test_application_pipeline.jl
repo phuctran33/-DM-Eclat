@@ -43,8 +43,14 @@ include(joinpath(@__DIR__,"..","scripts","run_applications.jl"))
         config["dna"]["minsup"]="0.75"
         cfg=joinpath(dir,"applications.toml")
         open(io->TOML.print(io,config;sorted=true),cfg,"w")
+        # The input root can contain arbitrary data; it is never the code root.
+        mkpath(joinpath(dir,"src"))
+        write(joinpath(dir,"src","input_only.jl"),"not application source")
         output=joinpath(dir,"result")
         metadata=run_applications(cfg,output;root=dir)
+        @test haskey(metadata["source_sha256"],"src/EclatProject.jl")
+        @test metadata["source_sha256"]["scripts/run_applications.jl"] == bytes2hex(open(sha256,joinpath(@__DIR__,"..","scripts","run_applications.jl")))
+        @test !haskey(metadata["source_sha256"],"src/input_only.jl")
         @test metadata["statistics"]["groceries"]["n_rules"]==9
         @test length(EclatProject.csv_records(joinpath(output,"groceries_top10.csv")))==4
         @test length(EclatProject.csv_records(joinpath(output,"dna_patterns.csv")))==3

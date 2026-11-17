@@ -43,8 +43,8 @@
         "D:\\-DM-Eclat\\tools\\spmf.jar",
         "run",
         "Eclat",
-        "D:\\-DM-Eclat\\results\\applications\\prepared\\groceries\\transactions.txt",
-        "D:\\-DM-Eclat\\results\\applications\\verification\\groceries.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\prepared\\groceries\\transactions.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\verification\\groceries.txt",
         "0.005033045246568378240976105745"
       ],
       "output_sha256": "8901ad51b892144dce5d820c63fd89574da895609c79e1ed0dd49ebf725a6756",
@@ -64,8 +64,8 @@
         "D:\\-DM-Eclat\\tools\\spmf.jar",
         "run",
         "Eclat",
-        "D:\\-DM-Eclat\\results\\applications\\prepared\\splice\\transactions_EI.txt",
-        "D:\\-DM-Eclat\\results\\applications\\verification\\splice_EI.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\prepared\\splice\\transactions_EI.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\verification\\splice_EI.txt",
         "0.1993464052287581699346405229"
       ],
       "output_sha256": "534660e26890aedba70d5b69cc7434414b701b77d3710bfe556c36e75706f554",
@@ -85,8 +85,8 @@
         "D:\\-DM-Eclat\\tools\\spmf.jar",
         "run",
         "Eclat",
-        "D:\\-DM-Eclat\\results\\applications\\prepared\\splice\\transactions_IE.txt",
-        "D:\\-DM-Eclat\\results\\applications\\verification\\splice_IE.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\prepared\\splice\\transactions_IE.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\verification\\splice_IE.txt",
         "0.2003916449086161879895561358"
       ],
       "output_sha256": "d2f43cd8829b610cde8f2d24f5f3b167d00e47b9efccde1b35713da1cab0e38b",
@@ -106,8 +106,8 @@
         "D:\\-DM-Eclat\\tools\\spmf.jar",
         "run",
         "Eclat",
-        "D:\\-DM-Eclat\\results\\applications\\prepared\\splice\\transactions_N.txt",
-        "D:\\-DM-Eclat\\results\\applications\\verification\\splice_N.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\prepared\\splice\\transactions_N.txt",
+        "D:\\-DM-Eclat\\.tools\\pr4-applications\\verification\\splice_N.txt",
         "0.1998186215235792019347037485"
       ],
       "output_sha256": "aaf53fa2aa2dda17601b1bd2b1c07b5c86e37cc0b2b9e9839b256e7aa4f20cfb",
