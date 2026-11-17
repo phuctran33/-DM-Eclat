@@ -34,3 +34,39 @@ implementation A, preparation/export B, provenance từng bên và CI chung.
 
 Các log 01/11 vẫn là lịch sử kiểm chứng riêng B. Chưa chạy lại full benchmark,
 remote Colab hoặc tạo kết quả ứng dụng mined cuối trong lần xử lý conflict này.
+
+## M2 B — lịch sử local 10/11/2026
+
+M2-tests.log: full suite **787 pass**. M2-notebook-local.log: 7 actual code cells,
+preparation/miner/optimized/apps/SPMF bật; local exit 0. PowerShell có thể render
+Python unittest stderr dưới dạng NativeCommandError dù subprocess exit 0; đây
+là định dạng shell trong raw log, không phải test failure.
+M2-summary.json hiện đã cập nhật theo lần Colab thật 17/11; các log 10/11 bên dưới là lịch sử local. Minor display-import
+và status-text changes sau log local được kiểm lại bằng CI notebook từ checkout sạch.
+Kết quả thật và 4 live SPMF maps: results/applications/validation.json.
+Chạy local và CI Linux không đồng nghĩa chạy trên remote Google Colab.
+
+CI đầu của commit M2 bị lỗi ở setup Julia 1.9 trên ubuntu-latest (image Ubuntu 26):
+libopenlibm.so yêu cầu executable stack, runtime chưa khởi động nên chưa chạy test.
+Đã pin hai Julia jobs vào ubuntu-24.04 và tắt fail-fast để hai phiên bản được
+kiểm độc lập. Không thay miner hoặc bỏ test Julia 1.9 để né lỗi.
+
+## Chạy trực tiếp trên máy, tự tìm runtime
+
+M2-machine-run.log/json ghi lần chạy `python -B scripts/run_notebook.py` không
+đặt ECLAT_JULIA/ECLAT_JAVA/JULIA_DEPOT_PATH thủ công. Tự tìm Julia 1.10.10 portable
+và Java 21.0.9 JBR của CLion; 787 Julia checks, 4 live SPMF maps và 7 code cells
+đều đạt. Cả 18 artifact hashes giống kết quả đã publish. Không cần cài package
+hoặc thay PATH/Java mặc định của máy.
+
+## Review PR #4 và Colab thật — 17/11/2026
+
+- PR4-tests.log: **790 checks** sau ba regression checks về provenance input/code root.
+- PR4-colab-initial-failure.log: lỗi runner trên Julia 1.12 của lần Colab đầu, giữ để truy vết.
+- PR4-review-followup.md: đối chiếu hai yêu cầu Hưng và cách xử lý.
+- colab/: notebook thực đã chạy, counts 1–7, toàn bộ output/log và summary có hashes.
+- M2-summary.json hiện ghi remote_colab_executed=true vì đã có output Google Colab
+  được kiểm nguồn cell, không phải suy ra từ local hoặc CI.
+
+Implementation, Chương 3 và bằng chứng M2 đã sẵn cho reviewer xác nhận 05/06;
+final PDF/rubric/validation M3 vẫn riêng.

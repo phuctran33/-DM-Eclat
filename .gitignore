@@ -33,3 +33,8 @@ docs/latex/*.out
 docs/latex/*.fls
 docs/latex/*.fdb_latexmk
 docs/latex/*.pdf
+
+!results/applications/
+results/applications/verification/*.txt
+results/applications/prepared/*/transactions*.txt
+results/applications/prepared/*/observations.csv

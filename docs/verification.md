@@ -1,3 +1,12 @@
+# Kiểm chứng M2 B — 10/11/2026
+
+Full suite 787 pass; hai pipeline mined thật, 4 live SPMF maps khớp 100%.
+Notebook 7 cells local chạy thật với ứng dụng/SPMF bật; remote Colab chưa xác nhận.
+Evidence: member-b-validation/M2-*.log, results/applications/validation.json;
+phân tích và bảng đầy đủ: [M2_MEMBER_B.md](M2_MEMBER_B.md).
+
+---
+
 # Tích hợp sau khi A được duyệt — 05/11/2026
 
 PR #1 đã merge vào main tại b821235. Nhánh B cập nhật main để giải quyết

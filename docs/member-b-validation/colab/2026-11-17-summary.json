@@ -1,0 +1,50 @@
+{
+  "remote_colab_executed": true,
+  "status": "pass",
+  "runtime_provider": "Google Colab / Google Compute Engine",
+  "source_commit": "07c0f2864a4621d16e1630f91d0f6da61dad5de4",
+  "notebook_url": "https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/07c0f2864a4621d16e1630f91d0f6da61dad5de4/notebooks/demo.ipynb",
+  "started_at_utc": "2026-11-17T09:42:34.383584+00:00",
+  "captured_at_utc": "2026-11-17T09:54:48.335959+00:00",
+  "runtime_connection_before_run": "Kết nối với một môi trường thời gian chạy mới",
+  "clean_execution_counts": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "original_code_cells": 7,
+  "cell_sources_match_reviewed_commit": true,
+  "julia_version": "1.12.6",
+  "julia_checks_passed": 790,
+  "cell_error_count": 0,
+  "live_spmf_maps": {
+    "groceries": 1001,
+    "splice_EI": 381,
+    "splice_IE": 209,
+    "splice_N": 48
+  },
+  "all_live_spmf_identical": true,
+  "groceries_rules": 22,
+  "groceries_top_rules": 10,
+  "dna_comparison_rows": 463,
+  "evidence_notebook": "colab/2026-11-17-executed.ipynb",
+  "evidence_log": "colab/2026-11-17-run-all.log",
+  "raw_download_sha256": "15a9b629f2d45a18b4c70b4b601e5348283d2a2084cadc4ac897bdac93614ca0",
+  "evidence_notebook_sha256": "54b80a5952a43c006d5e499ea20763c4f5ea67c4d24fa7f9b53353e30fc62090",
+  "evidence_log_sha256": "af05b8e0bf6279b06b945e2882f0f124c2e2ea94fb5c103aec353385ec69e6f7",
+  "cell_source_sha256": {
+    "cell-001": "860a28f261c1ac99868fcd6270c171864cbf290b18f061f34610bcd718d28516",
+    "member-b-preparation": "c8bfeedb6255f89cd361ba6feee2f30aa3b445aed1bf23b5aa8c0f94a284d1c5",
+    "cell-003": "49a69c74ae2300d256677149e0925c765f69141906b1c240f51b96615e38f3e0",
+    "cell-005": "725dec1d452a1b9aa12cb902706f9c58729165cf9423bc58faf963b5634b360d",
+    "cell-007": "e6d8877aad90b320fad84223ad3d6136f7437047709434a803f72d85924dbd50",
+    "cell-009": "c37591da62b3718a3d76198bb22b34a91c1c24eaaf8d1e800c15073e4b098f64",
+    "cell-011": "2c278e89ecdd355a33beae4dc5db0a8ebbb153b4fd89838c35b89707c8db51ec"
+  },
+  "metadata_redaction": "Google account attribution fields only, if present; code, execution counts and outputs unchanged",
+  "final_m3_validation": false
+}
