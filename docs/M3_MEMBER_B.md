@@ -34,8 +34,11 @@ Mỗi lần tạo output mới .tools/notebook-runs. Gate từ chối dùng resu
 - docs/member-b-validation/m3/local-run-all.log, local-summary.json.
 - docs/member-b-validation/m3/benchmarks/: maps/stdout/stderr/review.json thật của B.
 - docs/member-b-validation/colab/: bằng chứng public M2 giữ nguyên.
-- Cold-run M3 Colab: đang kiểm bằng upload local; sẽ cập nhật khi hoàn tất.
-  Không gọi M2 là M3, hoặc source bundle local là public main M3.
+- [Cold-run M3 Colab](member-b-validation/m3/colab/README.md): **7/7 cells pass**,
+  source ee2d46d upload từ Git bundle vào VM sạch; Julia 1.12.6, 790 checks,
+  bốn ứng dụng + bốn benchmark SPMF pass, final PDF/data gate pass.
+  Có notebook output/log/summary đã kiểm source từng cell và execution 1–7.
+  Đây là bản local chạy trên Colab; public main M3 vẫn chờ publish.
 
 ## Colab bản chưa push
 
@@ -57,3 +60,18 @@ Hiện chưa tuyên bố public main đã chứa/chạy M3; không push để v�
 A review PDF và tên/MSSV nếu yêu cầu, xác nhận gói 09/checklist và rà rubric.
 Kiểm deadline Moodle/Group ID chính thức trước nộp URL repo public.
 Review, publish và nộp bài không tự đánh dấu hoàn tất.
+
+## Provenance local và Colab
+
+Local run được thực hiện trước commit M3: review.json ghi HEAD tại thời điểm chạy
+và source_sha256 của cây mã thực tế. Colab clone commit ee2d46d từ bundle;
+bằng chứng remote là source đã commit. Các cập nhật sau cold-run chỉ đồng bộ
+tài liệu/evidence, giữ nguyên code notebook/Julia/PDF đã kiểm.
+Raw outputs SPMF giữ native line endings bằng gitattributes để hash đúng khi checkout
+Windows/Linux; đã kiểm cả Git blobs so với artifact_sha256 trong review.json.
+
+## Phần ngoài phạm vi chưa push
+
+Đã xong triển khai/kiểm thử của B. Chờ A review PDF/gói 09.
+CI M3 và kiểm public URL M3 sẽ thực hiện sau khi được yêu cầu publish;
+không tự push, không tự xác nhận reviewer và không nộp Moodle.

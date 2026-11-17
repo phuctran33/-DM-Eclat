@@ -35,10 +35,14 @@ Chương 1: 25–30% (tối ưu Julia 10%, Python 5%); Chương 2: 20%; Chương
 chia đều hai ứng dụng. Theo bảng đề, Julia có tổng tối đa 100%, Python 95%.
 Nhóm đã chọn Julia theo đề và kế hoạch; không được bỏ ứng dụng 2 để dồn vào benchmark.
 
-## Điểm cần nhóm chốt
+## Trạng thái chốt và phần cần nhóm xác nhận
 
-- Deadline Moodle chính thức, Group ID, tên/MSSV và GitHub usernames A/B.
-- Bản dữ liệu cụ thể, public mirror HF/Kaggle và license; tính lại thống kê trên file thật.
-- Schema đã khóa tại docs/SCHEMA.md: DNA −6..−1,+1..+6, chỉ số 25:36; không cần chọn lại.
-- Grid minsup sau pilot, minconf Groceries và tiêu chí chọn pattern DNA.
-- Các URL công khai và output test cuối chỉ điền sau khi có bằng chứng thật.
+- Schema v1 đã khóa; Groceries minsup 0.005/minconf 0.60, Splice 0.20 theo lớp,
+  candidates 2–4 item sau mining đầy đủ. Không cần chọn lại.
+- Grid benchmark đã đo sáu ngưỡng/tập, năm repetitions; nguồn/revisions/hashes,
+  thống kê/license tại configs/datasets.toml và data/manifest.csv.
+- Nguồn tải công khai thực tế dùng FIMI, snapshot stedy và mirror UCI học thuật;
+  không gọi các URL này là HF/Kaggle. Raw datasets không commit.
+- Report.pdf và test stdout cuối đã có; đối chiếu [M3 B](M3_MEMBER_B.md).
+- Nhóm cần xác nhận deadline Moodle chính thức, Group ID/MSSV nếu yêu cầu,
+  review PDF và public notebook M3 sau publish. Hiện M3 chưa push theo yêu cầu.

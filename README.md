@@ -18,6 +18,9 @@ B — Trần Thiên Phúc: kiểm chứng, Groceries/Splice DNA, notebook, Chư�
   6 delivery-gate tests, bốn đối chiếu ứng dụng và bốn benchmark với live Java SPMF.
   [Log](docs/member-b-validation/m3/local-run-all.log), [summary](docs/member-b-validation/m3/local-summary.json),
   [bàn giao chi tiết](docs/M3_MEMBER_B.md).
+- [Colab M3 thực](docs/member-b-validation/m3/colab/README.md) cũng đã **pass 7/7 cells**:
+  source bundle local trên VM sạch, Julia 1.12.6, 790 checks, tám live SPMF maps,
+  gate PDF/data pass. Có notebook output/log/summary; không phải public main M3.
 - Nhánh **feat/member-b-m3-delivery** đang local, **chưa push** theo yêu cầu.
   Public main chứa M2 đã merge. [Colab M2 thực](docs/member-b-validation/colab/README.md):
   7/7 cells, Julia 1.12.6, 790 checks; giữ riêng với bằng chứng M3.

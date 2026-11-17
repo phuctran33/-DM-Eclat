@@ -1,3 +1,20 @@
+# Kiểm chứng M3 B — 17/11/2026
+
+M2 đã merge (main e204a7f). Nhánh M3 local feat/member-b-m3-delivery,
+chưa push. Run all local 7/7 cells: 790 Julia checks, 4 source tests,
+6 delivery tests; ứng dụng mine mới và bốn live benchmark maps đều khớp Java SPMF.
+Audit A: 46 hashes, 35 cases/875 measurements/70 comparisons pass.
+Report.pdf: IEEE Việt, 10 trang nội dung + 1 bibliography, 10 nguồn.
+[Log/summary M3](member-b-validation/m3/), [bàn giao M3](M3_MEMBER_B.md).
+
+Colab M2 thật ngày 17/11 đã đạt: [evidence](member-b-validation/colab/README.md).
+[Colab M3 thật](member-b-validation/m3/colab/README.md) đã pass 7/7 code cells,
+Julia 1.12.6/790 checks, bốn ứng dụng + bốn benchmark SPMF và final gate.
+Source bundle local ee2d46d trên VM sạch; không tuyên bố public main có M3.
+Các mục bên dưới là nhật ký lịch sử theo ngày, không thay trạng thái mới nhất.
+
+---
+
 # Kiểm chứng M2 B — 10/11/2026
 
 Full suite 787 pass; hai pipeline mined thật, 4 live SPMF maps khớp 100%.
