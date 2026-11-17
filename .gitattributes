@@ -11,3 +11,6 @@ results/applications/verification/*.log whitespace=-blank-at-eol,-blank-at-eof
 docs/member-b-validation/M2-*.log whitespace=-blank-at-eol,-blank-at-eof
 
 docs/member-b-validation/PR4-*.log whitespace=-blank-at-eol,-blank-at-eof
+
+# Captured Google Colab process output may include legitimate progress whitespace.
+docs/member-b-validation/colab/*.log whitespace=-blank-at-eol,-blank-at-eof

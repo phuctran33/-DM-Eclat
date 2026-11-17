@@ -1,3 +1,5 @@
+> Cập nhật review 17/11/2026: đã chạy Colab thật 7/7 cells, 790 checks, bốn SPMF maps khớp; evidence tại [colab/README.md](member-b-validation/colab/README.md). Chờ reviewer xác nhận gói 05/06; nội dung dưới là lịch sử.
+
 > M2 10/11/2026: pipeline mined thật đã triển khai. Xem [M2_MEMBER_B.md](M2_MEMBER_B.md) cho trạng thái hiện tại; phần dưới giữ nguyên lịch sử bàn giao trước M2.
 
 > Cập nhật 05/11/2026: A đã merge vào main qua PR #1 (`b821235`). Nhánh B

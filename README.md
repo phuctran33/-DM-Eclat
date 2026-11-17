@@ -12,14 +12,19 @@ và diễn giải 3 luật; DNA: **463 patterns so sánh ba lớp**. Xem
 [bàn giao M2 B](docs/M2_MEMBER_B.md) và [kết quả CSV](results/applications/).
 
 **Trạng thái nghiệm thu:** code/kết quả hai ứng dụng, Chương 3 nguồn và notebook
-M2 đã có; local/CI đã chạy thành công. Chưa chốt nghiệm thu M2 vì còn cần bằng
-chứng `Runtime → Run all` trên Google Colab thực và reviewer xác nhận gói 05/06.
+M2 đã có; local/CI và **Google Colab thực đã chạy thành công**. Colab Run all ngày
+17/11/2026 hoàn tất 7/7 code cells, 790 Julia checks và bốn live SPMF maps khớp 100%.
+[Bằng chứng Colab](docs/member-b-validation/colab/README.md) gồm notebook có output,
+log và summary có hashes. Gói 05/06 còn chờ reviewer xác nhận nghiệm thu.
 Build PDF cuối, cân trang và rà rubric thuộc M3; không phải phần core cần làm lại.
 
 [**Mở notebook M2 trên Google Colab**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb)
 → Runtime → Run all. Mặc định chạy preprocessing, miner, hai ứng dụng và live SPMF;
-khởi tạo tự tải Julia có kiểm checksum/cài Java 21. Notebook local và Linux CI
-được kiểm riêng; chưa ghi nhận một phiên remote Colab thực trong evidence hiện tại.
+khởi tạo dùng Julia >=1.9 có sẵn hoặc tải binary chính thức có kiểm checksum khi
+thiếu, rồi chuẩn bị Java 21. Phiên Colab đã kiểm dùng Julia 1.12.6 trên Google Compute
+Engine. [Notebook có output](docs/member-b-validation/colab/2026-11-17-executed.ipynb)
+và [log Run all](docs/member-b-validation/colab/2026-11-17-run-all.log) được lưu riêng
+với bằng chứng local/CI.
 
 Chạy toàn bộ M2 ngay trên máy (tự tìm Julia portable/Java 21 đã có):
 
@@ -101,7 +106,7 @@ ECLAT_TEST_MINER=1 ECLAT_TEST_SPMF=1 ECLAT_TEST_BACKENDS=list,bitset julia --pro
 source tests và bốn đối chiếu ứng dụng với Java SPMF khớp toàn map. Log của full
 suite hiện tại: [M2-tests.log](docs/member-b-validation/PR4-tests.log). Notebook đã
 chạy local bằng một lệnh và qua kernel Jupyter thật; bằng chứng local không thay
-phiên Colab thật. [final-tests.log](results/logs/final-tests.log) là log lịch sử
+phiên Colab thật; bằng chứng Colab 17/11 đã được lưu ở trên. [final-tests.log](results/logs/final-tests.log) là log lịch sử
 **622 checks của A ngày 31/10**, được giữ nguyên để truy vết, không phải tổng test
 M2 mới nhất. References/hash provenance ở [manifest](tests/reference/spmf/manifest.csv);
 output tự tính của toy fixtures không được gọi là reference SPMF.
@@ -168,7 +173,8 @@ hoặc core chỉ vì chưa đóng gói PDF.
 [Notebook M2](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb)
 đã triển khai đầy đủ: mặc định bật preparation, miner, hai backend, applications và
 live SPMF. Chỉ `RUN_BENCHMARKS` và `FINAL_DELIVERY_VALIDATION` dành cho M3 đang tắt.
-Notebook local/CI chạy thành công; **remote Colab vẫn chờ bằng chứng phiên chạy thật**.
+Notebook local/CI và Colab đã chạy thành công; [summary Colab 17/11](docs/member-b-validation/colab/2026-11-17-summary.json)
+ghi đúng source commit, counts 1–7, runtime, kết quả và hashes của bằng chứng.
 [Status](docs/planning/STATUS.md) phân biệt implementation/kết quả, nghiệm thu Colab
 và bàn giao M3. Các mốc module trong kế hoạch là lịch nội bộ, không suy ra hạn Moodle.
 

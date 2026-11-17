@@ -1,16 +1,39 @@
 {
-  "date": "2026-11-10",
+  "date": "2026-11-17",
   "timezone": "Asia/Saigon",
-  "julia": "1.10.10",
-  "julia_checks": 787,
+  "julia": "1.12.6",
+  "julia_checks": 790,
   "notebook_code_cells": 7,
-  "local_notebook_exit_code": 0,
-  "local_shell": "PowerShell; merged stderr may include NativeCommandError formatting for successful Python unittest stderr",
-  "remote_colab_executed": false,
+  "remote_colab_executed": true,
+  "remote_colab_status": "pass",
+  "remote_colab_provider": "Google Colab / Google Compute Engine",
+  "source_commit": "07c0f2864a4621d16e1630f91d0f6da61dad5de4",
+  "remote_colab_evidence": "colab/2026-11-17-summary.json",
+  "remote_colab_notebook": "colab/2026-11-17-executed.ipynb",
+  "remote_colab_log": "colab/2026-11-17-run-all.log",
+  "remote_colab_execution_counts": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "remote_colab_error_count": 0,
+  "local_julia": "1.10.10",
+  "local_julia_checks": 790,
+  "local_test_log": "PR4-tests.log",
+  "historical_local_notebook": {
+    "date": "2026-11-10",
+    "julia": "1.10.10",
+    "julia_checks": 787,
+    "exit_code": 0,
+    "evidence": "M2-machine-run.log"
+  },
   "complete_backend_maps_equal": true,
   "live_spmf_cases": 4,
   "all_live_spmf_identical": true,
-  "artifact_hashes_equal_across_two_runs": true,
   "groceries_patterns": 1001,
   "groceries_rules": 22,
   "dna_patterns_by_class": {
@@ -20,5 +43,10 @@
   },
   "dna_comparison_rows": 463,
   "nonzero_infrequent_class_counts": 864,
-  "notebook_sha256": "394fc768e68f842d5a3b155f68aa1422d001d6fe6f68bbfb628135195fe475b6"
+  "application_artifact_hashes_unchanged_after_fix": true,
+  "notebook_sha256": "24c0ce974f28ebe70cb70edbaa939f7a958161b5b44351bf5b273935922847e0",
+  "ci_code_run": "https://github.com/phuctran33/-DM-Eclat/actions/runs/44057346550",
+  "ci_jobs_passed": 7,
+  "reviewer_acceptance": "packages 05/06 awaiting reviewer confirmation",
+  "final_m3_validation": false
 }

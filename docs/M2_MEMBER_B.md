@@ -1,6 +1,6 @@
 # M2 người B — kết quả và bàn giao
 
-Ngày thực hiện: **10/11/2026**, Asia/Saigon. Nhánh `feat/member-b-m2-applications`,
+Ngày thực hiện M2: **10/11/2026**; cập nhật theo review/Colab **17/11/2026**, Asia/Saigon. Nhánh `feat/member-b-m2-applications`,
 base main `1f7a980` đã chứa PR A/B trước. Không sửa core Eclat/rules của A.
 
 ## Đã triển khai
@@ -117,15 +117,21 @@ julia --project=. tests/runtests.jl
 python -B scripts/run_notebook.py
 ```
 
-Notebook local dùng `ECLAT_JULIA`/`ECLAT_JAVA` nếu executable không ở PATH hoặc Java
-mặc định quá cũ. Colab notebook tự tải Julia có kiểm checksum và cài Java 21.
+Notebook local tự tìm runtime có sẵn và hỗ trợ `ECLAT_JULIA`/`ECLAT_JAVA` khi cần.
+Colab dùng Julia >=1.9 có sẵn hoặc tải binary có kiểm checksum khi thiếu, và chuẩn bị Java 21.
 
 [**Mở notebook M2 trên Colab**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/feat/member-b-m2-applications/notebooks/demo.ipynb).
 GitHub Actions `applications-notebook` chạy từ checkout Ubuntu sạch, tải nguồn thật,
 chạy mọi cell và upload artifacts. Local/CI Linux không được ghi là remote Colab.
-Phiên này chưa điều khiển được runtime Google Colab; cần mở link, Run all và lưu
-output để reviewer xác nhận tiêu chí Colab tối thiểu. Đây là phần nghiệm thu
-ngoài môi trường thực thi hiện tại, không được đánh dấu pass chỉ vì CI xanh.
+Đã chạy **Run all thật trên Colab ngày 17/11/2026**, Julia 1.12.6: đủ 7 cells,
+790 checks, cả bốn SPMF maps khớp. [Bằng chứng](member-b-validation/colab/README.md)
+gồm notebook có output, log, source commit và hashes. Gói 05/06 chờ A xác nhận;
+không dùng local/CI thay bằng chứng Colab.
+
+Lần Colab đầu phát hiện lỗi provenance của runner khi input root là fixture tạm.
+Đã tách code root khỏi input root, thêm ba checks và Julia 1.12 CI; giữ nguyên
+core Eclat/rules và 18 artifact hashes. Log lần lỗi đầu được giữ riêng trong
+member-b-validation/PR4-colab-initial-failure.log, không trộn với evidence pass.
 
 ## Files chính
 
