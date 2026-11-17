@@ -1,0 +1,33 @@
+{
+  "status": "pass",
+  "compiler": "Tectonic 0.17.0",
+  "pdf_sha256": "99c89ffa5da9d2feb49da347f83f454f75e661ebe3b6eae32074cefe42e214c1",
+  "source_sha256": {
+    "docs/latex/figures/memory.pdf": "21a98688f6165cd57a8355f95e92e3038d1821fdaed77aa5631036df717a218c",
+    "docs/latex/figures/output-size.pdf": "7184527e9ef940e5d507fc83e35d9fb5b51d36efb60d6876f462a6203b3a1bfe",
+    "docs/latex/figures/runtime-chess.pdf": "239a6481475587017cc0ce5338c6f924fcb29ff28feb8d10ecb1e20eeda89d91",
+    "docs/latex/figures/runtime-mushroom.pdf": "9119f0f4c92e066432d74f95067a596037577e4fdeec44e6e3bf8c4e3c510e8f",
+    "docs/latex/figures/runtime-retail.pdf": "20e850b3e293cab538f9d40ed02b7022fac89a9ca29156e98c540bdeef060426",
+    "docs/latex/figures/runtime-T10I4D100K.pdf": "5e7771a5a0d2443bfc62450df8b0ae5ce60d7dac73119f39898a93a8b9b84210",
+    "docs/latex/figures/scalability.pdf": "a59d1ef57acf3c54ebcf31d27ef9d36615e15fd322dd55bdcd7eef42ce7da3aa",
+    "docs/latex/figures/transaction-length.pdf": "b63f82849c5a1b5469285f441688248a118bfabdf46dd04020eb0c547ea005e2",
+    "docs/latex/generated/applications-dna.tex": "ab664cf4889570f6148070c85dcf93972864309471744b87185b8a2180d02e02",
+    "docs/latex/generated/applications-top10.tex": "6da833aa7d9d085235f44fa32fdb33301e16750c6551db9119e77c018f055d6e",
+    "docs/latex/generated/correctness.tex": "74acbd8682f5a3123f5f52a23ad8a1a4ed30ea157ee79001d3d63bd083c84192",
+    "docs/latex/generated/datasets.tex": "22010487a9f23e60185011642e4deba7403a4264f842db0efb6f30d2dbbae145",
+    "docs/latex/generated/length.tex": "c88f2b47bbe65ceca5ec622bd67567976326a0be30f9b28616703e911b0cb947",
+    "docs/latex/generated/medium-e2e.tex": "3100e1baba18f56edbc72a224f61f98bb7f3582ff6c14c452c130c4bceb7abf1",
+    "docs/latex/generated/medium-runtime.tex": "4d145f061d92c0d097a5e79256411ea989465d3be630178338464a88f4aec345",
+    "docs/latex/generated/memory.tex": "b0c5071c0fcf0c64e182a8d4c0e0bdfb0d82f11e55a6b8a63c64877d5fa1a34d",
+    "docs/latex/generated/scalability.tex": "373e668edcac8a1e17fb35271373fedb318f67631136fca87c4bbb0acaf60e00",
+    "docs/latex/generated/thresholds.tex": "d025cbad547c7a3e2758f8ca1989c50e9c9715c11447f72860a57c89947d3e32",
+    "docs/latex/references.bib": "e65cbccd3fb3a1a0f8bed6d1fc49627b79d545eefd5b836365fc3e27b91ae9a1",
+    "docs/latex/Report.tex": "4d92adc16fb450d8ee200031ad432705e6648bf8dc072db69b85ea52ab0f45e8",
+    "docs/latex/sections/01-implementation.tex": "eaf565aa5c3aaa1cd5a1e783593ddace86c26134c0b890e6f187415e6dfba320",
+    "docs/latex/sections/02-evaluation.tex": "2c628ef0724b890f5e53b6e8d2a8deb84d5aa4eea27b6e7fd49f2a0eaf2df1e2",
+    "docs/latex/sections/03-applications.tex": "4abf9fbcd84ee5f032718c2947fcc622f25709701a8cf8f7cd7d67952dc80370"
+  },
+  "pdf_pages": 11,
+  "body_pages": 10,
+  "reference_start_page": 11
+}

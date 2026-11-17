@@ -1,6 +1,19 @@
+\RequirePackage{iftex}
+\ifPDFTeX\else\RequirePackage[T1]{fontenc}\fi
 \documentclass[conference,a4paper]{IEEEtran}
-\usepackage[T5]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T5]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage{fontspec}
+  \setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+  \setsansfont{texgyreheros}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+  \setmonofont{texgyrecursor}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\fi
 \usepackage[vietnamese]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -10,7 +23,7 @@
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 
-% Compile with pdfLaTeX + BibTeX. IEEEtran and Vietnamese fonts (vntex) required.
+% pdfLaTeX + BibTeX (vntex) or Tectonic/XeLaTeX (bundled TeX Gyre fonts).
 % Chapters 1–2 by A; Chapter 3 contains B's measured M2 application results.
 \newcommand{\todo}[1]{\textbf{[TODO: #1]}}
 
@@ -18,7 +31,7 @@
 \author{\IEEEauthorblockN{Nguyễn Đức Hưng \qquad Trần Thiên Phúc}
 \IEEEauthorblockA{Môn Khai phá dữ liệu và ứng dụng\\
 Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM\\
-Bản tích hợp A/B; kết quả M2 đã kiểm chứng, chờ nghiệm thu cuối}}
+Eclat: thuật toán, thực nghiệm và hai ứng dụng}}
 
 \begin{document}
 \maketitle
@@ -37,7 +50,7 @@ hạn output để giảm thời gian. Phân tích tập trung vào mật độ 
 intersection, allocation và ảnh hưởng runtime nền; không giả định BitVector luôn
 có lợi trên dữ liệu thưa. Chương 3 áp dụng cùng engine lên Groceries và Splice DNA: 22 luật kết hợp,
 463 patterns so sánh ba lớp; output hai backend và SPMF khớp toàn bộ. Báo cáo
-phân biệt kiểm chứng dữ liệu/mã với nghiệm thu Colab và PDF cuối của nhóm.
+kèm nguồn dữ liệu, mã tái lập và bằng chứng chạy trên Google Colab.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -53,6 +66,7 @@ frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
 \input{sections/03-applications}
 \fi
 
+\clearpage
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

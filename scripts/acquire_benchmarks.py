@@ -19,7 +19,8 @@ def main():
         reader = csv.DictReader(stream)
         fields = reader.fieldnames
         # Preserve B's provenance rows exactly.
-        manifest = [row for row in reader if row["owner"] != "A"]
+        original_manifest = list(reader)
+        manifest = [row for row in original_manifest if row["owner"] != "A"]
     stats = []
     provenance = []
     args.raw_dir.mkdir(parents=True, exist_ok=True)
@@ -51,11 +52,13 @@ def main():
         manifest.append(dict(dataset=name, module="M3", owner="A", original_source=dataset["url"],
                              public_snapshot_url=dataset["url"], revision="sha256:" + dataset["raw_sha256"],
                              license=dataset["license"], sha256=sha256(output),
-                             local_path=str(output.relative_to(ROOT)), status="verified"))
+                             local_path=output.relative_to(ROOT).as_posix(), status="verified"))
         provenance.append(dict(**dataset, normalized_sha256=sha256(output),
                                transformation=f"gzip decode; add {offset} to every item ID; normalize whitespace; retain all rows",
                                raw_bytes=len(raw), normalized_bytes=output.stat().st_size))
         print(name, stats[-1], flush=True)
+    order = {row["dataset"]: i for i, row in enumerate(original_manifest)}
+    manifest.sort(key=lambda row: order.get(row["dataset"], len(order)))
     write_csv(manifest_path, manifest, fields)
     write_csv(ROOT / "results/raw/dataset_statistics.csv", stats, stats[0].keys())
     json_write(ROOT / "results/raw/dataset_provenance.json", provenance)

@@ -1,32 +1,41 @@
 # Báo cáo IEEE tiếng Việt
 
-Chương 1–2 của Member A có implementation, protocol, kết quả thật và phân tích.
-Chương 3 giữ nguyên nội dung template thuộc B; chưa có kết quả hai ứng dụng.
-Không coi bản PDF review này là nghiệm thu 10–15 trang cuối của cả nhóm.
+[Report.pdf](../Report.pdf): **10 trang nội dung + 1 trang tài liệu tham khảo**,
+ba chương, 10 nguồn. Chương 1–2 giữ số liệu A; Chương 3 có Groceries/DNA mined thật.
 
-Cần TeX Live/Overleaf có IEEEtran, vntex, babel-vietnamese, amsmath, booktabs,
-algorithm và algpseudocode. Trước build, sinh figures/tables từ CSV thực:
+Từ repo root, Python 3.11+:
 
-```bash
-python3 scripts/plot_results.py --results results --report
+~~~bash
+python -m pip install -r requirements-report.txt
+python scripts/application_tables.py --check
+python scripts/build_report.py --tectonic /path/to/tectonic
+~~~
+
+Máy này dùng .tools/tectonic/tectonic.exe, **Tectonic 0.17.0**;
+cache .tools/tectonic-cache. [Release chính thức](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0),
+asset tectonic-0.17.0-x86_64-pc-windows-msvc.zip, SHA-256:
+f61ce51f0b0ade1015b7de7ef368541c5424e9756ecbd0d7af97d6d48030845f.
+Không commit compiler/cache. Build đầu cần mạng tải TeX bundle/font.
+TeX Gyre Termes/Cursor/Heros có đủ glyph tiếng Việt, giữ IEEEtran A4.
+
+Build chạy đủ TeX/BibTeX passes, kiểm PDF bằng pypdf rồi mới copy docs/Report.pdf.
+docs/report-build.json ghi PDF/source hashes; sửa nguồn cần build lại.
+Log: docs/member-b-validation/m3/report-build.log.
+Không unresolved refs/citations, thiếu glyph nội dung hoặc overfull boxes;
+đã render/rà trang đầu, bảng ứng dụng và bibliography.
+Một số underfull boxes tiếng Việt/URL còn tồn tại; Tectonic cảnh báo encoding
+comment algorithm.sty và Fontconfig Windows, nhưng OTF resolve/nhúng đúng.
+Không gọi các cảnh báo này là thiếu ký tự trong PDF.
+
+Nguồn hỗ trợ thêm pdfLaTeX + BibTeX trên TeX Live/Overleaf với IEEEtran, vntex,
+babel-vietnamese, amsmath, booktabs và algorithm/algpseudocode:
+
+~~~bash
 cd docs/latex
-latexmk -pdf -interaction=nonstopmode -halt-on-error MemberAReview.tex
 latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
-```
+~~~
 
-Chạy lệnh đầu từ repo root. Bản `MemberAReview.pdf` chỉ gồm Chương 1–2, copy đã
-kiểm tra ở `docs/Member-A-review.pdf`. `Report.pdf` local vẫn gồm ba chương,
-Chương 3 pending có nhãn rõ. Không ghi lên `docs/Report.pdf` cuối trước khi B hoàn
-thiện ứng dụng và nhóm review. Khi latexmk không có, dùng pdflatex → bibtex →
-pdflatex → pdflatex cho mỗi entry point.
-
-Hình ở `figures/`, fragments bảng ở `generated/`, nguồn CSV/logs trong `results/`.
-Các hình có caption/label/reference và units; code sinh hình cũng copy PDFs để
-clean clone build được review mà không phải chạy lại benchmark. Không sinh bảng
-bằng số liệu tự điền. Các warnings reference/citation phải hết sau các pass cuối;
-underfull boxes do căn cột tiếng Việt có thể còn, không đồng nghĩa lỗi biên dịch.
-
-Giữ font/lề/spacing IEEEtran. A dùng khoảng 3 trang cho implementation và phần
-còn lại cho phương pháp/kết quả; B cân dung lượng Chương 3 để bản nhóm đạt 10–15
-trang nội dung, chưa tính tài liệu tham khảo. Abstract ghi rõ tình trạng bản review;
-không đưa kết quả ứng dụng chưa chạy vào abstract/kết luận.
+Engine khác cần rà lại PDF/số trang; metadata bản phát hành do script build tạo.
+MemberAReview.tex là entry point review lịch sử, không thay PDF đủ ba chương.
+Bảng ứng dụng sinh từ CSV qua scripts/application_tables.py; các hình/bảng A
+đã render, không cần tạo lại để build PDF và làm đổi hash evidence đã đo.
