@@ -45,6 +45,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The notebook verifies benchmark sources at their original measurement commit.
+          fetch-depth: 0
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1.11'
