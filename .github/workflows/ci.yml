@@ -39,11 +39,15 @@ jobs:
       - run: python -m pip install -r requirements-plot.txt
       - run: python tests/test_benchmark.py -v
       - run: python tests/test_plot_results.py -v
+      - run: python -B tests/test_delivery.py -v
 
   applications-notebook:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The notebook verifies benchmark sources at their original measurement commit.
+          fetch-depth: 0
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1.11'
@@ -58,5 +62,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m2-applications-notebook
+          name: m3-delivery-notebook
           path: .tools/notebook-runs/

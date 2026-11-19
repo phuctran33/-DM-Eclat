@@ -119,8 +119,10 @@ CLI xuất CSV, patterns và mapping/audit cùng \texttt{run.toml} ghi config,
 runtime, source/input/output hashes; output phải mới/rỗng. Hai lần chạy có
 cùng artifact hashes. Notebook thực hiện tải nguồn có kiểm hash, Julia helpers,
 miner, rules/comparison và SPMF; Linux CI chạy từ checkout sạch.
-Local/CI không được gọi là phiên Google Colab đã nghiệm thu; remote Colab và
-đóng gói PDF cuối là các bước bàn giao cần xác nhận riêng.
+Phiên Google Colab ngày 17/11/2026 chạy từ runtime sạch, hoàn tất 7/7 code cells
+với Julia 1.12.6, 790 checks và bốn full-map comparisons với Java SPMF.
+Notebook có output, log và hash nguồn được lưu trong kho mã; bằng chứng này
+được phân biệt với log local/CI và các phép đo hiệu năng trên máy của A.
 
 Hai ứng dụng cho thấy cùng frequent-itemset engine có thể mô tả giỏ hàng và
 co-occurrence vị trí/base, nhưng ý nghĩa ứng dụng phụ thuộc chuẩn hóa, metadata,

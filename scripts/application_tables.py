@@ -1,0 +1,53 @@
+"""Generate/check Chapter 3 tables directly from the application's published CSV."""
+import argparse
+import csv
+import re
+from benchlib import ROOT
+
+def rows(name):
+    with (ROOT/"results/applications"/name).open(encoding="utf-8",newline="") as stream:
+        return list(csv.DictReader(stream))
+
+def tex(value):
+    for old,new in [("\\",r"\textbackslash{}"),("&",r"\&"),("%",r"\%"),("_",r"\_"),("#",r"\#")]:
+        value=value.replace(old,new)
+    return value
+
+def tables():
+    top=rows("groceries_top10.csv")
+    output=[r"% Generated from results/applications/groceries_top10.csv; do not hand-edit numbers.",
+            r"\begin{tabular}{rp{0.51\textwidth}rrrr}",r"\toprule",
+            r"Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Count & Supp. (\%) & Conf. (\%) & Lift \\",
+            r"\midrule"]
+    for row in top:
+        lhs=tex(row["antecedent_labels"].replace(" | ",", "))
+        rhs=tex(row["consequent_labels"].replace(" | ",", "))
+        output.append(f'{row["rank"]} & {lhs} $\\Rightarrow$ {rhs} & {row["support_count"]} & '
+                      f'{100*float(row["support"]):.4f} & {100*float(row["confidence"]):.2f} & {float(row["lift"]):.3f} '+r"\\")
+    output += [r"\bottomrule",r"\end{tabular}"]
+    dna=rows("dna_patterns.csv")
+    ranks={1,2}
+    ranks.update(int(next(row for row in dna if int(row["length"])==width)["rank"]) for width in [3,4])
+    output2=[r"% Generated from results/applications/dna_patterns.csv; first two ranks and first length 3/4.",
+             r"\begin{tabular}{rp{0.43\columnwidth}rrr}",r"\toprule",
+             r"Hạng & Pattern (vị trí, base) & EI & IE & N \\",r"\midrule"]
+    for row in dna:
+        if int(row["rank"]) not in ranks:continue
+        items=[re.fullmatch(r"pos=([+-]?[0-9]+);base=([ACGT])", value).groups() for value in row["pattern_labels"].split(" | ")]
+        label=r",\allowbreak ".join(f"({position},{base})" for position,base in items)
+        output2.append(f'{row["rank"]} & $'+label+"$ & "+ " & ".join(f'{100*float(row["support_"+c]):.2f}' for c in ["EI","IE","N"])+r" \\")
+    output2 += [r"\bottomrule",r"\end{tabular}"]
+    return {"applications-top10.tex":"\n".join(output)+"\n","applications-dna.tex":"\n".join(output2)+"\n"}
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check",action="store_true")
+    args=parser.parse_args()
+    for name,text in tables().items():
+        target=ROOT/"docs/latex/generated"/name
+        if args.check:
+            if target.read_text("utf-8")!=text:raise ValueError(f"Stale report table: {target}")
+        else:target.write_text(text,"utf-8")
+    print("PASS Chapter 3 tables match source CSV" if args.check else "Generated Chapter 3 tables from CSV")
+
+if __name__=="__main__":main()
