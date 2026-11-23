@@ -1,19 +1,13 @@
-# Trạng thái M3 B — 17/11/2026
+# Trạng thái tích hợp M3
 
-M2 merge main e204a7f (PR #4). M3 B bàn giao qua nhánh PR feat/member-b-m3-delivery,
-**chờ review/merge vào main**.
+| Phần | Bằng chứng |
+|---|---|
+| Miner A, rules helper, schema | Basic và BitVector qua tests và full-map SPMF |
+| Groceries và Splice của B | 22 luật, 463 DNA candidates, bốn đầu vào ứng dụng khớp Java SPMF |
+| Benchmark | 35 cấu hình và 875 phép đo đã lưu, 70 đối chiếu đúng, 46 artifact hashes |
+| Chương 1–3 | PDF IEEE A4, 10 trang nội dung và 11 nguồn, hash đồng bộ nguồn |
+| Notebook | 7 code cells kiểm từ clone sạch. Colab M3 ngày 17/11 dùng Git bundle |
+| Nghiệm thu cuối | Public-main Colab, xác nhận hosting và các bước nộp của nhóm trong DELIVERY.md |
 
-| Thành phần | Bằng chứng | Còn lại |
-|---|---|---|
-| Core/schema A | Giữ nguyên, 790 Julia checks pass | Reviewer rà tích hợp |
-| Groceries/DNA | 22 rules, 463 DNA candidates, bốn SPMF maps khớp | Không cần viết lại |
-| Benchmark A | 46 hashes; 35 cases/875 runs/70 comparisons audit pass | A/B nghiệm thu |
-| Correctness B M3 | Bốn benchmark medium: list = bitset = SPMF | Maps/logs đã lưu |
-| Report.pdf | 10 trang nội dung + 1 bibliography, IEEE Việt, 10 nguồn | A review PDF |
-| Notebook M3 local | 7/7 cells, final gate pass trên mining mới | Đã lưu log/summary |
-| Colab M3 từ bundle local | 7/7 cells, Julia1.12.6/790 checks, 8 SPMF maps/final gate pass | Kiểm public main sau merge |
-| Colab M2 public | Bằng chứng thật 17/11, source07c0f28 | Giữ lịch sử |
-| Public main M3 / nộp bài | Nhánh M3 chờ review/merge | Kiểm CI, public main Colab sau merge và Moodle |
-
-Chi tiết docs/M3_MEMBER_B.md. Chỉ tick checklist sau reviewer xác nhận;
-local/CI không thay Colab. Mốc kế hoạch nội bộ không phải deadline Moodle.
+[Checklist](DELIVERY.md) · [Rubric audit](../RUBRIC_FINAL_AUDIT.md) ·
+[Lịch sử bàn giao M3 của B](../M3_MEMBER_B.md)

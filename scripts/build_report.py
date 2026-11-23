@@ -1,4 +1,4 @@
-"""Build the three-chapter IEEE report with Tectonic; validate PDF and provenance."""
+"""Build the three-chapter IEEE report and validate its PDF and provenance."""
 from __future__ import annotations
 import argparse
 import json
@@ -38,26 +38,43 @@ def inspect_pdf(path):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tectonic",default=os.environ.get("ECLAT_TECTONIC","tectonic"))
+    engine=parser.add_mutually_exclusive_group()
+    engine.add_argument("--tectonic",default=os.environ.get("ECLAT_TECTONIC","tectonic"))
+    engine.add_argument("--latexmk",metavar="EXECUTABLE",help="Use installed XeLaTeX through latexmk")
     args=parser.parse_args()
+    executable=args.latexmk or args.tectonic
+    compiler=shutil.which(executable)
+    if compiler is None:
+        parser.error(f"Compiler executable not found: {executable}")
+    compiler=str(Path(compiler).resolve())
     env={**os.environ,"TECTONIC_CACHE_DIR":str(ROOT/".tools/tectonic-cache")}
     parent=ROOT/".tools/report-build";parent.mkdir(parents=True,exist_ok=True)
     work=Path(tempfile.mkdtemp(prefix="build-",dir=parent))
-    version=subprocess.check_output([args.tectonic,"--version"],text=True).strip()
-    command=[args.tectonic,"--keep-logs","--keep-intermediates","--outdir",str(work),"Report.tex"]
+    if args.latexmk:
+        version=subprocess.check_output(["xelatex","--version"],text=True).splitlines()[0]
+        command=[compiler,"-xelatex","-interaction=nonstopmode","-halt-on-error",
+                 f"-outdir={work}","Report.tex"]
+    else:
+        version=subprocess.check_output([compiler,"--version"],text=True).strip()
+        command=[compiler,"--keep-logs","--keep-intermediates","--outdir",str(work),"Report.tex"]
+    sources=report_sources()
     process=subprocess.run(command,cwd=ROOT/"docs/latex",env=env,capture_output=True)
     log=(process.stdout+process.stderr).decode("utf-8",errors="replace")
-    evidence=ROOT/"docs/member-b-validation/m3";evidence.mkdir(parents=True,exist_ok=True)
-    (evidence/"report-build.log").write_text(log,"utf-8")
+    # Keep new build logs next to the intermediates. Historical logs are hashed.
+    build_log=work/"compiler.log"
+    build_log.write_text(log,encoding="utf-8")
+    print("Build log:",build_log,flush=True)
     print(log[-5000:],flush=True)
     process.check_returncode()
     texlog=(work/"Report.log").read_text("utf-8",errors="replace")
-    if re.search(r"undefined (?:references|citations)|Citation .* undefined|Reference .* undefined|Missing character:|could not represent character|Overfull \\[hv]box",texlog+log,re.I):
+    if re.search(r"undefined (?:references|citations)|Citation .* undefined|Reference .* undefined|Missing character:|could not represent character|Overfull \\[hv]box",texlog,re.I):
         raise ValueError("Unresolved citation/reference, missing glyph or overflowing box; see report build log")
     info=inspect_pdf(work/"Report.pdf")
+    if report_sources()!=sources:
+        raise ValueError("Report source changed during compilation; rebuild")
     destination=ROOT/"docs/Report.pdf";shutil.copyfile(work/"Report.pdf",destination)
     record=dict(status="pass",compiler=version,pdf_sha256=sha256(destination),
-                source_sha256=report_sources(),**info)
+                source_sha256=sources,**info)
     (ROOT/"docs/report-build.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n","utf-8")
     print("PASS Report.pdf",info,"SHA256",record["pdf_sha256"],flush=True)
 

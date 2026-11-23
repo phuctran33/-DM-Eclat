@@ -1,132 +1,135 @@
-# Frequent Itemset Mining — ECLAT / Julia
+# Frequent Itemset Mining — ECLAT bằng Julia
 
-Đồ án theo [đề HCMUS](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/),
-Zaki (2000), *Scalable Algorithms for Association Mining*,
-[DOI](https://doi.org/10.1109/69.846291).
-A — Nguyễn Đức Hưng: core, tối ưu, benchmark và Chương 1–2.
-B — Trần Thiên Phúc: kiểm chứng, Groceries/Splice DNA, notebook, Chương 3 và đóng gói.
+Đồ án khai thác tập phổ biến của **Nguyễn Đức Hưng** và **Trần Thiên Phúc**.
+Hai backend dùng chung DFS theo lớp tiền tố, với sorted TID lists hoặc BitVector.
+Kết quả ứng dụng Groceries và Splice DNA dùng chính miner của nhóm.
+[Đề HCMUS](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/) ·
+[Bài báo Zaki (2000)](https://doi.org/10.1109/69.846291) ·
+[Toàn văn của tác giả](https://cs.rpi.edu/~zaki/PaperDir/TKDE00.pdf)
 
-## Bàn giao M3 B
+[**Report.pdf**](docs/Report.pdf) ·
+[**Mở Colab từ public main**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) ·
+[Kiến trúc](docs/ARCHITECTURE.md) · [Vấn đáp](docs/DEFENSE_GUIDE.md) ·
+[Đối chiếu rubric](docs/RUBRIC_FINAL_AUDIT.md)
 
-- [Report.pdf](docs/Report.pdf): IEEE tiếng Việt, **10 trang nội dung + 1 trang tài liệu tham khảo**,
-  đủ ba chương và 10 nguồn; [LaTeX](docs/latex/Report.tex), [hash/build metadata](docs/report-build.json).
-- Groceries: **1.001 patterns, 22 luật**, top-10 theo lift, diễn giải ba luật.
-  Splice EI/IE/N: **381/209/48** patterns; **463** candidates so sánh ba lớp.
-- Audit A: **35 cases, 875 measurements, 70 full-map comparisons**, 46 artifact hashes nguyên vẹn.
-  B chạy thêm bốn benchmark ở ngưỡng trung bình: list = BitVector = Java SPMF, khớp toàn map.
-- Run all M3 local: **7/7 code cells**, **790 Julia checks**, 4 source tests,
-  6 delivery-gate tests, bốn đối chiếu ứng dụng và bốn benchmark với live Java SPMF.
-  [Log](docs/member-b-validation/m3/local-run-all.log), [summary](docs/member-b-validation/m3/local-summary.json),
-  [bàn giao chi tiết](docs/M3_MEMBER_B.md).
-- [Colab M3 thực](docs/member-b-validation/m3/colab/README.md) cũng đã **pass 7/7 cells**:
-  source bundle local trên VM sạch, Julia 1.12.6, 790 checks, tám live SPMF maps,
-  gate PDF/data pass. Có notebook output/log/summary; không phải public main M3.
-- Bàn giao qua nhánh PR **feat/member-b-m3-delivery**, chờ review/merge vào main.
-  Public main chứa M2 đã merge. [Colab M2 thực](docs/member-b-validation/colab/README.md):
-  7/7 cells, Julia 1.12.6, 790 checks; giữ riêng với bằng chứng M3.
+## Chạy từ clone sạch
 
-[**Mở Colab từ public main**](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb).
-Link này chạy M2 cho đến khi PR M3 được merge. Trước merge, kiểm thử M3 bằng notebook
-và Git bundle theo [hướng dẫn M3](docs/M3_MEMBER_B.md); đây là cách phiên Colab đã kiểm thực thi source.
+Cần Julia ≥1.9 và Python ≥3.11. Java ≥21 và curl dành cho kiểm chứng SPMF
+và tải dữ liệu. Core ECLAT dùng Julia Base/stdlib. Ví dụ dưới đây dùng shell
+Linux/macOS. Có thể chạy notebook local trên Windows với Python, Julia và Java
+trong PATH hoặc đặt `ECLAT_JULIA`, `ECLAT_JAVA` thành executable tương ứng.
 
-## Chạy toàn bộ trên máy
-
-Cần **Julia ≥1.9**, **Python ≥3.11**, **Java ≥21** cho SPMF.
-Core Julia dùng Base/stdlib; Python điều phối/kiểm chứng, không có thư viện FIM.
-
-~~~powershell
-python -B scripts/run_notebook.py
-~~~
-
-VS Code trên máy đã cấu hình: chọn kernel **Eclat (Python 3.11)**.
-Hoặc dùng Python 3.11+ có ipykernel. Notebook Python gọi Julia của nhóm;
-tự tìm portable Julia trong .tools và Java ≥21. Có thể đặt ECLAT_JULIA/ECLAT_JAVA
-thành đường dẫn executable. Mỗi lần tạo output mới trong .tools/notebook-runs.
-
-RUN_BENCHMARK_VERIFICATION và FINAL_DELIVERY_VALIDATION mặc định True.
-RUN_BENCHMARKS mặc định False: đo lại runtime/RSS là tùy chọn Linux/macOS;
-không cần đo lại 875 lượt để kiểm tra bản bàn giao.
-
-## Miner / ứng dụng
-
-~~~bash
+```bash
+git clone https://github.com/phuctran33/-DM-Eclat.git
+cd -- -DM-Eclat
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
-julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/basic.txt --minsup 0.4 --backend list
-julia --project=. scripts/mine.jl --input data/toy/basic.txt --output results/bitset.txt --min-count 2 --backend bitset
-python scripts/prepare_application_data.py --dataset all
-julia --project=. scripts/run_applications.jl --output results/applications-rerun
-python -B scripts/verify_application_results.py --output results/applications-rerun --java /path/to/java21
-~~~
+julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/demo-basic.txt --minsup 40% --backend list
+julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/demo-bitset.txt --min-count 2 --backend bitset
+julia --project=. scripts/compare_spmf.jl .tools/demo-basic.txt tests/reference/spmf/basic.txt
+```
 
-Output directory ứng dụng phải mới/rỗng. Miner xuất **mọi** frequent itemset/support
-tuyệt đối, dạng 1 2 #SUP: 3. Input SPMF: ID dương tăng dần, không trùng item trong
-transaction; giữ các transactions giống nhau. Threshold decimal/percent chính xác.
-[API](docs/API.md), [schema v1](docs/SCHEMA.md), [paper notes](docs/paper-notes.md):
-DFS prefix extension của nhóm là adaptation, phân biệt bottom-up trong paper.
+Toy có 5 giao dịch, ngưỡng count 2 và 7 patterns. File input gồm các ID dương tăng
+dần theo từng dòng. Hai dòng cùng nội dung vẫn là hai giao dịch. File output dùng
+`1 2 #SUP: 3` cho support tuyệt đối. Xem [API](docs/API.md),
+[schema](docs/SCHEMA.md) và [liên hệ paper với DFS của nhóm](docs/paper-notes.md).
 
-[Kết quả CSV](results/applications/), [bàn giao M2](docs/M2_MEMBER_B.md) có mapping,
-window 25:36, ambiguity, denominator riêng từng lớp, config và provenance.
-Groceries: [snapshot stedy](https://github.com/stedy/Machine-Learning-with-R-datasets/tree/d20658ec6d336af2d4ddb5fd72b6f677dd46136e);
-Splice: [UCI DOI](https://doi.org/10.24432/C5M888) qua mirror học thuật pin hash.
-Benchmark: [FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/),
-Chess/Mushroom/Retail/T10I4D100K; Retail/T10 cộng 1 vào mọi ID.
-[Manifest](data/manifest.csv), [config nguồn](configs/datasets.toml) giữ URL/license/hash.
-Không commit raw data; không gọi URL học thuật là HF/Kaggle snapshot chưa xác minh.
+## Kiểm thử và notebook
 
-## Tests / benchmark
-
-~~~bash
-python scripts/prepare_spmf.py --java /path/to/java21
+```bash
 julia --project=. tests/runtests.jl
-python -B tests/test_application_sources.py
-python -B tests/test_delivery.py -v
-python scripts/acquire_benchmarks.py
-python scripts/review_benchmarks.py --julia /path/to/julia --java /path/to/java21 --output results/new-review
-~~~
+python3 scripts/prepare_spmf.py
+python3 tests/test_benchmark.py -v
+python3 -m pip install -r requirements-plot.txt
+python3 tests/test_plot_results.py -v
+python3 tests/smoke_benchmark.py
+python3 -B scripts/run_notebook.py
+```
 
-SPMF **2.64b** tải từ archive chính thức, kiểm SHA-256; không commit JAR.
-Full Julia bật cả list/bitset và SPMF; exhaustive/random/edge tests.
-Review B so mọi itemset/support, không chỉ pattern count; không thay phép đo A.
+Julia tests mặc định kiểm cả list, bitset và năm references SPMF đã commit.
+Script tải SPMF **2.64b** từ nguồn chính thức và kiểm SHA-256. Notebook chạy
+bảy code cells, tải dữ liệu có kiểm hash, mine lại hai ứng dụng, so với live SPMF
+và audit benchmark/PDF. Mỗi lần dùng thư mục mới dưới `.tools/notebook-runs/`.
+Giữ `RUN_BENCHMARKS=False` để kiểm correctness mà không lặp lại phép đo.
+CI chạy Julia 1.9/1.11/1.12 và chạy notebook trên Linux.
 
-A đo sáu minsup/dataset, năm repetitions, Retail subsets 10/25/50/75/100% và
-synthetic widths 5/10/15/20/25/30, seed 42. [Raw](results/raw/benchmark_runs.csv),
-[summary](results/raw/summary.csv), [correctness](results/correctness/comparisons.csv),
-[plots](results/plots/), [environment](results/raw/environment.json),
-[protocol](results/raw/protocol.json), [phương pháp](docs/experiments.md).
-Máy đo Apple M1/macOS của A; end-to-end và warm read+mine phân tích riêng.
+Colab clone đúng `main` và in source commit. Phiên M3 trên Google Colab
+ngày 17/11 chạy sạch 7/7 cell từ Git bundle. Phiên **Run all từ public main**
+cần bằng chứng riêng. [Lịch sử Colab M3](docs/member-b-validation/m3/colab/README.md) ·
+[Checklist bàn giao](docs/planning/DELIVERY.md)
 
-Đo lại trên Linux/macOS, output mới/rỗng:
+## Hai ứng dụng
 
-~~~bash
-python -m pip install -r requirements-plot.txt
-julia --project=. scripts/benchmark_runner.jl --java /path/to/java21 --output results/reproduced
-python scripts/plot_results.py --results results/reproduced
-~~~
+```bash
+python3 scripts/prepare_application_data.py --dataset all
+julia --project=. scripts/run_applications.jl --output .tools/applications-rerun
+python3 -B scripts/verify_application_results.py --output .tools/applications-rerun --java java
+python3 scripts/application_tables.py --check
+```
 
-## Báo cáo / nghiệm thu
+Dùng output mới hoặc rỗng. Groceries có 9.835 giỏ và 169 items. Minsup 0,5%
+và minconf 0,60 cho **1.001 itemsets và 22 luật**. Splice dùng window 25:36,
+giữ 3.185/3.190 mẫu và mine **381/209/48 patterns** ở EI/IE/N. Bảng 463
+candidates dùng support đếm lại trên từng lớp.
+[Top-10 luật](results/applications/groceries_top10.csv) ·
+[Bảng DNA](results/applications/dna_patterns.csv) ·
+[Bằng chứng M2](docs/M2_MEMBER_B.md)
 
-~~~bash
-python -m pip install -r requirements-report.txt
-python scripts/application_tables.py --check
-python scripts/build_report.py --tectonic /path/to/tectonic
-~~~
+Nguồn ứng dụng là [snapshot Groceries pin commit](https://github.com/stedy/Machine-Learning-with-R-datasets/tree/d20658ec6d336af2d4ddb5fd72b6f677dd46136e)
+và [UCI Splice](https://doi.org/10.24432/C5M888) qua mirror học thuật có
+kiểm hash. [Manifest URL, revision, license và hash](data/manifest.csv)
 
-[Hướng dẫn TeX](docs/latex/README.md) có Tectonic đã kiểm và TeX Live.
-Gate kiểm PDF/nguồn/số trang, bảng ứng dụng khớp CSV, số liệu A, output ứng dụng
-mine mới và live SPMF. [PDF review A](docs/Member-A-review.pdf) giữ riêng.
+## Benchmark
 
-[Checklist](docs/planning/DELIVERY.md) chỉ tick sau reviewer xác nhận.
-Nhóm rà MSSV/Group ID nếu yêu cầu, hạn Moodle chính thức và public link trước nộp.
-Ngày 17/11 trong kế hoạch là mốc nội bộ.
+Chess, Mushroom, Retail và T10I4D100K đều lấy từ FIMI. Retail và T10 cộng 1
+cho mọi ID để giữ ID dương. Bốn file normalized có tổng 8.904.405 bytes.
+Chưa xác minh được snapshot HF/Kaggle tương đương được phép tái phân phối.
+Nguồn FIMI đã pin hash vẫn tái lập được. [Nguồn FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) ·
+[Chi tiết hosting](docs/RUBRIC_FINAL_AUDIT.md#dataset-hosting)
 
-## Stdout full Julia cuối — M3 local, 17/11/2026
+```bash
+python3 scripts/acquire_benchmarks.py
+python3 scripts/review_benchmarks.py --output .tools/benchmark-review
+# Đo lại khi cần, trên Linux/macOS
+JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output .tools/benchmark-rerun
+python3 scripts/plot_results.py --results .tools/benchmark-rerun
+```
 
-790 pass, không fail/error/skip. Stdout thật từ Run all local.
-Log lịch sử 622 checks của A giữ tại results/logs/final-tests.log.
+Runner yêu cầu output mới/rỗng hoặc checkpoint hợp lệ khi `--resume`.
+Bộ số liệu công bố có **35 cấu hình, 875 phép đo OK, 70 đối chiếu full map
+khớp SPMF**. Bốn tập có sáu mức minsup, năm lần lặp. End-to-end gồm startup và
+I/O cho cả ba backend. Warm read+mine so hai backend Julia cùng scope.
+Peak RSS lấy từ hệ điều hành.
+[Phương pháp đo](docs/experiments.md) · [Raw CSV](results/raw/benchmark_runs.csv) ·
+[Correctness](results/correctness/comparisons.csv) · [Hình](results/plots/) ·
+[46 hashes](results/raw/artifact_sha256.csv)
 
-~~~text
+## Build báo cáo
+
+```bash
+python3 -m pip install -r requirements-report.txt
+python3 scripts/application_tables.py --check
+python3 scripts/build_report.py --latexmk latexmk
+# Hoặc dùng Tectonic đã cài
+python3 scripts/build_report.py --tectonic tectonic
+```
+
+Bản IEEE hội nghị khổ A4 có **10 trang nội dung + 1 trang tài liệu tham khảo**,
+với **11 nguồn**. Clone đã có hình/bảng từ CSV. Build ghi PDF và hash nguồn sau
+khi qua kiểm tra, log từng lần nằm trong `.tools/report-build/`.
+[Nguồn LaTeX](docs/latex/Report.tex) · [Build metadata](docs/report-build.json)
+
+## Stdout kiểm thử Julia cuối
+
+**792 checks pass**, không fail, error hoặc skip trên macOS arm64,
+Julia 1.10.10. Controller 10 tests, source 4 tests, delivery 7 tests, plot 1
+test và smoke benchmark đều pass. Bản Julia trước khi sửa CLI có 790 checks.
+
+<details>
+<summary>Xem stdout của 16 testsets</summary>
+
+```text
 Test Summary:                     | Pass  Total  Time
-SPMF I/O and canonical comparison |   14     14  1.4s
+SPMF I/O and canonical comparison |   14     14  1.3s
 Test Summary:                           | Pass  Total  Time
 Threshold boundaries and API validation |   19     19  0.0s
 Test Summary:    | Pass  Total  Time
@@ -134,27 +137,29 @@ Shared schema v1 |   33     33  1.4s
 Test Summary:                      | Pass  Total  Time
 B: CSV and Groceries normalization |   18     18  0.8s
 Test Summary:                                            | Pass  Total  Time
-B: Splice normalization and independent class comparison |   24     24  0.8s
+B: Splice normalization and independent class comparison |   24     24  0.9s
 Test Summary:                                          | Pass  Total  Time
-B: RFC4180 writer, record positions and rule artifacts |   12     12  0.7s
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.8s
 Test Summary:                                          | Pass  Total  Time
-B: reject inconsistent DNA patterns and export ranking |    7      7  0.1s
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.2s
 Test Summary:                                      | Pass  Total   Time
-B: real preprocessing CLI and supplied-pattern CLI |   11     11  10.9s
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  12.9s
 Test Summary:                                             | Pass  Total  Time
 B: independently generated SPMF references and provenance |   68     68  0.2s
 Test Summary:                                          | Pass  Total  Time
-Edge cases, input ownership and packed-word boundaries |  267    267  1.5s
+Edge cases, input ownership and packed-word boundaries |  267    267  1.7s
 Test Summary:                                      | Pass  Total  Time
 Eclat: five different databases, selected backends |   80     80  0.1s
 Test Summary:                                      | Pass  Total  Time
 Randomized oracle and transaction-order invariance |   80     80  0.2s
 Test Summary:                                     | Pass  Total  Time
-Association rules and PreparedDataset integration |   94     94  1.8s
+Association rules and PreparedDataset integration |   94     94  1.7s
 Test Summary:                    | Pass  Total  Time
-CLI round trip and failure paths |   10     10  8.6s
+CLI round trip and failure paths |   12     12  8.5s
 Test Summary:                                         | Pass  Total  Time
-M2: complete mining applications and output ownership |   28     28  2.5s
+M2: complete mining applications and output ownership |   28     28  2.8s
 Test Summary:                               | Pass  Total  Time
-Exact agreement with SPMF on five databases |   25     25  0.0s
-~~~
+Exact agreement with SPMF on five databases |   25     25  0.1s
+```
+
+</details>

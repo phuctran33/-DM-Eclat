@@ -1,41 +1,32 @@
-# Báo cáo IEEE tiếng Việt
+# Build báo cáo IEEE tiếng Việt
 
-[Report.pdf](../Report.pdf): **10 trang nội dung + 1 trang tài liệu tham khảo**,
-ba chương, 10 nguồn. Chương 1–2 giữ số liệu A; Chương 3 có Groceries/DNA mined thật.
+[Report.pdf](../Report.pdf) có 10 trang nội dung và 1 trang tài liệu tham khảo
+với 11 nguồn. Report dùng IEEEtran conference A4, hai cột và font TeX Gyre.
+Chương 1–2 dùng dữ liệu đo của A. Bảng Chương 3 lấy CSV Groceries/Splice của B.
 
-Từ repo root, Python 3.11+:
+Từ repo root, cài Python 3.11+, TeX Live với XeLaTeX, latexmk, IEEEtran,
+babel-vietnamese, TeX Gyre, booktabs, algorithm và algpseudocode. Sau đó chạy:
 
-~~~bash
-python -m pip install -r requirements-report.txt
-python scripts/application_tables.py --check
-python scripts/build_report.py --tectonic /path/to/tectonic
-~~~
+```bash
+python3 -m pip install -r requirements-report.txt
+python3 scripts/application_tables.py --check
+python3 scripts/build_report.py --latexmk latexmk
+```
 
-Máy này dùng .tools/tectonic/tectonic.exe, **Tectonic 0.17.0**;
-cache .tools/tectonic-cache. [Release chính thức](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0),
-asset tectonic-0.17.0-x86_64-pc-windows-msvc.zip, SHA-256:
-f61ce51f0b0ade1015b7de7ef368541c5424e9756ecbd0d7af97d6d48030845f.
-Không commit compiler/cache. Build đầu cần mạng tải TeX bundle/font.
-TeX Gyre Termes/Cursor/Heros có đủ glyph tiếng Việt, giữ IEEEtran A4.
+Có thể chọn [Tectonic 0.17.0](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0)
+bằng `--tectonic /đường/dẫn/tectonic`. Lần đầu có thể cần tải TeX bundle.
+Hình và bảng đã commit đủ để build từ clone sạch. Khi cập nhật bảng ứng
+dụng có chủ đích, chạy `python3 scripts/application_tables.py`, xem diff rồi
+build lại. Tái render benchmark sẽ tạo artifacts mới, nên dùng output riêng.
 
-Build chạy đủ TeX/BibTeX passes, kiểm PDF bằng pypdf rồi mới copy docs/Report.pdf.
-docs/report-build.json ghi PDF/source hashes; sửa nguồn cần build lại.
-Log: docs/member-b-validation/m3/report-build.log.
-Không unresolved refs/citations, thiếu glyph nội dung hoặc overfull boxes;
-đã render/rà trang đầu, bảng ứng dụng và bibliography.
-Một số underfull boxes tiếng Việt/URL còn tồn tại; Tectonic cảnh báo encoding
-comment algorithm.sty và Fontconfig Windows, nhưng OTF resolve/nhúng đúng.
-Không gọi các cảnh báo này là thiếu ký tự trong PDF.
+Script giữ console log và `Report.log` ở thư mục riêng trong
+`.tools/report-build/`. Kiểm final log, số trang, ký tự và source hashes trước
+khi cập nhật `docs/Report.pdf` cùng `docs/report-build.json`.
+Mã nguồn, timestamp và engine có thể làm byte PDF thay đổi giữa các lần build.
+Phát hành một PDF cùng metadata tương ứng.
 
-Nguồn hỗ trợ thêm pdfLaTeX + BibTeX trên TeX Live/Overleaf với IEEEtran, vntex,
-babel-vietnamese, amsmath, booktabs và algorithm/algpseudocode:
-
-~~~bash
-cd docs/latex
-latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
-~~~
-
-Engine khác cần rà lại PDF/số trang; metadata bản phát hành do script build tạo.
-MemberAReview.tex là entry point review lịch sử, không thay PDF đủ ba chương.
-Bảng ứng dụng sinh từ CSV qua scripts/application_tables.py; các hình/bảng A
-đã render, không cần tạo lại để build PDF và làm đổi hash evidence đã đo.
+Bản cuối được build bằng XeLaTeX/TeX Live 2025 và kiểm trực quan đủ 11 trang.
+[Đối chiếu báo cáo](../RUBRIC_FINAL_AUDIT.md#bao-cao). Bản B cho phiên Colab
+bundle dùng Tectonic, có [PDF ở commit lịch sử](https://github.com/phuctran33/-DM-Eclat/blob/392d165b897eea7c78d9ce2076b5e05ac0c0e7c7/docs/Report.pdf)
+và [log build cũ](../member-b-validation/m3/report-build.log).
+`MemberAReview.tex` là entry point để xem riêng Chương 1–2.

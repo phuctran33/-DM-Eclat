@@ -1,5 +1,7 @@
 # Bàn giao Module 3 — Trần Thiên Phúc
 
+Ghi nhận lịch sử của bản PR #5 trước tích hợp. [Trạng thái hiện tại](planning/STATUS.md) · [Rubric audit](RUBRIC_FINAL_AUDIT.md). PDF và metadata của phiên này nằm ở [snapshot 392d165](https://github.com/phuctran33/-DM-Eclat/tree/392d165b897eea7c78d9ce2076b5e05ac0c0e7c7/docs).
+
 Nhánh PR feat/member-b-m3-delivery từ main e204a7f sau merge PR #4.
 Chờ review/merge M3 vào main. Core/schema và số liệu đo A giữ nguyên.
 
