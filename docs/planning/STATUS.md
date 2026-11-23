@@ -1,17 +1,13 @@
-# Trạng thái M2 B — 17/11/2026
+# Trạng thái tích hợp M3
 
-Nhánh feat/member-b-m2-applications từ main 1f7a980, sau khi PR A/B trước được merge.
+| Phần | Bằng chứng |
+|---|---|
+| Miner A, rules helper, schema | Basic và BitVector qua tests và full-map SPMF |
+| Groceries và Splice của B | 22 luật, 463 DNA candidates, bốn đầu vào ứng dụng khớp Java SPMF |
+| Benchmark | 35 cấu hình và 875 phép đo đã lưu, 70 đối chiếu đúng, 46 artifact hashes |
+| Chương 1–3 | PDF IEEE A4, 10 trang nội dung và 11 nguồn, hash đồng bộ nguồn |
+| Notebook | 7 code cells kiểm từ clone sạch. Colab M3 ngày 17/11 dùng Git bundle |
+| Nghiệm thu cuối | Public-main Colab, xác nhận hosting và các bước nộp của nhóm trong DELIVERY.md |
 
-| Thành phần | Đã thực hiện | Còn lại |
-|---|---|---|
-| Core A và schema v1 | Giữ nguyên core/schema | Review nhóm |
-| Groceries B | Hai backend: 1.001 patterns, 22 rules, top-10 và diễn giải ≥3 luật | Chờ reviewer A xác nhận |
-| Splice B | 381/209/48 patterns EI/IE/N, 463 comparisons, counts độc lập | Chờ reviewer A xác nhận |
-| Correctness ứng dụng | Hai backend khớp; 4 live SPMF maps khớp 100%; 790 Julia checks | Giữ log CI/local |
-| Notebook M2 | Defaults chạy prep/miner/apps/SPMF; public Colab link, Linux CI | Colab thật 7/7 cells đã đạt, evidence đã lưu; reviewer xác nhận |
-| Chương 3 | Bảng/kết quả mined và phân tích thực, bỏ TODO kết quả ứng dụng | Review nội dung/cân trang M3 |
-| Benchmark/Chương 1–2 A | Giữ nguyên evidence đã duyệt | Nghiệm thu toàn nhóm M3 |
-| Report.pdf cuối/Colab final | Chưa tuyên bố hoàn tất | M3: PDF 10–15 trang, remote cold-run, nộp bài |
-
-Chi tiết và lệnh tái lập: docs/M2_MEMBER_B.md. Checklist kế hoạch chỉ tick sau
-reviewer xác nhận; code/tests pass không thay remote Colab hoặc nghiệm thu toàn nhóm.
+[Checklist](DELIVERY.md) · [Rubric audit](../RUBRIC_FINAL_AUDIT.md) ·
+[Lịch sử bàn giao M3 của B](../M3_MEMBER_B.md)

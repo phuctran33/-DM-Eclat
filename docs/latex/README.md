@@ -1,32 +1,32 @@
-# Báo cáo IEEE tiếng Việt
+# Build báo cáo IEEE tiếng Việt
 
-Chương 1–2 của Member A có implementation, protocol, kết quả thật và phân tích.
-Chương 3 giữ nguyên nội dung template thuộc B; chưa có kết quả hai ứng dụng.
-Không coi bản PDF review này là nghiệm thu 10–15 trang cuối của cả nhóm.
+[Report.pdf](../Report.pdf) có 10 trang nội dung và 1 trang tài liệu tham khảo
+với 11 nguồn. Report dùng IEEEtran conference A4, hai cột và font TeX Gyre.
+Chương 1–2 dùng dữ liệu đo của A. Bảng Chương 3 lấy CSV Groceries/Splice của B.
 
-Cần TeX Live/Overleaf có IEEEtran, vntex, babel-vietnamese, amsmath, booktabs,
-algorithm và algpseudocode. Trước build, sinh figures/tables từ CSV thực:
+Từ repo root, cài Python 3.11+, TeX Live với XeLaTeX, latexmk, IEEEtran,
+babel-vietnamese, TeX Gyre, booktabs, algorithm và algpseudocode. Sau đó chạy:
 
 ```bash
-python3 scripts/plot_results.py --results results --report
-cd docs/latex
-latexmk -pdf -interaction=nonstopmode -halt-on-error MemberAReview.tex
-latexmk -pdf -interaction=nonstopmode -halt-on-error Report.tex
+python3 -m pip install -r requirements-report.txt
+python3 scripts/application_tables.py --check
+python3 scripts/build_report.py --latexmk latexmk
 ```
 
-Chạy lệnh đầu từ repo root. Bản `MemberAReview.pdf` chỉ gồm Chương 1–2, copy đã
-kiểm tra ở `docs/Member-A-review.pdf`. `Report.pdf` local vẫn gồm ba chương,
-Chương 3 pending có nhãn rõ. Không ghi lên `docs/Report.pdf` cuối trước khi B hoàn
-thiện ứng dụng và nhóm review. Khi latexmk không có, dùng pdflatex → bibtex →
-pdflatex → pdflatex cho mỗi entry point.
+Có thể chọn [Tectonic 0.17.0](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0)
+bằng `--tectonic /đường/dẫn/tectonic`. Lần đầu có thể cần tải TeX bundle.
+Hình và bảng đã commit đủ để build từ clone sạch. Khi cập nhật bảng ứng
+dụng có chủ đích, chạy `python3 scripts/application_tables.py`, xem diff rồi
+build lại. Tái render benchmark sẽ tạo artifacts mới, nên dùng output riêng.
 
-Hình ở `figures/`, fragments bảng ở `generated/`, nguồn CSV/logs trong `results/`.
-Các hình có caption/label/reference và units; code sinh hình cũng copy PDFs để
-clean clone build được review mà không phải chạy lại benchmark. Không sinh bảng
-bằng số liệu tự điền. Các warnings reference/citation phải hết sau các pass cuối;
-underfull boxes do căn cột tiếng Việt có thể còn, không đồng nghĩa lỗi biên dịch.
+Script giữ console log và `Report.log` ở thư mục riêng trong
+`.tools/report-build/`. Kiểm final log, số trang, ký tự và source hashes trước
+khi cập nhật `docs/Report.pdf` cùng `docs/report-build.json`.
+Mã nguồn, timestamp và engine có thể làm byte PDF thay đổi giữa các lần build.
+Phát hành một PDF cùng metadata tương ứng.
 
-Giữ font/lề/spacing IEEEtran. A dùng khoảng 3 trang cho implementation và phần
-còn lại cho phương pháp/kết quả; B cân dung lượng Chương 3 để bản nhóm đạt 10–15
-trang nội dung, chưa tính tài liệu tham khảo. Abstract ghi rõ tình trạng bản review;
-không đưa kết quả ứng dụng chưa chạy vào abstract/kết luận.
+Bản cuối được build bằng XeLaTeX/TeX Live 2025 và kiểm trực quan đủ 11 trang.
+[Đối chiếu báo cáo](../RUBRIC_FINAL_AUDIT.md#bao-cao). Bản B cho phiên Colab
+bundle dùng Tectonic, có [PDF ở commit lịch sử](https://github.com/phuctran33/-DM-Eclat/blob/392d165b897eea7c78d9ce2076b5e05ac0c0e7c7/docs/Report.pdf)
+và [log build cũ](../member-b-validation/m3/report-build.log).
+`MemberAReview.tex` là entry point để xem riêng Chương 1–2.

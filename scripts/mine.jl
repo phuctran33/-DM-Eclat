@@ -26,14 +26,15 @@ function main(args)
     all(k -> haskey(options, k), ["--input", "--output"]) || throw(ArgumentError(HELP))
     xor(haskey(options, "--minsup"), haskey(options, "--min-count")) ||
         throw(ArgumentError("Specify exactly one support option"))
-    abspath(options["--input"]) == abspath(options["--output"]) &&
+    input, output = options["--input"], options["--output"]
+    (abspath(input) == abspath(output) || samefile(input, output)) &&
         throw(ArgumentError("Output must differ from input"))
-    transactions = read_transactions(options["--input"])
+    transactions = read_transactions(input)
     threshold = haskey(options, "--minsup") ?
         minimum_count(parse_minsup(options["--minsup"]), length(transactions)) :
         parse(Int, options["--min-count"])
     patterns = mine(transactions, threshold; backend=Symbol(get(options, "--backend", "list")))
-    write_patterns(options["--output"], patterns)
+    write_patterns(output, patterns)
     println("transactions=$(length(transactions)), min_count=$threshold, patterns=$(length(patterns))")
 end
 

@@ -1,33 +1,35 @@
 # Checklist nghiệm thu và bàn giao
 
-## Gate M1 — 03/11/2026
+Các mục hoàn thành có bằng chứng trong [rubric audit](../RUBRIC_FINAL_AUDIT.md).
+Mốc Module 1–3 là lịch nội bộ.
 
-- [ ] A/B thống nhất paper, DFS adaptation, input/output và minsup.
-- [ ] Basic chạy bằng CLI; xuất tất cả frequent itemset cùng absolute support.
-- [ ] ≥5 toy DB có expected độc lập và reference SPMF thật, cùng input/threshold.
-- [ ] So khớp 100%, không thiếu/thừa itemset hoặc sai support.
-- [ ] Unit/edge tests pass; phác thảo Chương 1; chốt nguồn Groceries/DNA.
+## Thuật toán và kiểm chứng
 
-## Gate M2 — 10/11/2026
+- [x] Basic/BitVector dùng vertical tidsets, xuất đủ frequent itemsets và support.
+- [x] CLI hai dạng threshold và I/O SPMF. Kiểm cả trường hợp output alias của input.
+- [x] Vét cạn, edge, randomized, word tails và năm toy databases khớp Java SPMF.
+- [x] Hai pipelines ứng dụng dùng miner, kiểm labels/rules/counts và SPMF.
 
-- [ ] BitVector cùng interface và kết quả basic/SPMF.
-- [ ] Groceries: mapping tên, top-10 theo lift, giải thích ít nhất 3 luật.
-- [ ] DNA: 12 vị trí, metadata EI/IE/N, so sánh pattern 2–4 item bằng support theo lớp.
-- [ ] Hai ứng dụng dùng miner của nhóm, dữ liệu thật và kết quả tái lập được.
-- [ ] Pilot 4 benchmark, worker có warm-up; Colab tối thiểu chạy được.
+## Thực nghiệm và báo cáo
 
-## Gate M3 — 17/11/2026
+- [x] 4 benchmarks, 6 ngưỡng/tập, exact support maps và 46 hashes evidence.
+- [x] Runtime, output size, peak RSS, Retail subsets và synthetic width plots.
+- [x] Giải thích giới hạn đo và ít nhất hai tối ưu tiếp.
+- [x] Groceries top-10 theo lift và ba diễn giải. Splice có counts đếm lại theo lớp,
+  bảng mẫu đại diện và thảo luận sinh học.
+- [x] IEEE 10 trang nội dung, 11 nguồn, đã kiểm bố cục mọi trang và hash nguồn.
+- [x] README có các lệnh tái lập, test stdout, nguồn, PDF và link Colab.
 
-- [ ] 4 benchmark, 5–7 ngưỡng/tập; đối chiếu đầy đủ với SPMF.
-- [ ] CSV gốc, runtime, output size, peak RAM, Retail 10/25/50/75/100%.
-- [ ] Transaction-length experiment và giải thích dense/sparse; ≥2 tối ưu tiếp theo.
-- [ ] Ghi Julia/Java/SPMF, phần cứng, seed, dataset revisions/hashes, cách đo.
-- [ ] Full tests bật cả mining và SPMF, không còn skipped tương ứng; output cuối trong README.
-- [ ] Notebook cold-run từ môi trường sạch, không dựa vào file results có sẵn.
-- [ ] README có URL GitHub, public Colab, dataset HF/Kaggle và lệnh tái lập thật.
-- [ ] Report.pdf tiếng Việt 10–15 trang IEEE, 3 chương, paper gốc + ≥3 nguồn khác.
-- [ ] Mọi hình/bảng có caption, tham chiếu; mọi biến trong công thức được định nghĩa.
-- [ ] A/B hiểu và có thể giải thích code, số liệu, giới hạn ứng dụng.
-- [ ] Rà hạn Moodle chính thức và nộp một URL repository công khai đúng hạn.
+## Nghiệm thu trước nộp
 
-Các mốc trên là lịch nội bộ. Không tạo yêu cầu commit/PR hằng ngày.
+- [x] Chạy notebook local từ mã tích hợp và kiểm toàn bộ artifacts mới.
+- [x] Giữ bằng chứng Colab thật dùng Git bundle M3 ngày 17/11.
+- [ ] Xác nhận **Runtime → Run all** từ public main trong runtime Colab mới.
+  Lưu commit, output đủ 7 cells, versions, dataset hashes và final gate.
+- [ ] Xác nhận chính sách HF/Kaggle với giảng viên hoặc bổ sung snapshot phù
+  hợp có quyền sử dụng. Repo có dữ liệu FIMI tải công khai kèm hash.
+- [ ] Gửi bản thảo/bản cuối cho bên cung cấp Retail theo điều kiện nguồn.
+- [ ] Hai thành viên luyện vấn đáp, xác nhận thông tin nhóm và hạn Moodle.
+- [ ] Nộp một URL GitHub công khai qua Moodle.
+
+[Chuẩn bị vấn đáp](../DEFENSE_GUIDE.md) · [Điều kiện dữ liệu Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf)

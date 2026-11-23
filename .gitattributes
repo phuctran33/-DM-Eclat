@@ -14,3 +14,6 @@ docs/member-b-validation/PR4-*.log whitespace=-blank-at-eol,-blank-at-eof
 
 # Captured Google Colab process output may include legitimate progress whitespace.
 docs/member-b-validation/colab/*.log whitespace=-blank-at-eol,-blank-at-eof
+
+# Preserve raw M3 validation bytes: hashes include native SPMF line endings.
+docs/member-b-validation/m3/** -text -whitespace

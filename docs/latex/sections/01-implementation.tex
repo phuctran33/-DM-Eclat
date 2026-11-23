@@ -270,6 +270,11 @@ hoạch $X=A\cup B$ với hai phía khác rỗng, rời nhau. Confidence đượ
 counts chính xác trước khi xuất Float64; subset support thiếu là lỗi. Duyệt tập con
 đệ quy không phụ thuộc bitmask có số bit cố định. Luật được sort theo lift,
 confidence, support giảm dần, rồi length và keys tăng dần theo schema. Test dùng
-PreparedDataset để gọi mine và kiểm cả consequent nhiều item. Hai preprocessing
-pipelines Groceries/DNA thuộc Chương 3 vẫn cần thành viên B hoàn thiện; việc helper
-chạy đúng không được dùng để tuyên bố ứng dụng trên dữ liệu thực đã hoàn thành.
+PreparedDataset để gọi mine và kiểm cả consequent nhiều item.
+\ifdefined\MemberAOnly
+Hai ứng dụng dùng kết quả này để kiểm riêng ánh xạ item, chuẩn bị giao dịch và
+toàn bộ kết quả khai thác.
+\else
+Chương~\ref{sec:applications} dùng cùng API trên hai bộ dữ liệu thực, kiểm riêng
+ánh xạ item, chuẩn bị giao dịch và toàn bộ kết quả khai thác.
+\fi

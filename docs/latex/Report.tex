@@ -1,6 +1,19 @@
+\RequirePackage{iftex}
+\ifPDFTeX\else\RequirePackage[T1]{fontenc}\fi
 \documentclass[conference,a4paper]{IEEEtran}
-\usepackage[T5]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T5]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage{fontspec}
+  \setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+  \setsansfont{texgyreheros}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+  \setmonofont{texgyrecursor}[Extension=.otf,UprightFont=*-regular,
+    BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\fi
 \usepackage[vietnamese]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -10,34 +23,31 @@
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 
-% Compile with pdfLaTeX + BibTeX. IEEEtran and Vietnamese fonts (vntex) required.
+% pdfLaTeX + BibTeX (vntex) or Tectonic/XeLaTeX (bundled TeX Gyre fonts).
 % Chapters 1–2 by A; Chapter 3 contains B's measured M2 application results.
 \newcommand{\todo}[1]{\textbf{[TODO: #1]}}
 
 \title{Khai thác tập phổ biến bằng Eclat:\\Cài đặt Julia, đánh giá và ứng dụng Groceries -- Splice DNA}
 \author{\IEEEauthorblockN{Nguyễn Đức Hưng \qquad Trần Thiên Phúc}
 \IEEEauthorblockA{Môn Khai phá dữ liệu và ứng dụng\\
-Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM\\
-Bản tích hợp A/B; kết quả M2 đã kiểm chứng, chờ nghiệm thu cuối}}
+Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Báo cáo trình bày ECLAT bằng Julia với hai biểu diễn tidsets: sorted lists và
-BitVector. Cả hai dùng cùng DFS prefix extension và trả mọi frequent itemset cùng
-support tuyệt đối. Phần cài đặt phân biệt rõ lịch DFS của nhóm với bottom-up trong
-paper Zaki (2000), đồng thời cung cấp parser/writer SPMF và threshold chính xác.
-Kiểm chứng kết hợp oracle vét cạn độc lập, dữ liệu ngẫu nhiên và output thực của
-SPMF. Thực nghiệm trên Chess, Mushroom, Retail và T10I4D100K dùng sáu ngưỡng mỗi
-CSDL, năm repetitions; so sánh end-to-end riêng với read+mine trong Julia đã warm.
-Peak RSS được đo bằng hệ điều hành, cùng thí nghiệm Retail nested subsets và
-synthetic transaction widths. Các bảng và hình sinh từ CSV/logs thực, không giới
-hạn output để giảm thời gian. Phân tích tập trung vào mật độ tidsets, chi phí
-intersection, allocation và ảnh hưởng runtime nền; không giả định BitVector luôn
-có lợi trên dữ liệu thưa. Chương 3 áp dụng cùng engine lên Groceries và Splice DNA: 22 luật kết hợp,
-463 patterns so sánh ba lớp; output hai backend và SPMF khớp toàn bộ. Báo cáo
-phân biệt kiểm chứng dữ liệu/mã với nghiệm thu Colab và PDF cuối của nhóm.
+Nhóm cài đặt ECLAT bằng Julia để tìm mọi tập mục phổ biến và support tuyệt đối.
+Hai bản dùng danh sách TID tăng dần hoặc BitVector, cùng duyệt theo chiều sâu
+trên các lớp tiền tố. Kiểm chứng kết hợp vét cạn, dữ liệu ngẫu nhiên và Java
+SPMF. Cả 70 phép đối chiếu toàn bộ tập mục và support trên lưới thực nghiệm
+đều khớp. Phép đo trên Chess, Mushroom, Retail và T10I4D100K tách thời gian
+đầu cuối khỏi thời gian đọc và khai thác sau khởi động Julia. Tại ngưỡng
+trung bình, tỉ số median Basic/BitVector đạt 5,10 trên Chess và 0,91 trên
+Retail. Peak RSS và các thí nghiệm thay đổi số dòng, độ rộng giao dịch giúp
+giải thích tác động của mật độ tidset, chi phí dựng biểu diễn và kích thước
+đầu ra. Cùng mã khai thác sinh 22 luật trên Groceries và 463 mẫu so sánh ba
+lớp trên Splice DNA. Hai ứng dụng khớp SPMF và cho các liên hệ mô tả trên
+dữ liệu quan sát. Số đo hiệu năng giới hạn trong môi trường đã công bố.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -53,6 +63,8 @@ frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
 \input{sections/03-applications}
 \fi
 
+\clearpage
+\IEEEtriggeratref{6}
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

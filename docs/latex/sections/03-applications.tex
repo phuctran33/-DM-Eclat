@@ -2,7 +2,8 @@
 \label{sec:applications}
 
 \subsection{Groceries: dữ liệu và phương pháp}
-Groceries gồm 9.835 giỏ hàng và 169 nhóm sản phẩm. Nhóm dùng CSV mirror
+Groceries gồm 9.835 giỏ hàng và 169 nhóm sản phẩm. Ranh giới mỗi lượt mua đã
+có sẵn, phù hợp để đo đồng xuất hiện ở cấp giỏ. Nhóm dùng CSV mirror
 pin commit của kho \emph{Machine Learning with R}~\cite{groceries_source_b};
 nguồn gốc dữ liệu được mô tả bởi arules~\cite{groceries_documentation_b}.
 Adapter giữ mỗi dòng nguồn thành basket ID riêng rồi tạo 43.367 cặp
@@ -12,8 +13,10 @@ có nội dung giống nhau vẫn là hai giao dịch. Dữ liệu này không c
 item cần gộp. Mapping, metadata và audit được xuất riêng và kiểm chéo độc lập.
 
 Ngưỡng pilot đã chốt được giữ nguyên: minsup $0{,}005$, minconf $0{,}60$;
-absolute threshold $\lceil0{,}005\times9835\rceil=50$. Pilot sinh đủ luật
-để trình bày top-10, không điều chỉnh ngưỡng để tối đa lift sau khi xem kết quả.
+absolute threshold $\lceil0{,}005\times9835\rceil=50$. Điều kiện này yêu cầu
+cặp tiền kiện và hậu kiện cùng xuất hiện ở ít nhất 50 giỏ. Ngưỡng confidence
+giữ các luật có hậu kiện xuất hiện trong ít nhất 60\% số giỏ thỏa tiền kiện.
+Pilot sinh đủ luật để trình bày top-10 với hai ngưỡng đã chốt.
 Cả hai backend mine đầy đủ, trả cùng 1.001 tập phổ biến/support. Với $A,B$
 khác rỗng, rời nhau, $n$ là số giỏ và $\sigma$ là absolute support:
 \begin{align}
@@ -36,13 +39,13 @@ rank và metric gốc không làm tròn trước khi lọc/sort.}
 \subsection{Groceries: kết quả và ý nghĩa kinh doanh}
 Bảng~\ref{tab:groceries-top10-m2} cho thấy luật hạng 1:
 citrus fruit, root vegetables, whole milk $\Rightarrow$ other vegetables.
-Có 57/90 giỏ thỏa hậu kiện, confidence $63{,}33\%$, cao hơn tỷ lệ nền
+Có 57/90 giỏ thỏa hậu kiện, support $0{,}5796\%$, confidence $63{,}33\%$, cao hơn tỷ lệ nền
 $1903/9835=19{,}35\%$, lift $3{,}273$. Có thể thử gợi ý/bố trí nhóm rau khi
 giỏ đã có trái cây, rau củ và sữa; toàn luật chỉ xuất hiện ở 57 giỏ nên chưa
 đủ để áp dụng đại trà.
 
 Luật hạng 5: root vegetables, tropical fruit, yogurt $\Rightarrow$ whole milk,
-confidence $56/80=70\%$, lift $2{,}740$, so với tỷ lệ nền sữa $25{,}55\%$.
+support $0{,}5694\%$, confidence $56/80=70\%$, lift $2{,}740$, so với tỷ lệ nền sữa $25{,}55\%$.
 Gợi ý sữa theo nhóm giỏ này là giả thuyết bán chéo cần A/B test.
 Luật hạng 9: butter, yogurt $\Rightarrow$ whole milk có $92/144=63{,}89\%$,
 lift $2{,}500$, support $0{,}9354\%$. Support cao hơn luật hạng 1 nhưng lift
@@ -52,7 +55,10 @@ hơn khi thiết kế thử nghiệm thực tế.
 Lift là tương quan so với độc lập trong dữ liệu quan sát, không phải mức tăng
 doanh thu hay tác động nhân quả của khuyến mãi. Các luật có item chồng lấn,
 không phải bằng chứng độc lập. Support thấp và lựa chọn top trên cùng dữ liệu
-có thể làm thứ hạng không ổn định; cần kiểm trên giai đoạn/dữ liệu khác.
+có thể làm thứ hạng không ổn định. Dữ liệu giỏ không có giá, thời điểm hay
+nhóm đối chứng để kiểm soát mùa vụ, khuyến mãi và khác biệt cửa hàng. Một
+thử nghiệm gợi ý mua kèm cần giữ nhóm đối chứng và đo tỷ lệ thêm sản phẩm
+ở các giỏ đủ điều kiện, trước khi cân nhắc triển khai rộng hơn.
 
 \subsection{Splice DNA: mã hóa và audit}
 UCI Splice~\cite{splice} có 3.190 sequences với nhãn EI (exon--intron),
@@ -60,9 +66,13 @@ IE (intron--exon), N (neither). Raw records từ kho học thuật Đại học
 Szeged~\cite{splice_mirror_b}, pin SHA-256, giữ source IDs/thứ tự dòng.
 Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$; mỗi item là
 (vị trí, base), 48 IDs cố định theo A/C/G/T. Nhãn giữ riêng, không đưa vào miner.
+Cửa sổ lấy số vị trí bằng nhau ở hai phía điểm cắt đã căn chỉnh. Mã hóa vị
+trí cùng base bảo toàn sự khác biệt giữa cùng một nucleotide ở hai phía.
 Mẫu bị loại nếu có ambiguity trong cửa sổ; ambiguity ngoài cửa sổ không làm
 mẫu bị loại. Không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại;
 Bảng~\ref{tab:splice-preparation-b} cho audit và threshold theo từng lớp.
+Ngưỡng tương đối 20\% giữ các mẫu lặp đủ thường xuyên trong chính lớp đó,
+với số quan sát tối thiểu điều chỉnh theo kích thước lớp.
 
 \begin{table}[htbp]
 \centering
@@ -101,6 +111,11 @@ $(+1,G),(+2,T)$ gặp ở EI $758/765=99{,}08\%$, IE $108/766=14{,}10\%$,
 N $98/1654=5{,}93\%$: co-occurrence bên phải ranh giới khác biệt lớn giữa
 các nhãn. $(-2,A),(-1,G)$ gặp ở IE $762/766=99{,}48\%$, EI
 $388/765=50{,}72\%$, N $127/1654=7{,}68\%$, cho mô tả tương ứng ở bên trái.
+GT sau ranh giới EI và AG trước ranh giới IE phù hợp với hai dinucleotide
+thường gặp tại vị trí cho và nhận của intron ở động vật có vú~\cite{burset2000}.
+Chênh lệch EI--N và IE--N lần lượt là $93{,}16$ và $91{,}80$ điểm phần trăm.
+Sự hiện diện trong cả lớp N cho thấy từng cặp base riêng lẻ không đủ để
+nhận diện điểm nối.
 Pattern 4 item hạng 13 có counts EI/IE/N $514/22/2$;
 điều kiện cụ thể hơn đi kèm support EI giảm còn $67{,}19\%$.
 Đây là association mô tả, không phải accuracy classifier, p-value hay chứng
@@ -119,8 +134,11 @@ CLI xuất CSV, patterns và mapping/audit cùng \texttt{run.toml} ghi config,
 runtime, source/input/output hashes; output phải mới/rỗng. Hai lần chạy có
 cùng artifact hashes. Notebook thực hiện tải nguồn có kiểm hash, Julia helpers,
 miner, rules/comparison và SPMF; Linux CI chạy từ checkout sạch.
-Local/CI không được gọi là phiên Google Colab đã nghiệm thu; remote Colab và
-đóng gói PDF cuối là các bước bàn giao cần xác nhận riêng.
+Phiên Google Colab ngày 17/11/2026 dùng Git bundle của bản M3, hoàn tất 7/7 code
+cells trên runtime sạch với Julia 1.12.6 và 790 checks. Bốn đầu vào ứng dụng
+và bốn benchmark ở ngưỡng trung bình khớp Java SPMF. Kho mã lưu notebook có
+output, log và commit nguồn của phiên này. Notebook nộp bài lấy mã từ nhánh
+\texttt{main} công khai và ghi commit của phiên chạy để đối chiếu.
 
 Hai ứng dụng cho thấy cùng frequent-itemset engine có thể mô tả giỏ hàng và
 co-occurrence vị trí/base, nhưng ý nghĩa ứng dụng phụ thuộc chuẩn hóa, metadata,
