@@ -23,7 +23,7 @@ jobs:
       - run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
       - run: python3 scripts/prepare_spmf.py
       - run: python tests/test_application_sources.py
-      - run: julia --project=. tests/runtests.jl
+      - run: julia --project test/runtests.jl
       - run: julia --project=. scripts/mine.jl --help
       - run: python3 tests/smoke_benchmark.py
   controller:

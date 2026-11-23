@@ -9,7 +9,7 @@ không thay thế thông báo giảng viên hoặc Moodle.
 | Một thuật toán, tự cài đặt từ original paper | Zaki 2000; docs/paper-notes.md, src/algorithm/ | A+B / M1 |
 | Julia ≥1.9, dùng kiểu dữ liệu phù hợp ngôn ngữ | Project.toml, typed atoms, multiple dispatch, BitVector | A / M1–2 |
 | Xuất mọi frequent itemset và support | mine API và CLI SPMF | A / M1 |
-| Khớp đầy đủ SPMF trên ≥5 CSDL, test tự động | tests/test_correctness.jl, test_spmf.jl, comparator | B / M1 |
+| Khớp đầy đủ SPMF trên ≥5 CSDL, test tự động | `julia --project test/runtests.jl`, test_correctness.jl, test_spmf.jl, comparator | B / M1 |
 | ≥1 tối ưu có đo thời gian/bộ nhớ so với basic | BitVector; worker + external RSS | A / M2–3 |
 | ≥4 benchmark cộng đồng FIM | Chess, Mushroom, Retail, T10I4D100K | A; B kiểm chứng / M3 |
 | Correctness trên từng benchmark | Cùng file/threshold, canonical maps, không chỉ count | B / M3 |
@@ -43,6 +43,7 @@ Nhóm đã chọn Julia theo đề và kế hoạch; không được bỏ ứng 
   thống kê/license tại configs/datasets.toml và data/manifest.csv.
 - Nguồn tải công khai thực tế dùng FIMI, snapshot stedy và mirror UCI học thuật;
   không gọi các URL này là HF/Kaggle. Raw datasets không commit.
-- Report.pdf và test stdout cuối đã có; đối chiếu [M3 B](M3_MEMBER_B.md).
-- Nhóm cần xác nhận deadline Moodle chính thức, Group ID/MSSV nếu yêu cầu,
-  review PDF và chạy lại public notebook M3 sau merge; nhánh M3 đang bàn giao để review.
+- M3 đã merge qua PR #5. Xem PDF, tests và tình trạng nghiệm thu tại
+  [rubric audit](RUBRIC_FINAL_AUDIT.md).
+- Nhóm cần xác nhận deadline Moodle chính thức, Group ID/MSSV nếu yêu cầu
+  và lưu bằng chứng Run all của public main. [Checklist bàn giao](planning/DELIVERY.md).
