@@ -8,7 +8,7 @@ import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
 from benchlib import ROOT,sha256
 from review_benchmarks import check_coverage,check_manifest,require_equal
-from verify_delivery import check_report
+from verify_delivery import check_published_applications,check_report
 
 class DeliveryGateTests(unittest.TestCase):
     def test_full_map_rejects_missing_pattern(self):
@@ -47,5 +47,29 @@ class DeliveryGateTests(unittest.TestCase):
             self.assertEqual(check_report(root)["body_pages"],10)
             source.write_text("new source","utf-8")
             with self.assertRaises(ValueError):check_report(root)
+
+    def test_fresh_applications_must_match_published_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fresh, published = root/"fresh", root/"published"
+            # Published metadata also hashes prepared rows that are intentionally local-only.
+            generated = '"prepared/groceries/transactions.txt" = "' + "0"*64 + '"\n'
+            for output in (fresh, published):
+                output.mkdir()
+                table = output/"groceries_rules.csv"
+                table.write_bytes(b"rank,lift\n1,3.273\n")
+                (output/"run.toml").write_text(
+                    f'[artifact_sha256]\n"groceries_rules.csv" = "{sha256(table)}"\n' + generated, encoding="utf-8")
+            check_published_applications(fresh, published)
+            table = fresh/"groceries_rules.csv"
+            table.write_bytes(b"rank,lift\n1,3.999\n")
+            (fresh/"run.toml").write_text(
+                f'[artifact_sha256]\n"groceries_rules.csv" = "{sha256(table)}"\n' + generated, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Fresh application artifacts differ"):
+                check_published_applications(fresh, published)
+            (fresh/"run.toml").write_bytes((published/"run.toml").read_bytes())
+            (published/"groceries_rules.csv").write_bytes(b"rank,lift\n1,0.0\n")
+            with self.assertRaisesRegex(ValueError, "Published application artifact changed"):
+                check_published_applications(fresh, published)
 
 if __name__=="__main__":unittest.main()

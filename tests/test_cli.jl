@@ -17,6 +17,13 @@
         @test !success(pipeline(`$julia --startup-file=no --project=$root $script --input $input --output $input --min-count 1`;
                               stdout=devnull, stderr=devnull))
         @test read(input) == before
+        copy_path = joinpath(directory, "preserve-input.txt")
+        alias_path = joinpath(directory, "alias.txt")
+        cp(input, copy_path)
+        hardlink(copy_path, alias_path)
+        @test !success(pipeline(`$julia --startup-file=no --project=$root $script --input $copy_path --output $alias_path --min-count 1`;
+                              stdout=devnull, stderr=devnull))
+        @test read(copy_path) == before
         @test !success(pipeline(`$julia --startup-file=no --project=$root $script --input $input --output $(outputs[1]) --min-count 1 --minsup 0.4`;
                               stdout=devnull, stderr=devnull))
     end

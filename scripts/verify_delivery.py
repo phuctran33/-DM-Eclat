@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+import tomllib
 from benchlib import ROOT, sha256, read_patterns
 from build_report import report_sources
 from review_benchmarks import check_manifest, check_coverage, current_sources, require_equal
@@ -39,6 +40,24 @@ def check_benchmark_review(output):
             require_equal(read_patterns(output/f"{name}-{backend}.txt"),reference,name)
     return report
 
+def check_published_applications(fresh, published=ROOT/"results/applications"):
+    """Bind a fresh run to the published tables and patterns used by the report."""
+    fresh = Path(fresh)
+    published = Path(published)
+    computed = tomllib.loads((fresh/"run.toml").read_text(encoding="utf-8"))["artifact_sha256"]
+    recorded = tomllib.loads((published/"run.toml").read_text(encoding="utf-8"))["artifact_sha256"]
+    if not recorded or computed != recorded:
+        raise ValueError("Fresh application artifacts differ from published report evidence")
+    for path, digest in recorded.items():
+        artifact = published/path
+        # Observation rows and numeric transactions are regenerated from pinned inputs.
+        generated_rows = path.startswith("prepared/") and (
+            artifact.name == "observations.csv" or artifact.name.startswith("transactions"))
+        if generated_rows and not artifact.exists():
+            continue
+        if sha256(artifact) != digest:
+            raise ValueError(f"Published application artifact changed: {path}")
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--applications",type=Path,required=True)
@@ -56,6 +75,7 @@ def main():
     check_coverage(json.loads((ROOT/"results/raw/cases.json").read_text("utf-8")))
     benchmarks=check_benchmark_review(args.benchmark_review)
     apps=verify(applications)
+    check_published_applications(applications)
     live=json.loads((applications/"validation.json").read_text("utf-8"))
     if live["status"]!="pass" or len(live["spmf"])!=4:
         raise ValueError("Four live application SPMF comparisons required")
