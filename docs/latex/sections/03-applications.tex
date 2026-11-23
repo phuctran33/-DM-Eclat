@@ -2,23 +2,18 @@
 \label{sec:applications}
 
 \subsection{Groceries: dữ liệu và phương pháp}
-Groceries gồm 9.835 giỏ hàng và 169 nhóm sản phẩm. Ranh giới mỗi lượt mua đã
-có sẵn, phù hợp để đo đồng xuất hiện ở cấp giỏ. Nhóm dùng CSV mirror
-pin commit của kho \emph{Machine Learning with R}~\cite{groceries_source_b};
-nguồn gốc dữ liệu được mô tả bởi arules~\cite{groceries_documentation_b}.
-Adapter giữ mỗi dòng nguồn thành basket ID riêng rồi tạo 43.367 cặp
-\texttt{basket\_id,item\_name}. Julia chuẩn hóa NFC, chữ thường, whitespace,
-tạo mapping lexicographic và loại item lặp trong cùng giỏ; hai giỏ khác ID
-có nội dung giống nhau vẫn là hai giao dịch. Dữ liệu này không có dòng trùng
-item cần gộp. Mapping, metadata và audit được xuất riêng và kiểm chéo độc lập.
+Groceries gồm 9.835 giỏ và 169 nhóm sản phẩm. CSV từ kho
+\emph{Machine Learning with R} được pin commit~\cite{groceries_source_b};
+arules mô tả nguồn dữ liệu~\cite{groceries_documentation_b}. Adapter gán
+basket ID cho từng dòng nguồn, xuất 43.367 cặp \texttt{basket\_id,item\_name}.
+Julia chuẩn hóa NFC, chữ thường và khoảng trắng, rồi gán ID item theo thứ tự
+từ điển. Bộ tiền xử lý loại item trùng trong cùng giỏ và giữ từng basket ID riêng.
 
-Ngưỡng pilot đã chốt được giữ nguyên: minsup $0{,}005$, minconf $0{,}60$;
-absolute threshold $\lceil0{,}005\times9835\rceil=50$. Điều kiện này yêu cầu
-cặp tiền kiện và hậu kiện cùng xuất hiện ở ít nhất 50 giỏ. Ngưỡng confidence
-giữ các luật có hậu kiện xuất hiện trong ít nhất 60\% số giỏ thỏa tiền kiện.
-Pilot sinh đủ luật để trình bày top-10 với hai ngưỡng đã chốt.
-Cả hai backend mine đầy đủ, trả cùng 1.001 tập phổ biến/support. Với $A,B$
-khác rỗng, rời nhau, $n$ là số giỏ và $\sigma$ là absolute support:
+Minsup $0{,}005$ cho ngưỡng $\lceil0{,}005\times9835\rceil=50$ giỏ.
+Minconf $0{,}60$ yêu cầu hậu kiện xuất hiện ở ít nhất 60\% giỏ thỏa tiền kiện.
+Hai backend cùng trả 1.001 tập phổ biến. Với $A,B$ khác rỗng, rời nhau,
+$n$ là số giỏ và $\sigma$ là số giao dịch chứa tập mục:
+
 \begin{align}
 \operatorname{supp}(A\Rightarrow B)&=\sigma(A\cup B)/n,\\
 \operatorname{conf}(A\Rightarrow B)&=\sigma(A\cup B)/\sigma(A),\\
@@ -52,22 +47,26 @@ lift $2{,}500$, support $0{,}9354\%$. Support cao hơn luật hạng 1 nhưng li
 thấp hơn nên đứng sau theo tiêu chí đã chọn; tiền kiện ngắn có thể thuận tiện
 hơn khi thiết kế thử nghiệm thực tế.
 
-Lift là tương quan so với độc lập trong dữ liệu quan sát, không phải mức tăng
-doanh thu hay tác động nhân quả của khuyến mãi. Các luật có item chồng lấn,
-không phải bằng chứng độc lập. Support thấp và lựa chọn top trên cùng dữ liệu
-có thể làm thứ hạng không ổn định. Dữ liệu giỏ không có giá, thời điểm hay
-nhóm đối chứng để kiểm soát mùa vụ, khuyến mãi và khác biệt cửa hàng. Một
-thử nghiệm gợi ý mua kèm cần giữ nhóm đối chứng và đo tỷ lệ thêm sản phẩm
-ở các giỏ đủ điều kiện, trước khi cân nhắc triển khai rộng hơn.
+Trong 9.835 giỏ, 580 giỏ thỏa tiền kiện của ít nhất một luật top-10. Có
+353 giỏ thỏa đồng thời cả hai vế của ít nhất một luật ($3{,}59\%$ tổng số
+giỏ). Mỗi giỏ có thể thỏa nhiều luật, nên số giỏ phân biệt cho biết phạm vi
+áp dụng của gợi ý bán kèm khi xét cả top-10.
+
+Lift đo mức đồng xuất hiện so với giả thiết độc lập. Support thấp và việc chọn
+top-10 trên cùng dữ liệu có thể làm thứ hạng thiếu ổn định. Dữ liệu thiếu giá,
+thời điểm và nhóm đối chứng. Để đánh giá bán chéo, có thể thử gợi ý mua kèm
+và so tỷ lệ thêm sản phẩm giữa các nhóm giỏ đủ điều kiện.
 
 \subsection{Splice DNA: mã hóa và audit}
 UCI Splice~\cite{splice} có 3.190 sequences với nhãn EI (exon--intron),
 IE (intron--exon), N (neither). Raw records từ kho học thuật Đại học
-Szeged~\cite{splice_mirror_b}, pin SHA-256, giữ source IDs/thứ tự dòng.
-Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$; mỗi item là
-(vị trí, base), 48 IDs cố định theo A/C/G/T. Nhãn giữ riêng, không đưa vào miner.
-Cửa sổ lấy số vị trí bằng nhau ở hai phía điểm cắt đã căn chỉnh. Mã hóa vị
-trí cùng base bảo toàn sự khác biệt giữa cùng một nucleotide ở hai phía.
+Szeged~\cite{splice_mirror_b}, pin SHA-256, giữ source IDs và thứ tự dòng.
+File \texttt{splice.data} trong ZIP chính thức của UCI có cùng SHA-256 và
+được dùng làm nguồn dự phòng.
+Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$. Với EI/IE, tọa độ
+tính theo hai phía ranh giới được chú thích. Với N, chúng tính quanh tâm cửa
+sổ đối chứng. Mỗi item là cặp (vị trí, base), gồm 48 ID cố định theo A/C/G/T.
+Mã hóa theo vị trí phân biệt cùng một nucleotide ở hai phía. Nhãn được giữ riêng.
 Mẫu bị loại nếu có ambiguity trong cửa sổ; ambiguity ngoài cửa sổ không làm
 mẫu bị loại. Không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại;
 Bảng~\ref{tab:splice-preparation-b} cho audit và threshold theo từng lớp.
@@ -124,23 +123,14 @@ Cửa sổ, ngưỡng, loại ambiguity và chọn pattern trên cùng mẫu gi�
 khái quát; muốn dự báo cần đánh giá trên tập độc lập.
 
 \subsection{Kiểm chứng và khả năng tái lập}
-Mọi output được sinh bằng Eclat của nhóm. Python độc lập kiểm count của mọi
-pattern emitted, mọi split luật đủ ngưỡng, metric, labels, ranking/top-10 và
-candidate union DNA. Java SPMF 2.64b pin JAR đối chiếu toàn bộ map của
-Groceries/EI/IE/N: 1.001/381/209/48 patterns đều khớp 100\%.
-Absolute thresholds đồng nhất; argument cho SPMF nằm trong cùng count bin
-để tránh lệch ranh giới khi nhân số thực. Không giới hạn độ dài output.
-CLI xuất CSV, patterns và mapping/audit cùng \texttt{run.toml} ghi config,
-runtime, source/input/output hashes; output phải mới/rỗng. Hai lần chạy có
-cùng artifact hashes. Notebook thực hiện tải nguồn có kiểm hash, Julia helpers,
-miner, rules/comparison và SPMF; Linux CI chạy từ checkout sạch.
-Phiên Google Colab ngày 17/11/2026 dùng Git bundle của bản M3, hoàn tất 7/7 code
-cells trên runtime sạch với Julia 1.12.6 và 790 checks. Bốn đầu vào ứng dụng
-và bốn benchmark ở ngưỡng trung bình khớp Java SPMF. Kho mã lưu notebook có
-output, log và commit nguồn của phiên này. Notebook nộp bài lấy mã từ nhánh
-\texttt{main} công khai và ghi commit của phiên chạy để đối chiếu.
+Python kiểm độc lập count, nhãn, xếp hạng luật và tập mẫu DNA.
+Java SPMF 2.64b khớp toàn bộ map Groceries/EI/IE/N với
+1.001/381/209/48 tập. Tham số Java nằm trong cùng khoảng sinh ra ngưỡng
+đếm tuyệt đối để tránh lệch do làm tròn ở biên. File \texttt{run.toml}
+lưu config, runtime và hash nguồn, đầu vào, đầu ra.
 
-Hai ứng dụng cho thấy cùng frequent-itemset engine có thể mô tả giỏ hàng và
-co-occurrence vị trí/base, nhưng ý nghĩa ứng dụng phụ thuộc chuẩn hóa, metadata,
-ngưỡng và denominator. Kết quả mined cần kiểm chứng đầy đủ trước diễn giải;
-correlation không tự xác lập tác động kinh doanh hay cơ chế sinh học.
+Notebook tự tải dữ liệu, chạy Julia và đối chiếu SPMF từ checkout sạch.
+Phiên Google Colab ngày 17/11/2026 dùng Git bundle M3, hoàn tất 7/7 ô
+với Julia 1.12.6 và 790 checks. Repo lưu notebook có output, log và commit
+của phiên đó. Notebook nộp bài lấy mã từ nhánh \texttt{main} công khai và
+in commit của lần chạy để đối chiếu.

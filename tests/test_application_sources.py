@@ -1,5 +1,5 @@
 """Network-free regression checks for source acquisition and canonical adaptation."""
-import csv,hashlib,importlib.util,io,json,subprocess,tempfile,unittest
+import csv,hashlib,importlib.util,io,json,subprocess,tempfile,unittest,zipfile
 from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
@@ -53,5 +53,46 @@ class SourceTests(unittest.TestCase):
             with patch.object(source.shutil,"which",return_value="curl"),patch.object(source.subprocess,"run",side_effect=fail):
                 with self.assertRaises(subprocess.CalledProcessError):source.fetch("https://example.invalid/source",target,False)
             self.assertFalse(target.exists())
+
+    def test_splice_falls_back_to_uci_and_reuses_verified_archive(self):
+        data = b"EI,fixture," + b"A" * 60 + b"\n"
+        checksum = hashlib.sha256(data).hexdigest()
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory)
+            (cache / "splice-source.data").write_bytes(b"bad mirror bytes")
+
+            def download(command, **kwargs):
+                self.assertEqual(command[-3], source.SPLICE_ORIGINAL_URL)
+                with zipfile.ZipFile(command[-1], "w") as archive:
+                    archive.writestr("splice.data", data)
+
+            with patch.object(source, "SPLICE_HASH", checksum), patch.object(source.shutil, "which", return_value="curl"):
+                with patch.object(source.subprocess, "run", side_effect=download) as request:
+                    self.assertEqual(source.read_splice(cache, False)[:2], (data, source.SPLICE_ORIGINAL_URL))
+                    request.assert_called_once()
+                with patch.object(source.subprocess, "run") as request:
+                    self.assertEqual(source.read_splice(cache, True)[:2], (data, source.SPLICE_ORIGINAL_URL))
+                    request.assert_not_called()
+
+    def test_splice_rejects_bad_zip_without_promoting_cache(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            canonical = root / "data/applications/splice.data"
+            canonical.parent.mkdir(parents=True)
+            canonical.write_bytes(b"keep canonical")
+
+            def download(command, **kwargs):
+                if command[-3] == source.SPLICE_URL:
+                    raise subprocess.CalledProcessError(22, command)
+                with zipfile.ZipFile(command[-1], "w") as archive:
+                    archive.writestr("splice.data", b"wrong checksum")
+
+            with patch.object(source, "ROOT", root), patch.object(source.shutil, "which", return_value="curl"):
+                with patch.object(source.subprocess, "run", side_effect=download) as request:
+                    with self.assertRaisesRegex(ValueError, "checksum"):
+                        source.prepare("splice")
+                    self.assertEqual(request.call_count, 2)
+            self.assertEqual(canonical.read_bytes(), b"keep canonical")
+            self.assertEqual(list((root / ".tools/downloads").iterdir()), [])
 
 if __name__=="__main__":unittest.main(verbosity=2)

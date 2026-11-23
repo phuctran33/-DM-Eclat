@@ -8,7 +8,7 @@ import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
 from benchlib import ROOT,sha256
 from review_benchmarks import check_coverage,check_manifest,require_equal
-from verify_delivery import check_published_applications,check_report
+from verify_delivery import check_application_spmf,check_published_applications,check_report
 
 class DeliveryGateTests(unittest.TestCase):
     def test_full_map_rejects_missing_pattern(self):
@@ -71,5 +71,29 @@ class DeliveryGateTests(unittest.TestCase):
             (published/"groceries_rules.csv").write_bytes(b"rank,lift\n1,0.0\n")
             with self.assertRaisesRegex(ValueError, "Published application artifact changed"):
                 check_published_applications(fresh, published)
+
+    def test_application_spmf_requires_all_four_distinct_datasets(self):
+        names = ["groceries", "splice_EI", "splice_IE", "splice_N"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for folder in ["patterns", "verification"]:
+                (root / folder).mkdir()
+            expected = []
+            for name in names:
+                for folder in ["patterns", "verification"]:
+                    (root / folder / f"{name}.txt").write_text("1 #SUP: 2\n", encoding="utf-8")
+                expected.append(dict(
+                    dataset=name, identical=True, exact_match_rate=1.0,
+                    output_sha256=sha256(root / "verification" / f"{name}.txt"),
+                ))
+            validation = root / "validation.json"
+            validation.write_text(json.dumps(dict(status="pass", spmf=expected)), encoding="utf-8")
+            self.assertEqual(check_application_spmf(root), 4)
+            for cases in ([expected[0]] * 4, expected[:-1],
+                          expected[:-1] + [dict(expected[-1], dataset="unexpected")]):
+                with self.subTest(names=[case["dataset"] for case in cases]):
+                    validation.write_text(json.dumps(dict(status="pass", spmf=cases)), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "one live SPMF comparison"):
+                        check_application_spmf(root)
 
 if __name__=="__main__":unittest.main()

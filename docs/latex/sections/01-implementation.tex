@@ -13,7 +13,7 @@ của các tập con khi sinh luật, nhưng cũng làm chi phí bộ nhớ ph�
 
 Gọi $D=(t_1,\ldots,t_n)$ là dãy $n$ giao dịch; $I$ là tập $m$ item phân biệt;
 $t_i\subseteq I$ và $X\subseteq I$, $X\ne\emptyset$. Dùng dãy thay vì loại trùng
-các giao dịch: hai giỏ hàng giống nội dung vẫn là hai quan sát độc lập. Tidset và
+các giao dịch: hai giỏ hàng giống nội dung vẫn là hai giao dịch riêng biệt, có hai TID khác nhau. Tidset và
 support count của $X$ được định nghĩa bởi
 \begin{equation}
  T(X)=\{i\in\{1,\ldots,n\}:X\subseteq t_i\},\quad
@@ -259,8 +259,10 @@ CSDL/transaction rỗng, một item, ID không liên tiếp, database dày, inpu
 caller ownership và các kích thước 63/64/65/127/128/129 giao dịch. Các test cuối
 cho cả phần mining, schema, rules và CLI được lưu nguyên stdout.
 
-Reference tại 40\% được tạo thực sự bằng SPMF 2.64b, pin JAR SHA-256, input hash,
-output hash và lệnh trong manifest. Comparator xác minh toàn bộ key/support,
+Tại minsup 40\%, cả hai backend khớp toàn bộ tập mục và support với Java
+SPMF 2.64b trên năm CSDL toy, đạt 10/10 phép so sánh (100\%). SPMF trả lần
+lượt 7, 14, 5, 4 và 0 tập trên basic, dense, duplicates, boundary và sparse.
+Ở sparse, cả ba map đều rỗng. Manifest lưu hash của JAR, input, output và lệnh chạy. Comparator xác minh toàn bộ key/support,
 đếm missing, extra, wrong support; hai output rỗng vẫn là một trường hợp hợp lệ,
 không tự suy correctness của các trường hợp có output từ ví dụ rỗng. Trên benchmark,
 runner còn đối chiếu từng cấu hình trước khi đo và kiểm output của từng repetition.

@@ -58,6 +58,24 @@ def check_published_applications(fresh, published=ROOT/"results/applications"):
         if sha256(artifact) != digest:
             raise ValueError(f"Published application artifact changed: {path}")
 
+def check_application_spmf(applications):
+    live = json.loads((applications / "validation.json").read_text("utf-8"))
+    cases = live["spmf"]
+    expected = {"groceries", "splice_EI", "splice_IE", "splice_N"}
+    names = [case["dataset"] for case in cases]
+    if live["status"] != "pass" or set(names) != expected or len(names) != len(expected):
+        raise ValueError("Expected one live SPMF comparison each for groceries, splice_EI, splice_IE and splice_N")
+    for case in cases:
+        name = case["dataset"]
+        if not case["identical"] or case["exact_match_rate"] != 1.0:
+            raise ValueError(f"Application SPMF mismatch: {name}")
+        reference = applications / "verification" / f"{name}.txt"
+        if sha256(reference) != case["output_sha256"]:
+            raise ValueError(f"Application SPMF evidence changed: {name}")
+        require_equal(read_patterns(applications / "patterns" / f"{name}.txt"),
+                      read_patterns(reference), name)
+    return len(cases)
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--applications",type=Path,required=True)
@@ -76,17 +94,7 @@ def main():
     benchmarks=check_benchmark_review(args.benchmark_review)
     apps=verify(applications)
     check_published_applications(applications)
-    live=json.loads((applications/"validation.json").read_text("utf-8"))
-    if live["status"]!="pass" or len(live["spmf"])!=4:
-        raise ValueError("Four live application SPMF comparisons required")
-    for case in live["spmf"]:
-        if not case["identical"] or case["exact_match_rate"]!=1.0:
-            raise ValueError("Application SPMF mismatch")
-        path=applications/"verification"/(case["dataset"]+".txt")
-        if sha256(path)!=case["output_sha256"]:
-            raise ValueError("Application SPMF evidence changed")
-        require_equal(read_patterns(applications/"patterns"/(case["dataset"]+".txt")),
-                      read_patterns(path),case["dataset"])
+    live_application_count = check_application_spmf(applications)
     try:
         import google.colab
         runtime="google-colab"
@@ -96,7 +104,7 @@ def main():
                 report_body_pages=pdf["body_pages"],n_rules=apps["n_rules"],
                 n_dna_candidates=apps["n_dna_candidates"],
                 archived_benchmark_comparisons=benchmarks["archived_full_map_comparisons"],
-                live_benchmark_datasets=4,live_application_datasets=4,
+                live_benchmark_datasets=4,live_application_datasets=live_application_count,
                 benchmark_review_sha256=sha256(args.benchmark_review/"review.json"),
                 application_validation_sha256=sha256(applications/"validation.json"))
     args.output.parent.mkdir(parents=True,exist_ok=True)

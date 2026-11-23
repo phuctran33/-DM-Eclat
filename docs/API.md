@@ -22,7 +22,7 @@ giao dịch mining; giữ riêng để so sánh theo lớp. Mã CLI parse suppor
 để tránh `ceil(0.07*100)` lệch vì biểu diễn nhị phân.
 
 Blank/comment/metadata input không tạo TID. Giữ các transaction giống nhau vì đây
-là các quan sát độc lập. File input sai thứ tự/trùng item bị từ chối; helper chuẩn bị
+là các giao dịch riêng biệt với hai TID. File input sai thứ tự/trùng item bị từ chối; helper chuẩn bị
 dữ liệu phải chuẩn hóa rõ ràng, không âm thầm đổi dữ liệu trong parser.
 
 `PreparedDataset` có `dataset_id,transactions,item_labels,row_ids,classes`.
