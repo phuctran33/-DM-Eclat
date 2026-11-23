@@ -1,4 +1,9 @@
-# Kiểm chứng M3 B — 17/11/2026
+# Nhật ký kiểm chứng lịch sử
+
+Các mục dưới đây ghi lại kết quả ở từng mốc. Trạng thái của bản đã merge
+nằm ở [rubric audit](RUBRIC_FINAL_AUDIT.md) và [checklist](planning/DELIVERY.md).
+
+## Kiểm chứng M3 B — 17/11/2026
 
 M2 đã merge (main e204a7f). Nhánh PR M3 feat/member-b-m3-delivery,
 chờ review/merge vào main. Run all local 7/7 cells: 790 Julia checks, 4 source tests,

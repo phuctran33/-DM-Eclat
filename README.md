@@ -12,6 +12,9 @@ Kết quả ứng dụng Groceries và Splice DNA dùng chính miner của nhóm
 [Kiến trúc](docs/ARCHITECTURE.md) · [Vấn đáp](docs/DEFENSE_GUIDE.md) ·
 [Đối chiếu rubric](docs/RUBRIC_FINAL_AUDIT.md)
 
+Để chấm hoặc vấn đáp, mở PDF và bảng đối chiếu rubric trước. Sau đó chạy
+lệnh kiểm thử của đề và notebook theo hướng dẫn dưới đây.
+
 ## Chạy từ clone sạch
 
 Cần Julia ≥1.9 và Python ≥3.11. Java ≥21 và curl dành cho kiểm chứng SPMF
@@ -36,7 +39,7 @@ dần theo từng dòng. Hai dòng cùng nội dung vẫn là hai giao dịch. F
 ## Kiểm thử và notebook
 
 ```bash
-julia --project=. tests/runtests.jl
+julia --project test/runtests.jl
 python3 scripts/prepare_spmf.py
 python3 tests/test_benchmark.py -v
 python3 -m pip install -r requirements-plot.txt
@@ -45,17 +48,18 @@ python3 tests/smoke_benchmark.py
 python3 -B scripts/run_notebook.py
 ```
 
-Julia tests mặc định kiểm cả list, bitset và năm references SPMF đã commit.
+Cả lệnh của đề và `julia --project=. tests/runtests.jl` chạy cùng một bộ test,
+gồm list, bitset và năm references SPMF đã commit.
 Script tải SPMF **2.64b** từ nguồn chính thức và kiểm SHA-256. Notebook chạy
 bảy code cells, tải dữ liệu có kiểm hash, mine lại hai ứng dụng, so với live SPMF
 và audit benchmark/PDF. Mỗi lần dùng thư mục mới dưới `.tools/notebook-runs/`.
 Giữ `RUN_BENCHMARKS=False` để kiểm correctness mà không lặp lại phép đo.
 CI chạy Julia 1.9/1.11/1.12 và chạy notebook trên Linux.
 
-Colab clone đúng `main` và in source commit. Phiên M3 trên Google Colab
-ngày 17/11 chạy sạch 7/7 cell từ Git bundle. Phiên **Run all từ public main**
-cần bằng chứng riêng. [Lịch sử Colab M3](docs/member-b-validation/m3/colab/README.md) ·
-[Checklist bàn giao](docs/planning/DELIVERY.md)
+Colab clone `main` và in source commit. Phiên M3 ngày 17/11 chạy 7/7 cells
+trên Google Colab từ Git bundle. Phiên **Run all từ public main** vẫn
+**NOT VERIFIED**. [Lịch sử Colab M3](docs/member-b-validation/m3/colab/README.md) ·
+[Cách chạy và lưu bằng chứng](docs/planning/DELIVERY.md#colab-public-main)
 
 ## Hai ứng dụng
 
@@ -82,8 +86,9 @@ kiểm hash. [Manifest URL, revision, license và hash](data/manifest.csv)
 
 Chess, Mushroom, Retail và T10I4D100K đều lấy từ FIMI. Retail và T10 cộng 1
 cho mọi ID để giữ ID dương. Bốn file normalized có tổng 8.904.405 bytes.
-Chưa xác minh được snapshot HF/Kaggle tương đương được phép tái phân phối.
-Nguồn FIMI đã pin hash vẫn tái lập được. [Nguồn FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) ·
+File lớn nhất khoảng 3,89 MiB. Đề yêu cầu HF/Kaggle cho dữ liệu vượt kích
+thước repo và không ghi ngưỡng cụ thể của môn. Nguồn FIMI đã pin hash vẫn
+tái lập được. [Nguồn FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) ·
 [Chi tiết hosting](docs/RUBRIC_FINAL_AUDIT.md#dataset-hosting)
 
 ```bash
