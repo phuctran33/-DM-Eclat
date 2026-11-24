@@ -5,7 +5,7 @@ với 11 nguồn. Report dùng IEEEtran conference A4, hai cột và font TeX Gy
 Chương 1–2 dùng dữ liệu đo của A. Bảng Chương 3 lấy CSV Groceries/Splice của B.
 
 Từ repo root, cài Python 3.11+, TeX Live với XeLaTeX, latexmk, IEEEtran,
-babel-vietnamese, TeX Gyre, booktabs, algorithm và algpseudocode. Sau đó chạy:
+babel-vietnamese, TeX Gyre, booktabs, placeins, algorithm và algpseudocode. Sau đó chạy:
 
 ```bash
 python3 -m pip install -r requirements-report.txt
@@ -25,7 +25,7 @@ khi cập nhật `docs/Report.pdf` cùng `docs/report-build.json`.
 Mã nguồn, timestamp và engine có thể làm byte PDF thay đổi giữa các lần build.
 Phát hành một PDF cùng metadata tương ứng.
 
-Bản cuối được build bằng XeLaTeX/TeX Live 2025 và kiểm trực quan đủ 11 trang.
+Bản cuối được build bằng Tectonic 0.17.0 và được kiểm trực quan sau khi build.
 [Đối chiếu báo cáo](../RUBRIC_FINAL_AUDIT.md#bao-cao). Bản B cho phiên Colab
 bundle dùng Tectonic, có [PDF ở commit lịch sử](https://github.com/phuctran33/-DM-Eclat/blob/392d165b897eea7c78d9ce2076b5e05ac0c0e7c7/docs/Report.pdf)
 và [log build cũ](../member-b-validation/m3/report-build.log).

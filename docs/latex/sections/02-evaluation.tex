@@ -147,25 +147,25 @@ cho biết startup/compilation/serialization có thể che một phần cải th
 giao. Vì chúng đo những công việc khác nhau, không lấy hiệu hai median để khẳng
 định chính xác thời gian JIT hoặc thời gian ghi file.
 
-\begin{figure}[tb]
+\begin{figure}[!tb]
 \centering\includegraphics[width=\columnwidth]{figures/runtime-chess.pdf}
 \caption{Chess: end-to-end (giây) và warm read+mine (ms), median và min--max của
 năm lần; nguồn: \texttt{results/raw/benchmark\_runs.csv}.}
 \label{fig:runtime-chess}
 \end{figure}
-\begin{figure}[tb]
+\begin{figure}[!tb]
 \centering\includegraphics[width=\columnwidth]{figures/runtime-mushroom.pdf}
 \caption{Mushroom: cùng hai phạm vi đo của Hình~\ref{fig:runtime-chess}, năm lần
 mỗi điểm, output đầy đủ. Nguồn: raw benchmark CSV.}
 \label{fig:runtime-mushroom}
 \end{figure}
-\begin{figure}[tb]
+\begin{figure}[!tb]
 \centering\includegraphics[width=\columnwidth]{figures/runtime-retail.pdf}
 \caption{Retail: runtime theo minsup; error bars min--max, không coi timer JVM
 nội bộ là một phần của panel warm Julia. Nguồn: raw benchmark CSV.}
 \label{fig:runtime-retail}
 \end{figure}
-\begin{figure}[tb]
+\begin{figure}[!tb]
 \centering\includegraphics[width=\columnwidth]{figures/runtime-T10I4D100K.pdf}
 \caption{T10I4D100K: runtime trên 100,000 transactions; panel trên giây, panel
 dưới ms; năm repetitions. Nguồn: raw benchmark CSV.}
@@ -215,8 +215,8 @@ ngưỡng và phát triển theo tổ hợp. Ngược lại, nhiều item hiếm
 được mở rộng ở các ngưỡng cao của grid. Minsup bằng nhau về tỉ lệ cũng không làm
 candidate space của các CSDL bằng nhau.
 
-\begin{figure*}[tb]
-\centering\includegraphics[width=.83\textwidth]{figures/output-size.pdf}
+\begin{figure*}[!t]
+\centering\includegraphics[width=.78\textwidth]{figures/output-size.pdf}
 \caption{Số tất cả frequent itemsets theo minsup trên bốn CSDL. Counts lấy từ
 output Basic đã khớp toàn bộ BitVector/SPMF; nguồn: raw/summary CSV.}
 \label{fig:output-size}
@@ -229,6 +229,26 @@ Với BitVector, mỗi giao vẫn có $\lceil n/w\rceil$ words, nên lợi thế
 số joins chứ không chỉ số patterns cuối. Báo cáo chưa instrument riêng candidate
 count theo độ sâu; các giải thích trên là cơ chế phù hợp với mã và số đo, không
 phải kết quả profiling từng phase đã thực hiện.
+
+% Queue these figures before the accompanying text to keep them in Chapter 2.
+\begin{figure}[!tb]
+\centering\includegraphics[width=\columnwidth]{figures/memory.pdf}
+\caption{Median maximum process RSS (MiB), năm process độc lập mỗi backend/CSDL;
+ngưỡng như Bảng~\ref{tab:optimization}. Nguồn: raw memory comparison CSV.}
+\label{fig:memory}
+\end{figure}
+\begin{figure}[!tb]
+\centering\includegraphics[width=.94\columnwidth]{figures/scalability.pdf}
+\caption{Retail: end-to-end (s), warm read+mine (ms) và output size theo $n$;
+relative minsup cố định 1\%, năm repetitions; nguồn: raw benchmark CSV.}
+\label{fig:scalability}
+\end{figure}
+\begin{figure}[!tb]
+\centering\includegraphics[width=.94\columnwidth]{figures/transaction-length.pdf}
+\caption{Synthetic width effects: end-to-end (s), warm read+mine (ms) và số
+patterns; $n=10{,}000,m=100,\theta=0.20$, seed 42. Nguồn: raw benchmark CSV.}
+\label{fig:length}
+\end{figure}
 
 \subsection{Peak RAM và hiệu quả bộ nhớ}
 Peak RSS đo bằng \texttt{/usr/bin/time -l} của macOS trên từng process end-to-end,
@@ -246,12 +266,6 @@ lớn hơn. Nguồn: \texttt{results/raw/memory\_comparison.csv}.}
 \setlength{\tabcolsep}{3pt}
 \input{generated/memory}
 \end{table}
-\begin{figure}[tb]
-\centering\includegraphics[width=\columnwidth]{figures/memory.pdf}
-\caption{Median maximum process RSS (MiB), năm process độc lập mỗi backend/CSDL;
-ngưỡng như Bảng~\ref{tab:optimization}. Nguồn: raw memory comparison CSV.}
-\label{fig:memory}
-\end{figure}
 
 Trong Bảng~\ref{tab:memory} và Hình~\ref{fig:memory}, mức giảm được tính
 $100(1-R_{\mathrm{BitVector}}/R_{\mathrm{Basic}})$ với $R$ là median peak RSS. Do
@@ -280,28 +294,29 @@ Nguồn: raw benchmark CSV và \texttt{cases.json}.}
 \setlength{\tabcolsep}{3pt}
 \input{generated/scalability}
 \end{table}
-\begin{figure}[tb]
-\centering\includegraphics[width=\columnwidth]{figures/scalability.pdf}
-\caption{Retail: end-to-end (s), warm read+mine (ms) và output size theo $n$;
-relative minsup cố định 1\%, năm repetitions; nguồn: raw benchmark CSV.}
-\label{fig:scalability}
-\end{figure}
 
 Hình~\ref{fig:scalability} gồm ba panels để tách output khỏi runtime. Đọc và
 verticalization phải xử lý nhiều item occurrences hơn khi $n$ tăng; lists thường
 dài hơn và bitmaps cần nhiều words hơn. Nhưng sampling cũng thay support của
 các itemsets gần ngưỡng, trong khi ceiling có bước nhảy rời rạc. Vì vậy $|F|$ giữa
 các subsets có thể dao động dù input tăng: trong năm mẫu này counts nằm từ 157 đến 162,
-subset 100\% có 159 patterns như Retail gốc tại 1\%. Đường gần tuyến tính ở một grid cố định
-chỉ mô tả miền đo này; không chứng minh complexity của Eclat tuyến tính cho mọi D.
+subset 100\% có 159 patterns như Retail gốc tại 1\%. Median warm của Basic
+tăng gần tuyến tính từ 27,20 ms ở 10\% lên 301,48 ms ở 100\%. Với BitVector,
+median là 243,33 ms ở 75\% và 226,03 ms ở 100\%. Khoảng min--max tương ứng
+là 189,18--333,27 ms và 211,93--288,10 ms, chồng lấn đáng kể. Xu hướng của
+Basic mô tả miền đã đo. Độ phức tạp tổng quát phụ thuộc số phép giao và độ dài
+tidset theo các biểu thức (\ref{eq:list-cost}) và (\ref{eq:bit-cost}).
 
 \subsection{Ảnh hưởng của độ dài giao dịch}
 Generator của nhóm chọn đều không hoàn lại các items trong mỗi transaction bằng
 \texttt{randperm}, rồi sort; không phải IBM generator của paper. Thí nghiệm giữ
 $n=10{,}000$, $m=100$, seed 42 và $\theta=0.20$, thay width
-$\ell\in\{5,10,15,20,25,30\}$. Các CSDL khác width không được coi là nested.
-Không thêm planted patterns trong đợt chính; kết quả không có pattern vẫn được
-giữ vì nó kiểm tra rõ tác động của singleton filtering ở ngưỡng cố định.
+$\ell\in\{5,10,15,20,25,30\}$. Mỗi CSDL được tạo lại với cùng seed nên ở
+từng dòng, generator dùng chung một hoán vị của 100 item. Các độ rộng lấy những
+đoạn đầu dài dần của hoán vị đó. Khi kiểm lại, cả 50.000 cặp dòng ở các mức
+liền kề đều lồng nhau. Thiết kế ghép cặp giúp quan sát tác động của việc thêm item
+vào cùng giao dịch. Generator sinh đều, không chèn mẫu đồng xuất hiện có chủ đích.
+Các mức có output rỗng cho thấy tác động của lọc singleton ở ngưỡng cố định.
 
 \begin{table}[tb]
 \centering
@@ -311,12 +326,6 @@ giữ vì nó kiểm tra rõ tác động của singleton filtering ở ngưỡn
 \setlength{\tabcolsep}{3pt}
 \input{generated/length}
 \end{table}
-\begin{figure}[tb]
-\centering\includegraphics[width=\columnwidth]{figures/transaction-length.pdf}
-\caption{Synthetic width effects: end-to-end (s), warm read+mine (ms) và số
-patterns; $n=10{,}000,m=100,\theta=0.20$, seed 42. Nguồn: raw benchmark CSV.}
-\label{fig:length}
-\end{figure}
 
 Bảng~\ref{tab:length} và Hình~\ref{fig:length} cần đọc cùng xác suất sinh dữ liệu.
 Theo đối xứng, expected support tương đối của một item là $\ell/m$; của một cặp
@@ -340,9 +349,9 @@ chỉ áp dụng cùng dữ liệu, threshold và scope đã khai báo.
 End-to-end bao gồm startup/JIT/JVM, serialization và overhead controller; warm
 Julia không so trực tiếp với SPMF vì thiếu Java harness cùng boundary. RSS là peak
 của toàn process, không tách riêng tidset payload và không phản ánh chỉ lượng
-allocation đang sống. Các synthetic cases độc lập đều không thay thế dữ liệu có
-cấu trúc đồng xuất hiện mạnh; muốn nghiên cứu deep frequent patterns cần thêm
-planted generator với protocol riêng. Correctness full-map ở các cases đã chạy
+allocation đang sống. Các mức độ rộng dùng chung hoán vị theo từng dòng,
+nên không dùng chúng làm các lần lặp độc lập. Để nghiên cứu tập phổ biến dài trên
+dữ liệu có cấu trúc đồng xuất hiện mạnh, cần generator chèn mẫu và giao thức riêng. Correctness full-map ở các cases đã chạy
 không phải chứng minh thực nghiệm cho mọi CSDL có thể có; lập luận invariant ở
 Chương~\ref{sec:implementation} bổ sung cho test.
 

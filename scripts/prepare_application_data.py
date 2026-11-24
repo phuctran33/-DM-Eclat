@@ -1,5 +1,5 @@
 """Fetch source data and adapt it to B's frozen inputs; no FIM library is used."""
-import argparse,csv,hashlib,json,os,shutil,subprocess
+import argparse,csv,hashlib,json,os,shutil,subprocess,tempfile,zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -13,15 +13,51 @@ SPLICE_HASH="ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f"
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def fetch(url,path,offline):
-    if path.exists(): return
-    if offline: raise FileNotFoundError(path)
-    path.parent.mkdir(parents=True,exist_ok=True)
-    temporary=Path(str(path)+".part")
-    curl=shutil.which("curl.exe") if os.name=="nt" else shutil.which("curl")
-    if not curl: raise RuntimeError("curl is required for acquisition")
-    subprocess.run([curl,"-fLsS","--retry","1","--connect-timeout","15","--max-time","90",url,"-o",str(temporary)],check=True)
-    os.replace(temporary,path)
+def fetch(url, path, offline, *, read_verified=None):
+    if path.exists():
+        return read_verified(path) if read_verified else None
+    if offline:
+        raise FileNotFoundError(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    curl = shutil.which("curl.exe" if os.name == "nt" else "curl")
+    if not curl:
+        raise RuntimeError("curl is required for acquisition")
+    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=path.name + ".", suffix=".part", delete=False) as stream:
+        temporary = Path(stream.name)
+    try:
+        subprocess.run([curl, "-fLsS", "--retry", "1", "--connect-timeout", "15", "--max-time", "90",
+                        url, "-o", str(temporary)], check=True)
+        data = read_verified(temporary) if read_verified else None
+        os.replace(temporary, path)
+        return data
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def read_splice_archive(path):
+    with zipfile.ZipFile(path) as archive:
+        return archive.read("splice.data")
+
+
+def read_splice(cache, offline):
+    sources = [
+        (cache / "splice-source.data", SPLICE_URL, Path.read_bytes, "University of Szeged academic UCI mirror"),
+        (cache / "splice-uci.zip", SPLICE_ORIGINAL_URL, read_splice_archive, "UCI official ZIP, splice.data member"),
+    ]
+    # Prefer a local copy before attempting a network download.
+    errors = []
+    for path, url, read, kind in sorted(sources, key=lambda source: not source[0].is_file()):
+        def read_verified(candidate):
+            data = read(candidate)
+            if hashlib.sha256(data).hexdigest() != SPLICE_HASH:
+                raise ValueError("Splice pinned source checksum mismatch")
+            return data
+
+        try:
+            return fetch(url, path, offline, read_verified=read_verified), url, kind
+        except (FileNotFoundError, subprocess.CalledProcessError, ValueError, zipfile.BadZipFile, KeyError) as error:
+            errors.append(f"{kind}: {error}")
+    raise ValueError("No verified Splice source available. " + " | ".join(errors))
 
 def prepare(dataset,offline=False):
     cache=ROOT/".tools/downloads"; destination=ROOT/"data/applications"
@@ -46,17 +82,15 @@ def prepare(dataset,offline=False):
                         source_sha256=GROC_HASH,adapter="one source CSV row = one basket; long CSV, preserve every item",
                         n_source_baskets=len(baskets),output_sha256=digest(output))
     else:
-        source=cache/"splice-source.data"; fetch(SPLICE_URL,source,offline)
-        if digest(source)!=SPLICE_HASH: raise ValueError("Splice pinned academic mirror checksum mismatch")
-        data=source.read_bytes()
+        data, source_url, source_kind = read_splice(cache, offline)
         rows=list(csv.reader(data.decode("utf-8").splitlines(),strict=True))
         if len(rows)!=3190 or any(len(row)!=3 for row in rows):
             raise ValueError("Unexpected Splice source shape")
         output=destination/"splice.data"; output.write_bytes(data)
-        provenance=dict(dataset=dataset,source_url=SPLICE_URL,source_revision="sha256:"+SPLICE_HASH,
+        provenance=dict(dataset=dataset,source_url=source_url,source_revision="sha256:"+SPLICE_HASH,
                         original_source="https://doi.org/10.24432/C5M888",original_download_url=SPLICE_ORIGINAL_URL,
-                        source_kind="University of Szeged academic UCI mirror; original sample IDs preserved",
-                        source_sha256=digest(source),adapter="copy raw records without modification",
+                        source_kind=source_kind,source_sha256=SPLICE_HASH,
+                        adapter="copy raw records without modification",
                         n_source_records=len(rows),output_sha256=digest(output))
     (destination/f"{dataset}_source.json").write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     manifest=ROOT/"data/manifest.csv"

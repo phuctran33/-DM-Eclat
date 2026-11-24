@@ -88,7 +88,8 @@ không được gán OOM nếu không có thông báo hỗ trợ; timeout giết
   10/25/50/75/100%; giữ θ=0.01, tính lại τ theo actual n. Subset 100% là hoán vị
   của toàn bộ dữ liệu; không mặc định output size monotone giữa samples khác n.
 - Transaction length: n=10,000, m=100, widths=5/10/15/20/25/30, seed=42, θ=0.20.
-  Generator uniform không hoàn lại, không phải IBM generator và không có planted
+  Generator uniform không hoàn lại. Cùng seed tạo cùng hoán vị theo từng dòng,
+  nên các width lồng nhau theo từng giao dịch. Generator không chèn planted
   patterns. E[singleton]=width/100; E[pair]=width(width−1)/(100·99), nên grid này
   chủ yếu minh họa F1 filtering/pair intersections, không stress deep patterns.
 

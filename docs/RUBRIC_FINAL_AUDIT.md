@@ -15,9 +15,9 @@ viên quyết định.
 | A4 · I/O và CLI SPMF | 5/5 | **PASS.** `utils.jl`, `scripts/mine.jl`, `test_io.jl`, `test_support.jl`, `test_cli.jl`. Rational boundary, output canonical, lỗi input, hai backend và khóa ghi đè vào input/alias. | Ch. 1 mục E, tr. 2. Numeric SPMF, ID dương và tăng theo dòng. |
 | B1 · Correctness trên benchmark | 5/5 | **PASS.** 70 map comparisons lưu trữ. Kiểm lại mới cả 35 cases cùng normalized input SHA-256 và absolute count. 105/105 output hashes khớp output của các lượt end-to-end đã công bố. [Đối chiếu mới](validation/benchmark-maps-2026-11-23.json). | Ch. 2 mục D và Bảng V, tr. 4–5. Không cần đo lại thời gian để xác minh output. |
 | B2 · Runtime, RAM, scalability | 10/10 | **PASS.** 4 tập × 6 ngưỡng, 5 nested subsets, 6 widths, 875 measurements OK. Kiểm 46 hashes, CSV summary, OS RSS và process logs. [Protocol](experiments.md) · [Plots](../results/plots/). | Ch. 2 mục E–J, tr. 4–9. Min–max qua 5 lượt, dữ liệu một máy. |
-| B3 · Phân tích và tối ưu tiếp | 5/5 | **PASS.** Giải thích mật độ, output size, thời gian theo hai scopes, warm-up và allocation/RSS. Đề xuất mixed list/bitmap theo density và fused AND/popcount với buffer theo depth. | Ch. 2 mục K, tr. 7–8. Hướng tiếp theo cần profile và đo riêng. |
-| C1 · Ứng dụng giỏ hàng | 23/25 | **PASS kỹ thuật, chờ Colab public.** `groceries.jl`, `rules.jl`, `pipelines.jl`, `export_rules.jl`. 9.835 giỏ, 169 items, 1.001 tập, 22 luật và top-10 tính đúng. Auditor độc lập kiểm metrics, mọi split, thứ hạng và SPMF. | Ch. 3 mục A–B/E, tr. 8–10. Ba luật hạng 1/5/9 có support/confidence/lift và đề xuất thử nghiệm. Dữ liệu quan sát giới hạn suy luận. |
-| C2 · Ứng dụng mẫu sinh học | 23/25 | **PASS kỹ thuật, chờ Colab public.** `dna.jl`, `compare_dna.jl`, `pipelines.jl`. 3.190 raw, giữ 3.185, 48 IDs, 381/209/48 patterns, 463 candidates, 864 count dương dưới ngưỡng. Recount và SPMF theo lớp. | Ch. 3 mục C–E, tr. 9–10. Giải thích GT/AG theo vị trí và nguồn sinh học, đánh giá mô tả trên mẫu căn chỉnh. |
+| B3 · Phân tích và tối ưu tiếp | 5/5 | **PASS.** Giải thích mật độ, output size, thời gian theo hai scopes, warm-up và allocation/RSS. Đề xuất mixed list/bitmap theo density và fused AND/popcount với buffer theo depth. | Ch. 2 mục K, tr. 8–9. Hướng tiếp theo cần profile và đo riêng. |
+| C1 · Ứng dụng giỏ hàng | 23/25 | **PASS kỹ thuật, chờ Colab public.** `groceries.jl`, `rules.jl`, `pipelines.jl`, `export_rules.jl`. 9.835 giỏ, 169 items, 1.001 tập, 22 luật và top-10 tính đúng. Auditor độc lập kiểm metrics, mọi split, thứ hạng và SPMF. | Ch. 3 mục A–B/E, tr. 9–10. Ba luật hạng 1/5/9 có support/confidence/lift và đề xuất thử nghiệm. Có 580 giỏ thỏa tiền kiện và 353 giỏ thỏa đầy đủ ít nhất một luật top-10. |
+| C2 · Ứng dụng mẫu sinh học | 23/25 | **PASS kỹ thuật, chờ Colab public.** `dna.jl`, `compare_dna.jl`, `pipelines.jl`. 3.190 raw, giữ 3.185, 48 IDs, 381/209/48 patterns, 463 candidates, 864 count dương dưới ngưỡng. Recount và SPMF theo lớp. | Ch. 3 mục C–E, tr. 9–10. Giải thích GT/AG và phân biệt ranh giới EI/IE với tâm cửa sổ đối chứng N. |
 | **Tổng** | **96/100** | Ước lượng tạm thời, giữ lại 2 điểm mỗi ứng dụng đến khi có Run all từ public main. | |
 
 ## Kiến trúc và bảo trì
@@ -47,7 +47,8 @@ viên quyết định.
   [Ghi chú thuật toán](paper-notes.md)
 - **Benchmark.** Đảo offset 0/1 thu lại đúng từng dòng từ raw đã kiểm hash.
   Giữ nguyên 24 cặp dataset/minsup, 5 Retail subsets cùng permutation và
-  6 width cases seed 42. Mỗi case chạy một lần list, bitset và SPMF để so
+  6 width cases seed 42 với hoán vị ghép cặp theo từng giao dịch. Mỗi case
+  chạy một lần list, bitset và SPMF để so
   map và hash, dùng cùng input đã đo. Hash output khớp với cả 5 lượt đo
   end-to-end của backend tương ứng. Snapshot phép đo là `49dafc9`.
   [Dữ liệu gốc và hash](../results/raw/dataset_provenance.json) ·
@@ -58,9 +59,10 @@ viên quyết định.
   byte cấp phát trong vùng Julia. End-to-end có startup, JIT/JVM và I/O.
   [RSS CSV](../results/raw/memory_comparison.csv)
 - **Ứng dụng.** Live checks chạy lại preprocessing, mining và Java cho
-  Groceries cùng ba lớp Splice. Final gate kiểm hash tất cả outputs mới,
-  so chúng với metadata của lần công bố và kiểm byte từng bảng/pattern đã
-  ship. Observation rows và transactions được tái tạo từ input pin hash.
+  Groceries cùng ba lớp Splice. Final gate yêu cầu đúng một bản ghi SPMF
+  cho mỗi đầu vào. Nó đối chiếu hash output mới với metadata đã công bố và
+  kiểm từng bảng/pattern đã commit. Tải Splice từ ZIP chính thức của UCI khi
+  mirror không dùng được, với cùng SHA-256 cho dữ liệu đã giải nén.
   [Bảng và provenance ứng dụng](../results/applications/)
 - **Regression từ review Phúc.** Controller từ chối overwrite trước ghi.
   Timeout Linux/macOS dừng process group và wait. Windows bị từ chối ở
@@ -69,7 +71,7 @@ viên quyết định.
 <a id="bao-cao"></a>
 ## Báo cáo
 
-**PASS định dạng và nội dung kỹ thuật.** Build XeLaTeX/TeX Live 2025 qua latexmk,
+**PASS định dạng và nội dung kỹ thuật.** Build Tectonic 0.17.0,
 IEEEtran conference A4, hai cột, 10 trang nội dung và 1 trang tài liệu tham khảo.
 Đã render PDF phát hành và xem 11/11 trang ở lần rà cuối. Công thức, dấu
 tiếng Việt, hình, bảng và bibliography đọc được theo thứ tự hai cột.
@@ -79,9 +81,7 @@ citation/reference. Mười một nguồn gồm Zaki, Agrawal–Srikant, SPMF, J
 FIMI, Brijs, nguồn hai ứng dụng và nghiên cứu dinucleotide GT/AG của Burset
 và cộng sự. Link hỏng của Brijs được thay bằng DOI đã đối chiếu Crossref.
 
-PDF phát hành có SHA-256
-`99132e694da95b3fd02008ce8b7ebdab7fc5012336660f87addf5b8f3275268f`.
-Build metadata đối chiếu PDF với toàn bộ nguồn, ảnh và bảng đang dùng.
+Build metadata lưu SHA-256 của PDF và đối chiếu toàn bộ nguồn, ảnh và bảng đang dùng.
 Báo cáo và build log ngày 17/11 là bằng chứng của snapshot M3 cũ.
 [PDF](Report.pdf) · [Nguồn và lệnh build](latex/README.md) ·
 [Hash nguồn](report-build.json) ·
@@ -128,7 +128,7 @@ riêng yêu cầu bản mirror HF/Kaggle.
 | Local macOS | 7/7 cells ở bản tích hợp. Julia 1.10.10, Java 23.0.1, SPMF 2.64b. 792 Julia checks và final gate pass. |
 | CI | Julia 1.9/1.11/1.12, Python controller, plot, delivery tests và notebook Ubuntu theo [GitHub Actions](https://github.com/phuctran33/-DM-Eclat/actions). |
 | Google Colab 17/11 | 7/7 cells thật từ Git bundle M3 `ee2d46d`, Julia 1.12.6, 790 checks, tám live input maps và PDF gate. [Notebook, log và hash](member-b-validation/m3/colab/README.md). |
-| Google Colab public main | **NOT VERIFIED Run all.** Đã mở notebook công khai. Môi trường rà soát hiện thiếu quyền điều khiển runtime từ trình duyệt. Cần Run all trong runtime mới và lưu output 7 cells cùng `delivery-validation.json`. [Các bước lấy bằng chứng](planning/DELIVERY.md#colab-public-main). |
+| Google Colab public main | **NOT VERIFIED Run all.** Đã mở notebook công khai. Cần Run all trong runtime mới và lưu output 7 cells cùng `delivery-validation.json`. [Các bước lấy bằng chứng](planning/DELIVERY.md#colab-public-main). |
 
 Phạm vi kỹ thuật có bằng chứng cho hai chương đầu và kết quả của hai ứng
 dụng. Để hoàn tất nghiệm thu, xác nhận Colab public, thông tin nhóm/hạn

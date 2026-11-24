@@ -79,8 +79,9 @@ candidates dùng support đếm lại trên từng lớp.
 [Bằng chứng M2](docs/M2_MEMBER_B.md)
 
 Nguồn ứng dụng là [snapshot Groceries pin commit](https://github.com/stedy/Machine-Learning-with-R-datasets/tree/d20658ec6d336af2d4ddb5fd72b6f677dd46136e)
-và [UCI Splice](https://doi.org/10.24432/C5M888) qua mirror học thuật có
-kiểm hash. [Manifest URL, revision, license và hash](data/manifest.csv)
+và [UCI Splice](https://doi.org/10.24432/C5M888). Splice dùng mirror Đại học
+Szeged, với ZIP chính thức của UCI làm nguồn dự phòng. Cả hai nguồn phải cho
+cùng SHA-256 của `splice.data`. [Manifest URL, revision, license và hash](data/manifest.csv)
 
 ## Benchmark
 
@@ -126,8 +127,8 @@ khi qua kiểm tra, log từng lần nằm trong `.tools/report-build/`.
 ## Stdout kiểm thử Julia cuối
 
 **792 checks pass**, không fail, error hoặc skip trên macOS arm64,
-Julia 1.10.10. Controller 10 tests, source 4 tests, delivery 7 tests, plot 1
-test và smoke benchmark đều pass. Bản Julia trước khi sửa CLI có 790 checks.
+Julia 1.10.10. CI có 10 controller tests, 6 source tests, 8 delivery tests,
+1 plot test và benchmark smoke test.
 
 <details>
 <summary>Xem stdout của 16 testsets</summary>

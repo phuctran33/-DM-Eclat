@@ -17,6 +17,7 @@
 \usepackage[vietnamese]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{placeins}
 \usepackage{booktabs}
 \usepackage{algorithm,algpseudocode}
 \floatname{algorithm}{Thuật toán}
@@ -60,6 +61,7 @@ frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
 \ifdefined\MemberAOnly
 % Explicit A-only review; the team's complete three-chapter source stays intact.
 \else
+\FloatBarrier
 \input{sections/03-applications}
 \fi
 

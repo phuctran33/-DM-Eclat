@@ -14,10 +14,13 @@ Mốc Module 1–3 là lịch nội bộ.
 ## Thực nghiệm và báo cáo
 
 - [x] 4 benchmarks, 6 ngưỡng/tập, exact support maps và 46 hashes evidence.
-- [x] Runtime, output size, peak RSS, Retail subsets và synthetic width plots.
+- [x] Runtime, output size, peak RSS, Retail subsets và synthetic width plots. Các
+  mức độ rộng dùng chung hoán vị theo dòng. Phân tích Retail tách xu hướng
+  của Basic và BitVector.
 - [x] Giải thích giới hạn đo và ít nhất hai tối ưu tiếp.
-- [x] Groceries top-10 theo lift và ba diễn giải. Splice có counts đếm lại theo lớp,
-  bảng mẫu đại diện và thảo luận sinh học.
+- [x] Groceries top-10 theo lift, ba diễn giải và số giỏ phân biệt. Splice có counts
+  đếm lại theo lớp, giải thích tọa độ ở lớp N và ZIP UCI dự phòng đã kiểm hash.
+- [x] Gate nghiệm thu yêu cầu đúng một đối chiếu SPMF cho từng đầu vào ứng dụng.
 - [x] IEEE 10 trang nội dung, 11 nguồn, đã kiểm bố cục mọi trang và hash nguồn.
 - [x] README có các lệnh tái lập, test stdout, nguồn, PDF và link Colab.
 
@@ -27,8 +30,9 @@ Mốc Module 1–3 là lịch nội bộ.
 - [x] Giữ bằng chứng Colab thật dùng Git bundle M3 ngày 17/11.
 - [ ] Xác nhận **Runtime → Run all** từ public main trong runtime Colab mới.
   Lưu commit, output đủ 7 cells, versions, dataset hashes và final gate.
-- [ ] Nếu môn áp ngưỡng riêng, xác nhận nguồn FIMI pin hash có được chấp nhận
-  cho các file dưới 4 MiB. [Phân tích hosting](../RUBRIC_FINAL_AUDIT.md#dataset-hosting).
+- [ ] Xác nhận với giảng viên việc dùng URL FIMI pin hash cho bốn tập dưới 4 MiB.
+  Nếu cần HF/Kaggle, đối chiếu hash bản có quyền tái phân phối trước khi cập nhật
+  nguồn. [Phân tích hosting](../RUBRIC_FINAL_AUDIT.md#dataset-hosting).
 - [ ] Gửi bản thảo/bản cuối cho bên cung cấp Retail theo điều kiện nguồn.
 - [ ] Hai thành viên luyện vấn đáp, xác nhận thông tin nhóm và hạn Moodle.
 - [ ] Nộp một URL GitHub công khai qua Moodle.
