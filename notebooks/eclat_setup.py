@@ -99,7 +99,7 @@ def setup(root, in_colab, name):
     os.environ.setdefault("JULIA_DEPOT_PATH", str(root / ".tools/julia-depot"))
     run_julia("-e", "using Pkg; Pkg.instantiate()")
     run(sys.executable, "-B", "scripts/prepare_spmf.py", "--java", java)
-    if name != "demo" and find_spec("matplotlib") is None:
+    if find_spec("matplotlib") is None:
         if not in_colab:
             raise RuntimeError("Install the notebook dependencies from requirements-notebook.txt.")
         run(sys.executable, "-m", "pip", "install", "-r", "requirements-plot.txt")

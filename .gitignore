@@ -4,9 +4,7 @@
 __pycache__/
 .ipynb_checkpoints/
 data/benchmark/*
-!data/benchmark/README.md
 data/applications/*
-!data/applications/README.md
 results/*
 !results/README.md
 !results/raw/
@@ -21,9 +19,7 @@ results/raw/*
 !results/plots/
 !results/logs/
 results/logs/*
-!results/logs/*.log
 !results/logs/*.tar.gz
-!results/reference/
 tools/*.jar
 docs/references/*.pdf
 docs/latex/*.aux
@@ -36,6 +32,6 @@ docs/latex/*.fdb_latexmk
 docs/latex/*.pdf
 
 !results/applications/
-results/applications/verification/*.txt
+results/applications/verification/
 results/applications/prepared/*/transactions*.txt
 results/applications/prepared/*/observations.csv

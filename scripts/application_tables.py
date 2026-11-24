@@ -15,7 +15,8 @@ def tex(value):
 
 def tables():
     top=rows("groceries_top10.csv")
-    output=[r"% Generated from results/applications/groceries_top10.csv; do not hand-edit numbers.",
+    output=["% Generated from results/applications/groceries_top10.csv.",
+            r"\newcommand{\TableGroceries}{%",
             r"\begin{tabular}{rp{0.51\textwidth}rrrr}",r"\toprule",
             r"Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Count & Supp. (\%) & Conf. (\%) & Lift \\",
             r"\midrule"]
@@ -24,11 +25,12 @@ def tables():
         rhs=tex(row["consequent_labels"].replace(" | ",", "))
         output.append(f'{row["rank"]} & {lhs} $\\Rightarrow$ {rhs} & {row["support_count"]} & '
                       f'{100*float(row["support"]):.4f} & {100*float(row["confidence"]):.2f} & {float(row["lift"]):.3f} '+r"\\")
-    output += [r"\bottomrule",r"\end{tabular}"]
+    output += [r"\bottomrule",r"\end{tabular}%", "}", ""]
     dna=rows("dna_patterns.csv")
     ranks={1,2}
     ranks.update(int(next(row for row in dna if int(row["length"])==width)["rank"]) for width in [3,4])
-    output2=[r"% Generated from results/applications/dna_patterns.csv; first two ranks and first length 3/4.",
+    output2=["% Generated from results/applications/dna_patterns.csv. First two ranks and first lengths 3 and 4.",
+             r"\newcommand{\TableSplice}{%",
              r"\begin{tabular}{rp{0.43\columnwidth}rrr}",r"\toprule",
              r"Hạng & Pattern (vị trí, base) & EI & IE & N \\",r"\midrule"]
     for row in dna:
@@ -36,8 +38,8 @@ def tables():
         items=[re.fullmatch(r"pos=([+-]?[0-9]+);base=([ACGT])", value).groups() for value in row["pattern_labels"].split(" | ")]
         label=r",\allowbreak ".join(f"({position},{base})" for position,base in items)
         output2.append(f'{row["rank"]} & $'+label+"$ & "+ " & ".join(f'{100*float(row["support_"+c]):.2f}' for c in ["EI","IE","N"])+r" \\")
-    output2 += [r"\bottomrule",r"\end{tabular}"]
-    return {"applications-top10.tex":"\n".join(output)+"\n","applications-dna.tex":"\n".join(output2)+"\n"}
+    output2 += [r"\bottomrule",r"\end{tabular}%", "}"]
+    return {"application-tables.tex": "\n".join(output + output2) + "\n"}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)

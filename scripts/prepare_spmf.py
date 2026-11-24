@@ -14,6 +14,7 @@ def main():
     args = parser.parse_args()
     jar = ROOT / "tools/spmf.jar"
     if not jar.exists():
+        jar.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["curl", "-fLsS", "--retry", "2", "--max-time", "180", URL, "-o", str(jar)], check=True)
     if sha256(jar) != JAR_HASH:
         raise ValueError("JAR hash mismatch; preserve existing jar and install the pinned version explicitly")

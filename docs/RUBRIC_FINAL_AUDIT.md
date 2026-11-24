@@ -7,7 +7,7 @@ kết quả kiểm kỹ thuật. Điểm là ước lượng của nhóm, giản
 | Mục | Điểm ước lượng | Trạng thái, bằng chứng và vị trí báo cáo |
 |---|---:|---|
 | A1 · Khớp SPMF | 10/10 | **PASS.** Sorted TID lists, BitVector và DFS chung. Hai backend khớp trọn map của năm toy, kể cả sparse rỗng. Demo chạy lại Java. [Mã](../src/algorithm/) · Ch. 1 |
-| A2 · Unit tests | 5/5 | **PASS.** Lệnh đề `julia --project test/runtests.jl`, oracle vét cạn, 20 DB ngẫu nhiên, biên từ máy, lỗi parser và kiểm hai ứng dụng. [Stdout](validation/julia-tests.txt) · Ch. 1, phần kiểm thử |
+| A2 · Unit tests | 5/5 | **PASS.** Lệnh đề `julia --project test/runtests.jl`, oracle vét cạn, 20 DB ngẫu nhiên, biên từ máy, lỗi parser và kiểm hai ứng dụng. [Stdout](../README.md#kiem-thu-julia) · Ch. 1, phần kiểm thử |
 | A3 · Tối ưu có đo | 10/10 | **PASS.** BitVector tăng tốc warm 5,10× trên Chess và 3,12× trên T10I4D100K ở ngưỡng trung bình. Retail đạt 0,91×, T10 dùng RSS cao hơn Basic. [CSV](../results/raw/optimization.csv) · Ch. 1 và Ch. 2, Bảng VI/VIII |
 | A4 · I/O và CLI | 5/5 | **PASS.** SPMF numeric, ngưỡng rational và count, hai backend, lỗi file và alias input/output. [CLI](../scripts/mine.jl) · Ch. 1, phần I/O |
 | B1 · Benchmark correctness | 5/5 | **PASS.** 70 phép so trọn map trên 35 cấu hình, 105/105 hash đầu ra khớp đầu ra đã đo. Demo so lại một ngưỡng trung bình mỗi bộ. [Đối chiếu 35 cấu hình](validation/benchmark-maps-2026-11-23.json) · Ch. 2, phần correctness |
@@ -31,7 +31,7 @@ PDF IEEEtran conference A4, hai cột, 10 trang nội dung tiếng Việt và 1 
 tham khảo. Có 3 chương, công thức giải thích biến, chú thích/cross-reference
 và 11 nguồn gồm Zaki (2000). Hình lấy trực tiếp từ `results/plots/`; bảng
 ứng dụng tạo từ CSV. Script kiểm số trang và log biên dịch, lưu SHA-256
-của PDF cùng nguồn và hình. [PDF](Report.pdf) · [Build](latex/README.md) ·
+của PDF cùng nguồn và hình. [PDF](Report.pdf) · [Build](../README.md#build-bao-cao) ·
 [Hash nguồn](report-build.json)
 
 <a id="dataset-hosting"></a>
@@ -87,13 +87,15 @@ trên Moodle theo thông báo lớp.
 
 Các file làm việc cũ được truy xuất theo commit
 `556602e66d79f90fa735100e4c58fd0ba59e6d91`. Manifest gốc 46 mục và archive
-log vẫn được kiểm. Những PDF cũ đã ra khỏi checkout được kiểm byte từ Git.
-Các đồ thị dùng chung bản PDF trong `results/plots/`. Snapshot nguồn đo
+log vẫn được kiểm. Audit kiểm các bản PNG và bảng LaTeX rời cũ bằng byte trong Git.
+Báo cáo dùng PDF hình trong `results/plots/`. Demo sinh PNG từ CSV đã đo vào
+thư mục phiên chạy. Hai file bảng LaTeX mới giữ nội dung của mười bảng cũ. Snapshot nguồn đo
 là `49dafc999b6c00f8c4275ee68f99d4a6e3046f3d`.
 
 - [Colab M3 từ Git bundle](https://github.com/phuctran33/-DM-Eclat/tree/556602e66d79f90fa735100e4c58fd0ba59e6d91/docs/member-b-validation/m3/colab)
 - [Java SPMF độc lập cho toy](https://github.com/phuctran33/-DM-Eclat/tree/556602e66d79f90fa735100e4c58fd0ba59e6d91/docs/member-b-validation/spmf)
 - [Bản review chương 1–2](https://github.com/phuctran33/-DM-Eclat/blob/556602e66d79f90fa735100e4c58fd0ba59e6d91/docs/Member-A-review.pdf) ·
   [Nhật ký trước khi gộp](https://github.com/phuctran33/-DM-Eclat/blob/556602e66d79f90fa735100e4c58fd0ba59e6d91/docs/verification.md)
+- [Log Java SPMF của ứng dụng](https://github.com/phuctran33/-DM-Eclat/tree/0dcd64903eb5667c249cdf26501c4529b260c3f2/results/applications/verification)
 - [Manifest đo gốc](../results/raw/artifact_sha256.csv) ·
   [PR #7 sửa báo cáo và fallback UCI](https://github.com/phuctran33/-DM-Eclat/pull/7)
