@@ -1,4 +1,4 @@
-# Giao thức và tái lập thực nghiệm Member A
+# Giao thức và tái lập benchmark
 
 Cài đặt đo: commit trong `results/raw/environment.json`; mã nguồn tác động phép đo
 được hash trong `results/raw/protocol.json`. Figures/tables được render sau lần đo;
@@ -39,8 +39,7 @@ hai maps rỗng cho rate 1. Tỉ lệ 100% trên output rỗng không thay cho c
 Julia tính τ=ceil(θn) chính xác. SPMF nhận double; runner gửi θ'=(τ−0.5)/n để
 ceil(double(θ')*n)=τ, tránh boundary drift. Đây là **cùng absolute minsup**, không
 đổi tập frequent. Tham số thật ghi trong mỗi command JSON, kiểm count bins bằng test.
-Toy references thật giữ 40% như hợp đồng; regenerate bằng
-`python3 scripts/prepare_spmf.py --references`. Manifest có input/output/JAR hashes,
+Demo đối chiếu Java với năm toy references ở 40%. Manifest ghi hash input/output/JAR,
 Java/SPMF version và command. SPMF 2.64b cần Java ≥21; JAR latest yêu cầu Java mới
 hơn máy đo nên không dùng. Không đọc hoặc sao chép source thuật toán SPMF.
 
@@ -103,15 +102,16 @@ dùng UTF-8 tường minh và có thể chạy trên Windows. Từ root repo, sa
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
-python3 scripts/prepare_spmf.py --references
-julia --project=. tests/runtests.jl
+python3 scripts/prepare_spmf.py
+julia --project test/runtests.jl
 python3 tests/test_benchmark.py -v
 python3 tests/test_plot_results.py -v
 python3 tests/smoke_benchmark.py
 python3 scripts/acquire_benchmarks.py
-julia --project=. scripts/benchmark_runner.jl --phase pilot --repeats 1 --output results/new-pilot
-JULIA_NUM_THREADS=1 julia --project=. scripts/benchmark_runner.jl --output results/reproduced
-python3 scripts/plot_results.py --results results/reproduced --report
+python3 scripts/benchmark_runner.py --phase pilot --repeats 1 --output .tools/new-pilot
+JULIA_NUM_THREADS=1 python3 scripts/benchmark_runner.py --output .tools/benchmark-new
+python3 scripts/plot_results.py --results .tools/benchmark-new
+python3 scripts/verify_artifacts.py
 ```
 
 Dùng output directory mới hoặc rỗng để giữ bằng chứng đã publish. Controller từ
@@ -122,8 +122,7 @@ checkpoint có cùng config, input, JAR, source hashes và runtime environment; 
 Resume đọc lại các input đã sinh và kiểm hash trước khi ghi; không sinh đè input
 khi checkpoint không hợp lệ hoặc signature đã thay đổi.
 Không dùng resume sau khi đổi mã/config. Có thể chạy riêng `--phase runtime`,
-`--phase scalability`, `--phase length` với output riêng. Wrapper `.jl` tự truyền
-Julia executable hiện tại; `PYTHON=/path/to/python` chọn interpreter phù hợp.
+`--phase scalability`, `--phase length` với output riêng. Dùng `--julia /đường/dẫn/julia` khi executable chưa có trong PATH.
 
 ## Artifacts và giới hạn
 

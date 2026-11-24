@@ -1,9 +1,15 @@
-# Dữ liệu ứng dụng — B / M1–2
+# Nguồn dữ liệu ứng dụng
 
-- Groceries: adapter raw→canonical `groceries.csv`, header `basket_id,item_name`, mapping và transactions chuẩn.
-- UCI Splice: `splice.data`, metadata/sample ID, class EI/IE/N, mapping position/base,
-  transactions tổng và theo lớp; cửa sổ đã khóa 25:36, ambiguity trong window bị loại.
+- Groceries dùng CSV snapshot Git pin revision và SHA-256. Mỗi dòng là
+  một giỏ, được chuyển thành các cặp `basket_id,item_name`. CSV snapshot
+  không có điều khoản tái phân phối riêng trong manifest, nên tải từ nguồn
+  như hướng dẫn. [arules Groceries](https://mhahsler.github.io/arules/reference/Groceries.html)
+- Splice dùng `splice.data` có nhãn, mã quan sát và chuỗi 60 vị trí. Cả bản
+  Szeged và file trong ZIP UCI đều phải khớp cùng SHA-256. Giấy phép UCI
+  CC BY 4.0 yêu cầu ghi nguồn. [UCI](https://doi.org/10.24432/C5M888)
 
-Không có dữ liệu thật trong template. Ghi nguồn/license/version/hash vào manifest.
-Mã chuẩn bị nằm trong `src/applications/` và được gọi từ Colab notebook.
-Áp dụng `docs/SCHEMA.md` và `schemas/contracts.toml`; không nhầm nhãn lớp N với base ambiguity N.
+Từ repo root, chạy `python3 scripts/prepare_application_data.py --dataset all`
+để tải cả hai, hoặc chọn `groceries` hay `splice`. Mỗi lượt lưu nguồn thực tế
+và kết quả chuẩn hóa. Dữ liệu đầu vào được sinh tại chỗ từ
+[manifest](../manifest.csv). Quy tắc chuyển giao dịch nằm ở
+[schema](../../docs/SCHEMA.md) và hai notebook ứng dụng.

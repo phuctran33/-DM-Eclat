@@ -2,9 +2,7 @@ using Test
 using Random
 using EclatProject
 
-const TEST_BACKENDS = Symbol.(split(get(ENV, "ECLAT_TEST_BACKENDS", "list,bitset"), ','))
-all(backend -> backend in [:list, :bitset], TEST_BACKENDS) ||
-    error("ECLAT_TEST_BACKENDS must be list, bitset, or list,bitset")
+const TEST_BACKENDS = (:list, :bitset)
 
 include("test_io.jl")
 include("test_support.jl")
@@ -14,22 +12,8 @@ include("test_application_export.jl")
 include("test_preparation_cli.jl")
 include("test_spmf_references_b.jl")
 
-if get(ENV, "ECLAT_TEST_MINER", "1") == "1"
-    include("test_correctness.jl")
-    include("test_rules.jl")
-    include("test_cli.jl")
-    include("test_application_pipeline.jl")
-else
-    @testset "Eclat correctness: pending implementation" begin
-        @test_skip false
-    end
-    @info "Miner tests explicitly disabled by ECLAT_TEST_MINER=0."
-end
-
-if get(ENV, "ECLAT_TEST_SPMF", "1") == "1"
-    include("test_spmf.jl")
-else
-    @testset "SPMF comparison: pending approved miner" begin
-        @test_skip false
-    end
-end
+include("test_correctness.jl")
+include("test_rules.jl")
+include("test_cli.jl")
+include("test_application_pipeline.jl")
+include("test_spmf.jl")

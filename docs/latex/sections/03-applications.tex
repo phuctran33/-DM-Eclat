@@ -4,10 +4,11 @@
 \subsection{Groceries: dữ liệu và phương pháp}
 Groceries gồm 9.835 giỏ và 169 nhóm sản phẩm. CSV từ kho
 \emph{Machine Learning with R} được pin commit~\cite{groceries_source_b};
-arules mô tả nguồn dữ liệu~\cite{groceries_documentation_b}. Adapter gán
-basket ID cho từng dòng nguồn, xuất 43.367 cặp \texttt{basket\_id,item\_name}.
-Julia chuẩn hóa NFC, chữ thường và khoảng trắng, rồi gán ID item theo thứ tự
-từ điển. Bộ tiền xử lý loại item trùng trong cùng giỏ và giữ từng basket ID riêng.
+arules mô tả dữ liệu thu trong 30 ngày~\cite{groceries_documentation_b}.
+Mỗi dòng nguồn là một giỏ. Bước chuyển đổi gán mã giỏ và xuất 43.367 cặp
+\texttt{basket\_id,item\_name}. Julia chuẩn hóa NFC, chữ thường và khoảng
+trắng rồi gán mã sản phẩm theo thứ tự từ điển. Mỗi sản phẩm chỉ tính một lần
+trong một giỏ. Hai giỏ giống nội dung vẫn được đếm riêng.
 
 Minsup $0{,}005$ cho ngưỡng $\lceil0{,}005\times9835\rceil=50$ giỏ.
 Minconf $0{,}60$ yêu cầu hậu kiện xuất hiện ở ít nhất 60\% giỏ thỏa tiền kiện.
@@ -19,9 +20,10 @@ $n$ là số giỏ và $\sigma$ là số giao dịch chứa tập mục:
 \operatorname{conf}(A\Rightarrow B)&=\sigma(A\cup B)/\sigma(A),\\
 \operatorname{lift}(A\Rightarrow B)&=\operatorname{conf}(A\Rightarrow B)/(\sigma(B)/n).
 \end{align}
-Sinh mọi split đủ confidence bằng count ratio chính xác, không giới hạn một item
-ở hậu kiện. Có 22 luật; sort giảm lift, confidence, support, rồi tăng union length
-và IDs. Top-10 là đúng prefix của bảng đầy đủ, không chọn tay luật minh họa.
+Từ mỗi tập phổ biến, chương trình xét mọi cách chia thành hai vế và dùng tỉ
+số đếm chính xác để lọc confidence. Có 22 luật, xếp giảm dần theo lift,
+confidence và support. Khi bằng nhau, ưu tiên hợp hai vế ngắn hơn rồi mã
+sản phẩm nhỏ hơn. Bảng top-10 lấy mười luật đứng đầu.
 
 \begin{table*}[t]
 \centering\small
@@ -58,20 +60,20 @@ thời điểm và nhóm đối chứng. Để đánh giá bán chéo, có thể
 và so tỷ lệ thêm sản phẩm giữa các nhóm giỏ đủ điều kiện.
 
 \subsection{Splice DNA: mã hóa và audit}
-UCI Splice~\cite{splice} có 3.190 sequences với nhãn EI (exon--intron),
-IE (intron--exon), N (neither). Raw records từ kho học thuật Đại học
-Szeged~\cite{splice_mirror_b}, pin SHA-256, giữ source IDs và thứ tự dòng.
+UCI Splice~\cite{splice} có 3.190 chuỗi với nhãn EI (exon--intron),
+IE (intron--exon) và N (không thuộc hai lớp điểm nối). Nhóm lấy bản lưu tại
+Đại học Szeged~\cite{splice_mirror_b}, kiểm SHA-256 và giữ mã quan sát
+cùng thứ tự dòng.
 File \texttt{splice.data} trong ZIP chính thức của UCI có cùng SHA-256 và
 được dùng làm nguồn dự phòng.
 Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$. Với EI/IE, tọa độ
 tính theo hai phía ranh giới được chú thích. Với N, chúng tính quanh tâm cửa
 sổ đối chứng. Mỗi item là cặp (vị trí, base), gồm 48 ID cố định theo A/C/G/T.
 Mã hóa theo vị trí phân biệt cùng một nucleotide ở hai phía. Nhãn được giữ riêng.
-Mẫu bị loại nếu có ambiguity trong cửa sổ; ambiguity ngoài cửa sổ không làm
-mẫu bị loại. Không mở rộng một mẫu thành nhiều giao dịch. Có 5 mẫu bị loại;
-Bảng~\ref{tab:splice-preparation-b} cho audit và threshold theo từng lớp.
-Ngưỡng tương đối 20\% giữ các mẫu lặp đủ thường xuyên trong chính lớp đó,
-với số quan sát tối thiểu điều chỉnh theo kích thước lớp.
+Mỗi mẫu sinh một giao dịch nếu cả 12 vị trí là A, C, G hoặc T. Ký hiệu mơ
+hồ ngoài cửa sổ vẫn được chấp nhận. Bảng~\ref{tab:splice-preparation-b}
+cho biết năm mẫu bị loại và ngưỡng đếm từng lớp. Ngưỡng tương đối 20\%
+cho cùng yêu cầu về tỷ lệ lặp lại dù kích thước ba lớp khác nhau.
 
 \begin{table}[htbp]
 \centering
@@ -89,14 +91,14 @@ N & 1.655 & 1.654 & 1 & 331 \\
 \end{table}
 
 \subsection{Splice DNA: kết quả so sánh ba lớp}
-List/BitVector mine đầy đủ từng lớp, lần lượt trả 381/209/48 patterns.
-EI có patterns dài tới 6, chứng minh không giới hạn output ở 4 item.
-Sau mining, hợp candidates frequent ở ít nhất một lớp rồi lọc 2--4 item:
-463 rows. Mỗi candidate được đếm trực tiếp lại trên cả EI/IE/N, kể cả khi
-không frequent ở một lớp. Có 864 cặp candidate/lớp dưới ngưỡng nhưng count
-khác 0; gán absence thành 0 sẽ làm sai chênh lệch support.
-Sort giảm span $\max(s_{EI},s_{IE},s_N)-\min(s_{EI},s_{IE},s_N)$, rồi giảm
-max support, tăng length và IDs; $s_c$ là count chia số mẫu giữ của lớp $c$.
+Hai backend khớp đủ kết quả ở từng lớp, lần lượt 381/209/48 tập.
+EI có tập dài tới 6 item. Bảng so sánh lấy hợp các tập phổ biến của ba lớp
+rồi giữ độ dài 2--4, được 463 ứng viên. Chương trình đếm lại mỗi ứng viên
+trên cả EI/IE/N. Có 864 cặp ứng viên và lớp cho count dương dù dưới ngưỡng.
+Gán chúng bằng 0 sẽ làm sai chênh lệch support.
+Thứ hạng giảm dần theo $\max(s_{EI},s_{IE},s_N)-\min(s_{EI},s_{IE},s_N)$,
+trong đó $s_c$ là tỷ lệ mẫu giữ của lớp $c$ chứa ứng viên. Khi bằng nhau,
+xét tiếp support lớn nhất giảm dần, độ dài và mã item tăng dần.
 Bảng~\ref{tab:dna-m2} trích bảng đã sort và có đại diện 2, 3, 4 item.
 
 \begin{table}[htbp]
@@ -107,30 +109,28 @@ Bảng~\ref{tab:dna-m2} trích bảng đã sort và có đại diện 2, 3, 4 it
 \end{table}
 
 $(+1,G),(+2,T)$ gặp ở EI $758/765=99{,}08\%$, IE $108/766=14{,}10\%$,
-N $98/1654=5{,}93\%$: co-occurrence bên phải ranh giới khác biệt lớn giữa
-các nhãn. $(-2,A),(-1,G)$ gặp ở IE $762/766=99{,}48\%$, EI
+N $98/1654=5{,}93\%$. Mức đồng xuất hiện bên phải ranh giới chênh lệch
+lớn giữa các lớp. $(-2,A),(-1,G)$ gặp ở IE $762/766=99{,}48\%$, EI
 $388/765=50{,}72\%$, N $127/1654=7{,}68\%$, cho mô tả tương ứng ở bên trái.
 GT sau ranh giới EI và AG trước ranh giới IE phù hợp với hai dinucleotide
 thường gặp tại vị trí cho và nhận của intron ở động vật có vú~\cite{burset2000}.
 Chênh lệch EI--N và IE--N lần lượt là $93{,}16$ và $91{,}80$ điểm phần trăm.
 Sự hiện diện trong cả lớp N cho thấy từng cặp base riêng lẻ không đủ để
 nhận diện điểm nối.
-Pattern 4 item hạng 13 có counts EI/IE/N $514/22/2$;
-điều kiện cụ thể hơn đi kèm support EI giảm còn $67{,}19\%$.
-Đây là association mô tả, không phải accuracy classifier, p-value hay chứng
-minh cơ chế sinh học. Lớp N đông hơn nên phải dùng denominator riêng.
-Cửa sổ, ngưỡng, loại ambiguity và chọn pattern trên cùng mẫu giới hạn khả năng
-khái quát; muốn dự báo cần đánh giá trên tập độc lập.
+Tập 4 item hạng 13 xuất hiện $514/22/2$ lần ở EI/IE/N. Với nhiều điều
+kiện hơn, support EI giảm còn $67{,}19\%$.
+Kết quả mô tả mức đồng xuất hiện trên bộ chuỗi đã căn chỉnh. Cửa sổ,
+ngưỡng và quy tắc xử lý ký hiệu mơ hồ ảnh hưởng đến các mẫu tìm được.
+Muốn đánh giá khả năng nhận diện điểm nối trên chuỗi mới cần dữ liệu độc lập.
 
 \subsection{Kiểm chứng và khả năng tái lập}
-Python kiểm độc lập count, nhãn, xếp hạng luật và tập mẫu DNA.
-Java SPMF 2.64b khớp toàn bộ map Groceries/EI/IE/N với
-1.001/381/209/48 tập. Tham số Java nằm trong cùng khoảng sinh ra ngưỡng
-đếm tuyệt đối để tránh lệch do làm tròn ở biên. File \texttt{run.toml}
-lưu config, runtime và hash nguồn, đầu vào, đầu ra.
+Python đếm lại support từ giao dịch và kiểm chỉ số, thứ hạng của các bảng.
+Java SPMF 2.64b khớp mọi tập và support trên Groceries/EI/IE/N với
+1.001/381/209/48 tập. Tham số Java được chọn sao cho sinh cùng ngưỡng
+đếm nguyên với Julia khi làm tròn.
 
-Notebook tự tải dữ liệu, chạy Julia và đối chiếu SPMF từ checkout sạch.
-Phiên Google Colab ngày 17/11/2026 dùng Git bundle M3, hoàn tất 7/7 ô
-với Julia 1.12.6 và 790 checks. Repo lưu notebook có output, log và commit
-của phiên đó. Notebook nộp bài lấy mã từ nhánh \texttt{main} công khai và
-in commit của lần chạy để đối chiếu.
+README dẫn đến ba notebook độc lập. Demo tái hiện phép khai thác trên dữ
+liệu nhỏ và đối chiếu các tập benchmark. Hai notebook ứng dụng tải đúng
+nguồn, tạo lại giao dịch, chạy Julia và kiểm kết quả với SPMF. Bảng và hình
+trong notebook ứng dụng lấy từ lần chạy mới. Mỗi notebook in commit của mã
+đã dùng để người đọc đối chiếu.

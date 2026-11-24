@@ -47,7 +47,7 @@ splice_transactions(path::AbstractString; positions=DNA_POSITIONS)::PreparedData
 """Compare supplied frequent candidates without invoking a mining implementation.
 
 Counts are recomputed on every class, including candidates absent from that class's
-frequent output. This function is testable while A's miner is awaiting approval.
+frequent output. The caller supplies the three complete mining outputs.
 """
 function compare_dna_patterns(dataset::PreparedDataset,
                              patterns_by_class::AbstractDict{String,Vector{Pattern}})::Vector{DNAPatternComparison}

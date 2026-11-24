@@ -1,0 +1,4 @@
+-r requirements-plot.txt
+# Local and CI Jupyter execution. Colab already supplies the Python kernel.
+ipykernel>=6,<8
+nbclient>=0.10,<1

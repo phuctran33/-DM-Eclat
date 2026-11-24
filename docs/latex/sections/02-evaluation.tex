@@ -148,25 +148,25 @@ giao. Vì chúng đo những công việc khác nhau, không lấy hiệu hai me
 định chính xác thời gian JIT hoặc thời gian ghi file.
 
 \begin{figure}[!tb]
-\centering\includegraphics[width=\columnwidth]{figures/runtime-chess.pdf}
+\centering\includegraphics[width=\columnwidth]{../../results/plots/runtime-chess.pdf}
 \caption{Chess: end-to-end (giây) và warm read+mine (ms), median và min--max của
 năm lần; nguồn: \texttt{results/raw/benchmark\_runs.csv}.}
 \label{fig:runtime-chess}
 \end{figure}
 \begin{figure}[!tb]
-\centering\includegraphics[width=\columnwidth]{figures/runtime-mushroom.pdf}
+\centering\includegraphics[width=\columnwidth]{../../results/plots/runtime-mushroom.pdf}
 \caption{Mushroom: cùng hai phạm vi đo của Hình~\ref{fig:runtime-chess}, năm lần
 mỗi điểm, output đầy đủ. Nguồn: raw benchmark CSV.}
 \label{fig:runtime-mushroom}
 \end{figure}
 \begin{figure}[!tb]
-\centering\includegraphics[width=\columnwidth]{figures/runtime-retail.pdf}
+\centering\includegraphics[width=\columnwidth]{../../results/plots/runtime-retail.pdf}
 \caption{Retail: runtime theo minsup; error bars min--max, không coi timer JVM
 nội bộ là một phần của panel warm Julia. Nguồn: raw benchmark CSV.}
 \label{fig:runtime-retail}
 \end{figure}
 \begin{figure}[!tb]
-\centering\includegraphics[width=\columnwidth]{figures/runtime-T10I4D100K.pdf}
+\centering\includegraphics[width=\columnwidth]{../../results/plots/runtime-T10I4D100K.pdf}
 \caption{T10I4D100K: runtime trên 100,000 transactions; panel trên giây, panel
 dưới ms; năm repetitions. Nguồn: raw benchmark CSV.}
 \label{fig:runtime-t10}
@@ -216,7 +216,7 @@ ngưỡng và phát triển theo tổ hợp. Ngược lại, nhiều item hiếm
 candidate space của các CSDL bằng nhau.
 
 \begin{figure*}[!t]
-\centering\includegraphics[width=.78\textwidth]{figures/output-size.pdf}
+\centering\includegraphics[width=.78\textwidth]{../../results/plots/output-size.pdf}
 \caption{Số tất cả frequent itemsets theo minsup trên bốn CSDL. Counts lấy từ
 output Basic đã khớp toàn bộ BitVector/SPMF; nguồn: raw/summary CSV.}
 \label{fig:output-size}
@@ -232,19 +232,19 @@ phải kết quả profiling từng phase đã thực hiện.
 
 % Queue these figures before the accompanying text to keep them in Chapter 2.
 \begin{figure}[!tb]
-\centering\includegraphics[width=\columnwidth]{figures/memory.pdf}
+\centering\includegraphics[width=\columnwidth]{../../results/plots/memory.pdf}
 \caption{Median maximum process RSS (MiB), năm process độc lập mỗi backend/CSDL;
 ngưỡng như Bảng~\ref{tab:optimization}. Nguồn: raw memory comparison CSV.}
 \label{fig:memory}
 \end{figure}
 \begin{figure}[!tb]
-\centering\includegraphics[width=.94\columnwidth]{figures/scalability.pdf}
+\centering\includegraphics[width=.94\columnwidth]{../../results/plots/scalability.pdf}
 \caption{Retail: end-to-end (s), warm read+mine (ms) và output size theo $n$;
 relative minsup cố định 1\%, năm repetitions; nguồn: raw benchmark CSV.}
 \label{fig:scalability}
 \end{figure}
 \begin{figure}[!tb]
-\centering\includegraphics[width=.94\columnwidth]{figures/transaction-length.pdf}
+\centering\includegraphics[width=.94\columnwidth]{../../results/plots/transaction-length.pdf}
 \caption{Synthetic width effects: end-to-end (s), warm read+mine (ms) và số
 patterns; $n=10{,}000,m=100,\theta=0.20$, seed 42. Nguồn: raw benchmark CSV.}
 \label{fig:length}
@@ -271,13 +271,10 @@ Trong Bảng~\ref{tab:memory} và Hình~\ref{fig:memory}, mức giảm được 
 $100(1-R_{\mathrm{BitVector}}/R_{\mathrm{Basic}})$ với $R$ là median peak RSS. Do
 đó các mức giảm trên Chess, Mushroom và Retail lần lượt khoảng 14.88\%, 4.63\%
 và 3.89\%. T10I4D100K có median 345.1 MiB của Basic so với 351.1 MiB của
-BitVector, tức mức giảm $-1.74\%$. Chênh lệch nhỏ ở một phiên đo chưa chứng minh
-một regression bộ nhớ ổn định; cần xem spread raw và lặp trên các phiên khác.
-Do
-runtime nền và JIT tham gia peak, phần trăm RSS giảm không bằng phần trăm payload
-tidsets giảm. Với từ điển item lớn, bitmap có thể tiết kiệm nhờ chỉ cấp cho $F_1$,
-nhưng khi nhiều items đều frequent mà $n$ lớn, mỗi bitmap vẫn phải phủ toàn bộ TIDs.
-Không ngoại suy các ngưỡng này thành cam kết tiết kiệm RAM ở minsup thấp tùy ý.
+BitVector, tức mức giảm $-1.74\%$. Cần lặp trên nhiều phiên để đánh giá
+chênh lệch này. RSS gồm cả runtime và JIT, còn kích thước tidset chỉ là một
+phần. BitVector chỉ cấp mask cho $F_1$. Khi hạ ngưỡng, nhiều item có thể
+vào $F_1$ và mỗi mask vẫn cần một bit cho mỗi giao dịch.
 
 \subsection{Scalability theo số transactions}
 Retail được hoán vị một lần bằng MersenneTwister seed 42; lấy prefixes của cùng

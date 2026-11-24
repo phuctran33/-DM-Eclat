@@ -8,8 +8,12 @@ from pathlib import Path
 import subprocess
 import tarfile
 from collections import Counter
-from benchlib import ROOT, CONTRACT, sha256, write_csv
+from benchlib import ROOT, CONTRACT, sha256
 from benchmark_runner import aggregate
+
+# The original manifest still verifies the review PDF and duplicate figures
+# against the Git snapshot from before they were retired from the checkout.
+ARCHIVED_RELEASE = "556602e66d79f90fa735100e4c58fd0ba59e6d91"
 
 
 def read(path):
@@ -17,12 +21,30 @@ def read(path):
         return list(csv.DictReader(stream))
 
 
+def check_manifest(root=ROOT):
+    rows = read(root / "results/raw/artifact_sha256.csv")
+    if not rows or len({row["path"] for row in rows}) != len(rows):
+        raise ValueError("Empty/duplicate benchmark artifact manifest")
+    for row in rows:
+        name = row["path"].replace("\\", "/")
+        if name == "docs/Member-A-review.pdf" or name.startswith("docs/latex/figures/"):
+            data = subprocess.check_output(["git", "show", f"{ARCHIVED_RELEASE}:{name}"], cwd=root)
+            size, digest = len(data), hashlib.sha256(data).hexdigest()
+        else:
+            path = root / name
+            size, digest = path.stat().st_size, sha256(path)
+        if size != int(row["size_bytes"]) or digest != row["sha256"]:
+            raise ValueError(f"Changed measured artifact: {name}")
+    return len(rows)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results",type=Path,default=ROOT/"results")
-    parser.add_argument("--write-manifest",action="store_true")
     args=parser.parse_args()
     root=args.results.resolve()
+    if root == ROOT / "results":
+        print(f"PASS {check_manifest()} frozen artifact hashes (including archived Git paths)")
     rows=read(root/"raw/benchmark_runs.csv")
     comparisons=read(root/"correctness/comparisons.csv")
     assert list(rows[0])==CONTRACT["tables"]["benchmark_runs"]
@@ -73,17 +95,5 @@ def main():
     print(f"PASS {len(cases)} cases, {len(rows)} measurements, {len(comparisons)} exact full-map comparisons")
     print("Statuses:",dict(Counter(r["status"] for r in rows)))
     print("PASS shared headers, unique run IDs, thresholds/counts/hashes, aggregates and archived OS logs")
-    if args.write_manifest:
-        files=[]
-        for directory in [root/"raw",root/"correctness",root/"plots",ROOT/"docs/latex/figures",ROOT/"docs/latex/generated"]:
-            files.extend(p for p in directory.glob("*") if p.is_file() and p.suffix in {".csv",".json",".pdf",".png",".tex"}
-                         and p.name not in {"checkpoint.json","artifact_sha256.csv"})
-        files.extend([archive,ROOT/"docs/Member-A-review.pdf"])
-        fields=["path","sha256","size_bytes"]
-        write_csv(root/"raw/artifact_sha256.csv",
-                  [dict(path=str(p.relative_to(ROOT)),sha256=sha256(p),size_bytes=p.stat().st_size) for p in sorted(set(files))],fields)
-        print(f"Wrote hashes for {len(set(files))} evidence/render artifacts")
-
-
 if __name__=="__main__":
     main()

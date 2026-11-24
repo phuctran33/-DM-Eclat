@@ -1,32 +1,7 @@
-# SPMF binary tham chiếu
+# Java SPMF 2.64b
 
-```bash
-python3 scripts/prepare_spmf.py --references
-```
-
-Script tải archive chính thức `https://www.philippe-fournier-viger.com/spmf/spmf2.64.jar`,
-SPMF **2.64b**, pin SHA-256
-`c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250`.
-Cần Java ≥21 (class version 65); máy đo dùng Java 23.0.1. Bản latest không tương
-thích Java 23 tại thời điểm chạy nên không được dùng để tạo số liệu.
-
-File local là `tools/spmf.jar`, ignored và không commit. Nếu đã có JAR khác, script
-reject hash thay vì ghi đè; lưu bản đó sang tên riêng rồi tải bản pin. Không copy
-source Java thuật toán vào miner; binary chỉ dùng cho oracle/benchmark. Provenance
-năm references nằm trong `tests/reference/spmf/manifest.csv`, logs trong
-`results/reference/`. Không đồng nhất số version ECLAT in trong banner với version
-SPMF distribution.
-
-## References độc lập của B
-
-```text
-python scripts/prepare_references_b.py --java PATH_TO_JAVA_21
-```
-
-Script B kiểm full map bằng vét cạn và chuẩn hóa CRLF thành LF; lưu cả raw và
-canonical hashes trong docs/member-b-validation/spmf/. Manifest chính hiện dùng
-provenance B; logs lịch sử A tại results/reference/ giữ nguyên. Cả hai dùng cùng
-JAR pin và có output hashes giống nhau. Máy Windows có Java 8 mặc định có thể
-truyền đường dẫn Java 21 có sẵn trong CLion; không cần đổi PATH.
-Controller benchmark và script A khi dùng --references chỉ hỗ trợ Linux/macOS;
-script B tái tạo references hỗ trợ Windows.
+`python3 scripts/prepare_spmf.py --java java` tải JAR chính thức và đối chiếu
+SHA-256. Cần Java ≥21. JAR được lưu local ở `tools/spmf.jar`.
+SPMF chỉ xuất tập tham chiếu để kiểm kết quả của hai backend Julia.
+[Trang SPMF](https://www.philippe-fournier-viger.com/spmf/) ·
+[Toy và provenance](../tests/reference/spmf/README.md)

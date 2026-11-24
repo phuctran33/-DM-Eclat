@@ -134,16 +134,13 @@ co ngắn khi support giảm: sparse intersections có thể bất lợi. DFS nh
 lớp con khi quay lui, nhưng GC quyết định lúc thu hồi; RSS còn bao gồm runtime/JIT.
 Không đồng nhất payload với peak process RSS.
 
-## Bằng chứng kiểm tra và giới hạn tích hợp
+## Bằng chứng kiểm tra
 
-`tests/test_correctness.jl` dùng exhaustive subset counting độc lập cho 5 fixtures,
-20 DB ngẫu nhiên (seed 42), edge cases và word-boundary sizes. `tests/test_spmf.jl`
-so toàn bộ map với 5 references thật tại 40%, không chỉ so count; manifest pin input,
-output và JAR SHA-256. `scripts/prepare_spmf.py --references` tái tạo bằng Java.
-`tests/test_rules.jl` kiểm mọi hướng luật, consequent nhiều item, thiếu subset và
-PreparedDataset → mine. Preprocessing Groceries/DNA của B vẫn pending, không được
-coi bài test PreparedDataset là xác minh hai pipeline trên dữ liệu thực.
+`tests/test_correctness.jl` đếm vét cạn 5 fixtures và 20 CSDL sinh với
+seed 42, kiểm cả input biên và phần đuôi của packed word.
+`tests/test_spmf.jl` so toàn bộ map của cả hai backend với 5 Java
+references tại 40%. [Manifest toy](../tests/reference/spmf/manifest.csv)
 
-Full suite mặc định bật cả backends và references. Lệnh và stdout cuối nằm trong
-`docs/verification.md`, `results/logs/`; số liệu đo và phạm vi timer được mô tả tại
-`docs/experiments.md` và Chương 2. B cần review adaptation và tích hợp ứng dụng.
+Demo chạy Java SPMF để đối chiếu lại references. Hai notebook ứng dụng
+kiểm kết quả từ miner trên dữ liệu thực theo đúng từng input.
+[Stdout Julia](validation/julia-tests.txt) · [Phép đo](experiments.md)

@@ -1,21 +1,25 @@
-# Kết quả ứng dụng M2 B
+# Kết quả Groceries và Splice DNA
 
-Groceries: 1.001 tập phổ biến, 22 luật, top-10 theo schema ranking.
-Splice: EI/IE/N 381/209/48 tập; 463 candidates dài 2–4, đếm lại mọi lớp.
-Đây là output mined thật của nhóm, được đối chiếu toàn map hai backend và
-Java SPMF 2.64b. Xem run.toml, validation.json và verification/* logs.
+- [Groceries top-10](groceries_top10.csv) lấy mười luật theo lift từ
+  [22 luật](groceries_rules.csv), sinh trên 1.001 tập phổ biến.
+- [Splice](dna_patterns.csv) có 463 ứng viên độ dài 2–4 được đếm trên
+  cả ba lớp. Số tập frequent EI/IE/N lần lượt là 381/209/48.
 
-Patterns/CSV/mapping/audit và metadata được commit. Raw data, per-observation
-metadata và normalized transaction files được ignore để không nhân bản dữ liệu.
-Muốn chạy auditor từ clone mới, tái tạo một output directory mới trước:
+[run.toml](run.toml) ghi config, source hashes và các artifacts.
+[validation.json](validation.json) ghi đối chiếu toàn bộ map với Java SPMF.
+Repo giữ tập phổ biến, mapping, audit và các bảng. Numeric transactions
+và từng dòng quan sát được tạo lại từ nguồn có checksum.
 
-```text
-python scripts/prepare_application_data.py --dataset all
-julia --project=. scripts/run_applications.jl --output results/applications-rerun
-python -B scripts/verify_application_results.py --output results/applications-rerun --java PATH_TO_JAVA_21
+Chạy [Groceries](../../notebooks/01_groceries.ipynb) hoặc
+[Splice DNA](../../notebooks/02_splice_dna.ipynb) để tái lập. Có thể chạy cả
+hai bằng Julia CLI từ thư mục gốc:
+
+```bash
+python3 scripts/prepare_application_data.py --dataset all
+python3 scripts/prepare_spmf.py
+julia --project=. scripts/run_applications.jl --output .tools/applications-new
+python3 scripts/verify_application_results.py --output .tools/applications-new --java java
 ```
 
-Không chạy đè results/applications. Metadata checksum các file đầy đủ trước khi
-ignore; môi trường/runtime/provenance có thể khác nhưng các CSV/pattern outputs
-phải có cùng hashes. Hai full runs local đã kiểm điều này.
-Phân tích và cách tái lập đầy đủ: docs/M2_MEMBER_B.md.
+Dùng thư mục output mới cho mỗi lần chạy. Trình kiểm chứng chung đối chiếu
+các bảng và pattern mới với hash công bố. [Cách nghiệm thu](../../docs/RUBRIC_FINAL_AUDIT.md)

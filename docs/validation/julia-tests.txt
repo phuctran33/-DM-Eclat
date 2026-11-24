@@ -1,0 +1,41 @@
+$ julia --project test/runtests.jl
+julia version 1.10.10
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  0.8s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  0.9s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  0.5s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  0.6s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.5s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.1s
+Test Summary:                                      | Pass  Total  Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  6.8s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.1s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  1.0s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.0s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.1s
+Test Summary:                                     | Pass  Total  Time
+Association rules and PreparedDataset integration |   94     94  1.2s
+Test Summary:                    | Pass  Total  Time
+CLI round trip and failure paths |   12     12  5.4s
+Groceries: 7 frequent patterns, 9 rules, min_count=2
+Splice EI: 3 patterns, min_count=3
+Splice IE: 3 patterns, min_count=3
+Splice N: 0 patterns, min_count=3
+DNA comparisons: 2
+Applications output: /var/folders/vy/m8wm117x3ns8p50nhqp76cp00000gn/T/jl_lz9pFn/result
+Groceries: 7 frequent patterns, 9 rules, min_count=2
+Test Summary:                                         | Pass  Total  Time
+M2: complete mining applications and output ownership |   28     28  1.3s
+Test Summary:                               | Pass  Total  Time
+Exact agreement with SPMF on five databases |   25     25  0.0s

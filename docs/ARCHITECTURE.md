@@ -1,8 +1,7 @@
 # Kiến trúc ECLAT và cách đọc mã
 
 Đọc theo luồng CLI → hai backend Julia → kiểm chứng → ứng dụng → benchmark
-→ số liệu trong báo cáo. Tài liệu này cập nhật nội dung
-[PR #2](https://github.com/phuctran33/-DM-Eclat/pull/2) cho bản tích hợp M3.
+→ số liệu trong báo cáo.
 
 | Thư mục hoặc file | Điểm bắt đầu |
 |---|---|
@@ -18,7 +17,7 @@
 | `notebooks/demo.ipynb`, `.github/workflows/ci.yml` | Tái lập từ môi trường mới, kiểm CI và luồng notebook public |
 | `docs/latex/`, `docs/Report.pdf` | Nguồn và PDF IEEE của cả ba chương |
 
-Chi tiết kiểu và định dạng xem [API](API.md) và [schema v1](SCHEMA.md).
+Chi tiết kiểu, API và định dạng xem [schema](SCHEMA.md).
 Dùng lệnh setup ở [README](../README.md) để tái lập từ clone sạch.
 
 ## Miner
@@ -97,7 +96,7 @@ mapping và audit. `run_applications.jl` ghi một thư mục hoàn chỉnh kèm
 ## Kiểm chứng và benchmark
 
 - `tests/runtests.jl` gồm I/O, ngưỡng, schema, edge cases, oracle vét cạn,
-  word tails, rules, CLI và preprocessing/pipelines B. Hai backend dùng chung
+  word tails, rules, CLI và hai pipeline ứng dụng. Hai backend dùng chung
   DFS nên cần oracle độc lập ngoài việc so sánh chúng với nhau.
 - `prepare_spmf.py` pin JAR 2.64b. Toy unit tests đọc năm references đã commit
   tại 40%. Java live checks tạo outputs độc lập, rồi `compare_spmf.jl` hoặc
@@ -105,8 +104,8 @@ mapping và audit. `run_applications.jl` ghi một thư mục hoàn chỉnh kèm
 - `acquire_benchmarks.py` lấy đúng raw FIMI, kiểm SHA-256, chuẩn hóa ID/whitespace.
   `make_subsets.jl` tạo prefix của cùng permutation Retail. `generate_synthetic.jl`
   sinh các giao dịch đều độ rộng với seed 42.
-- `benchmark_runner.jl` chuyển tham số sang `benchmark_runner.py` để đọc
-  `configs/experiments.toml`, kiểm thư mục output và preflight ba backend.
+- `benchmark_runner.py` đọc `configs/experiments.toml`, kiểm thư mục
+  output và preflight ba backend.
   `benchlib.py` đo process mới, thu OS RSS/logs và xử lý timeout. Worker Julia
   đo các lần warm trong cùng process. Runner lưu raw CSV, summary và checkpoint.
 - `plot_results.py` sinh hình/bảng từ CSV. `review_benchmarks.py` audit snapshot
@@ -133,8 +132,9 @@ Giữ lịch sử Git khi audit nguồn của 875 phép đo. [Phương pháp đo
 
 Hưng phụ trách miner, BitVector, rules helper, benchmark và Chương 1–2.
 Phúc phụ trách kiểm chứng, dữ liệu, hai pipeline ứng dụng, notebook và Chương 3.
-Code tích hợp đã có đủ hai ứng dụng và PDF cuối. Phạm vi kiểm chứng Colab
-public cùng các mục nộp còn lại nằm ở [checklist](planning/DELIVERY.md).
+Ba notebook gọi chung file setup. Groceries và Splice chỉ tải nguồn và
+chạy bài toán tương ứng. Local runner chạy ba kernel rồi so hợp artifacts
+ứng dụng với kết quả công bố. [Kiểm chứng cuối](RUBRIC_FINAL_AUDIT.md).
 
 Giữ schema và artifacts gắn với lần đo cũ khi sửa code. Khi đổi dataset,
 threshold, cách đo hoặc ứng dụng, cập nhật config và kiểm lại nguồn gốc của kết
