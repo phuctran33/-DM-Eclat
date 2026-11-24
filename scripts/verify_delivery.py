@@ -3,12 +3,13 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-import sys
+import subprocess
 import tomllib
 from benchlib import ROOT, sha256, read_patterns
 from build_report import report_sources
-from review_benchmarks import check_manifest, check_coverage, current_sources, require_equal
-from verify_application_results import verify
+from review_benchmarks import check_coverage, current_sources, require_equal
+from verify_artifacts import check_manifest
+from verify_application_results import APPLICATION_CASES, verify
 from application_tables import tables
 
 def check_report(root=ROOT):
@@ -40,11 +41,16 @@ def check_benchmark_review(output):
             require_equal(read_patterns(output/f"{name}-{backend}.txt"),reference,name)
     return report
 
-def check_published_applications(fresh, published=ROOT/"results/applications"):
+def check_published_applications(fresh, published=ROOT/"results/applications", *, splice=None):
     """Bind a fresh run to the published tables and patterns used by the report."""
-    fresh = Path(fresh)
+    directories = [Path(fresh)] if splice is None else [Path(fresh), Path(splice)]
     published = Path(published)
-    computed = tomllib.loads((fresh/"run.toml").read_text(encoding="utf-8"))["artifact_sha256"]
+    computed = {}
+    for directory in directories:
+        hashes = tomllib.loads((directory/"run.toml").read_text(encoding="utf-8"))["artifact_sha256"]
+        if hashes.keys() & computed.keys():
+            raise ValueError("Duplicate fresh application artifacts")
+        computed.update(hashes)
     recorded = tomllib.loads((published/"run.toml").read_text(encoding="utf-8"))["artifact_sha256"]
     if not recorded or computed != recorded:
         raise ValueError("Fresh application artifacts differ from published report evidence")
@@ -58,13 +64,13 @@ def check_published_applications(fresh, published=ROOT/"results/applications"):
         if sha256(artifact) != digest:
             raise ValueError(f"Published application artifact changed: {path}")
 
-def check_application_spmf(applications):
+def check_application_spmf(applications, *, dataset="all"):
     live = json.loads((applications / "validation.json").read_text("utf-8"))
     cases = live["spmf"]
-    expected = {"groceries", "splice_EI", "splice_IE", "splice_N"}
+    expected = set(APPLICATION_CASES[dataset])
     names = [case["dataset"] for case in cases]
     if live["status"] != "pass" or set(names) != expected or len(names) != len(expected):
-        raise ValueError("Expected one live SPMF comparison each for groceries, splice_EI, splice_IE and splice_N")
+        raise ValueError(f"Expected one live SPMF comparison each for {', '.join(sorted(expected))}")
     for case in cases:
         name = case["dataset"]
         if not case["identical"] or case["exact_match_rate"] != 1.0:
@@ -78,12 +84,15 @@ def check_application_spmf(applications):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--applications",type=Path,required=True)
+    parser.add_argument("--applications",type=Path,nargs="+",required=True,
+                        help="Combined output directory, or two directories in Groceries, Splice order")
     parser.add_argument("--benchmark-review",type=Path,required=True)
     parser.add_argument("--output",type=Path,required=True)
     args=parser.parse_args()
-    applications=args.applications.resolve()
-    if applications==(ROOT/"results/applications").resolve():
+    applications = [path.resolve() for path in args.applications]
+    if len(applications) not in (1, 2):
+        parser.error("Provide one combined application run or two separate runs")
+    if (ROOT/"results/applications").resolve() in applications:
         raise ValueError("Final gate requires outputs mined in this run, not shipped application tables")
     for name,text in tables().items():
         if (ROOT/"docs/latex/generated"/name).read_text("utf-8")!=text:
@@ -92,21 +101,26 @@ def main():
     check_manifest()
     check_coverage(json.loads((ROOT/"results/raw/cases.json").read_text("utf-8")))
     benchmarks=check_benchmark_review(args.benchmark_review)
-    apps=verify(applications)
-    check_published_applications(applications)
-    live_application_count = check_application_spmf(applications)
+    scopes = ("all",) if len(applications) == 1 else ("groceries", "splice")
+    check_published_applications(applications[0], splice=applications[1] if len(applications) == 2 else None)
+    apps, validation_hashes, live_application_count = {}, {}, 0
+    for scope, path in zip(scopes, applications):
+        apps.update(verify(path, dataset=scope))
+        live_application_count += check_application_spmf(path, dataset=scope)
+        validation_hashes[scope] = sha256(path/"validation.json")
     try:
         import google.colab
         runtime="google-colab"
     except ImportError:
         runtime="local-or-CI"
-    record=dict(status="pass",runtime=runtime,report_pdf_sha256=pdf["pdf_sha256"],
+    record=dict(status="pass",runtime=runtime,source_commit=subprocess.check_output(
+                    ["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),report_pdf_sha256=pdf["pdf_sha256"],
                 report_body_pages=pdf["body_pages"],n_rules=apps["n_rules"],
                 n_dna_candidates=apps["n_dna_candidates"],
                 archived_benchmark_comparisons=benchmarks["archived_full_map_comparisons"],
                 live_benchmark_datasets=4,live_application_datasets=live_application_count,
                 benchmark_review_sha256=sha256(args.benchmark_review/"review.json"),
-                application_validation_sha256=sha256(applications/"validation.json"))
+                application_validation_sha256=validation_hashes)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n","utf-8")
     print("PASS final delivery:",json.dumps(record,ensure_ascii=False),flush=True)

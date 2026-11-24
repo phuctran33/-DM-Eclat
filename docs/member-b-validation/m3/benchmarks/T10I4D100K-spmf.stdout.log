@@ -1,7 +1,0 @@
->/D:/-DM-Eclat/tools/spmf.jar
-=============  ECLAT v0.96r18 - STATS =============
- Transactions count from database : 100000
- Frequent itemsets count : 385
- Total time ~ 225 ms
- Maximum memory usage : 90.74993896484375 mb
-===================================================

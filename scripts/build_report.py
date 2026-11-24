@@ -11,10 +11,14 @@ import tempfile
 from benchlib import ROOT, sha256
 
 def report_sources(root=ROOT):
-    paths=sorted(p for p in (root/"docs/latex").rglob("*")
-                 if p.is_file() and p.suffix in {".tex",".bib",".pdf"}
-                 and not p.name.startswith("MemberA") and not (p.parent==root/"docs/latex" and p.suffix==".pdf"))
-    return {p.relative_to(root).as_posix():sha256(p) for p in paths}
+    latex = root / "docs/latex"
+    sources = {path for path in latex.rglob("*") if path.is_file() and path.suffix in {".tex", ".bib"}}
+    figures = set()
+    for path in sources:
+        if path.suffix == ".tex":
+            names = re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", path.read_text(encoding="utf-8"))
+            figures.update((latex / name).resolve() for name in names)
+    return {path.relative_to(root).as_posix(): sha256(path) for path in sorted(sources | figures)}
 
 def inspect_pdf(path):
     from pypdf import PdfReader

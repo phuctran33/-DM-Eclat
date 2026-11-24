@@ -1,20 +1,18 @@
-# Bằng chứng thực nghiệm Member A
+# Kết quả thực nghiệm
 
-- `raw/dataset_statistics.csv`, `dataset_provenance.json`: tính trên file đã tải/chuẩn hóa.
-- `raw/benchmark_runs.csv`: raw repetitions theo shared schema v1.0.0.
-- `raw/summary.csv`: median/min/max, số ok/timeout/oom/error, output và peak RSS.
-- `raw/environment.json`, `protocol.json`, `cases.json`: versions/source/config/input hashes.
-- `correctness/comparisons.csv`: so toàn bộ maps với SPMF, không chỉ output count.
-- `raw/optimization.csv`, `memory_comparison.csv`, `end_to_end_medium.csv`: bảng dẫn xuất thật.
-- `plots/*.pdf,*.png`: hình từ raw/summary CSV, không có số liệu dựng tay.
-- `logs/final-tests.log`, `controller-tests.log`, `benchmark-smoke.log`: kiểm thử thực.
-- `logs/benchmark-logs.tar.gz`: stdout/stderr/command/status và output-verification hashes.
-- `reference/`: logs/version/provenance của năm SPMF references.
+| Vị trí | Đọc gì |
+|---|---|
+| `raw/benchmark_runs.csv`, `raw/summary.csv` | 875 phép đo và các median/min–max |
+| `raw/environment.json`, `raw/protocol.json`, `raw/cases.json` | Phiên bản, cấu hình, seed và hash nguồn |
+| `raw/dataset_statistics.csv`, `raw/dataset_provenance.json` | Thống kê, URL, biến đổi và hash input |
+| `correctness/comparisons.csv` | 70 phép so đầy đủ itemset/support |
+| `raw/optimization.csv`, `raw/memory_comparison.csv`, `raw/end_to_end_medium.csv` | Bảng hiệu năng ở minsup trung bình |
+| `plots/` | PNG cho notebook, PDF cho LaTeX |
+| `applications/` | Kết quả mined, luật và top-10 Groceries, mẫu Splice và provenance |
+| `logs/benchmark-logs.tar.gz` | OS RSS, stdout, stderr, lệnh chạy và hash output |
 
-Extract archive: `tar -xzf results/logs/benchmark-logs.tar.gz -C results/logs`.
-Full pattern outputs, subsets, synthetic data và checkpoint giữ local, ignored;
-regenerate bằng runner. Không commit JAR, raw benchmarks hoặc cache runtime.
-
-Đọc `docs/experiments.md` về hai phạm vi timer, OS peak RSS, timeout, warm-up,
-spread và hạn chế. Tạo lần đo mới bằng `--output results/reproduced`; không trộn số
-đo của hai machines/protocols vào một bảng. Ứng dụng Groceries/DNA chưa có kết quả.
+Chạy `python3 scripts/verify_artifacts.py` từ clone đầy đủ để kiểm
+manifest, nguồn tại commit đo và archive. Khi cần xem log, dùng
+`tar -tzf results/logs/benchmark-logs.tar.gz` để liệt kê và `tar -xOf`
+để đọc một mục. [Phương pháp đo](../docs/experiments.md) ·
+[Đối chiếu rubric và lịch sử](../docs/RUBRIC_FINAL_AUDIT.md)

@@ -22,7 +22,6 @@ jobs:
           java-version: '21'
       - run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
       - run: python3 scripts/prepare_spmf.py
-      - run: python tests/test_application_sources.py
       - run: julia --project test/runtests.jl
       - run: julia --project=. scripts/mine.jl --help
       - run: python3 tests/smoke_benchmark.py
@@ -38,10 +37,11 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements-plot.txt
       - run: python tests/test_benchmark.py -v
+      - run: python tests/test_application_sources.py -v
       - run: python tests/test_plot_results.py -v
       - run: python -B tests/test_delivery.py -v
 
-  applications-notebook:
+  notebooks:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -58,9 +58,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      - run: python -m pip install -r requirements-notebook.txt
       - run: python -B scripts/run_notebook.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m3-delivery-notebook
-          path: .tools/notebook-runs/
+          name: notebook-validation
+          path: |
+            .tools/notebook-runs/*/*-executed.ipynb
+            .tools/notebook-runs/*/delivery-validation.json
+            .tools/notebook-runs/*/demo/benchmark-review/review.json
+            .tools/notebook-runs/*/*/applications/validation.json

@@ -7,7 +7,8 @@ import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
 from benchlib import ROOT,sha256
-from review_benchmarks import check_coverage,check_manifest,require_equal
+from review_benchmarks import check_coverage,require_equal
+from verify_artifacts import check_manifest
 from verify_delivery import check_application_spmf,check_published_applications,check_report
 
 class DeliveryGateTests(unittest.TestCase):
@@ -95,5 +96,24 @@ class DeliveryGateTests(unittest.TestCase):
                     validation.write_text(json.dumps(dict(status="pass", spmf=cases)), encoding="utf-8")
                     with self.assertRaisesRegex(ValueError, "one live SPMF comparison"):
                         check_application_spmf(root)
+
+    def test_separate_application_runs_must_supply_disjoint_published_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            names = {"groceries": "groceries_rules.csv", "splice": "dna_patterns.csv"}
+            published = root / "published"
+            published.mkdir()
+            records = []
+            for scope, name in names.items():
+                run = root / scope
+                run.mkdir()
+                artifact = published / name
+                artifact.write_text(scope, encoding="utf-8")
+                records.append(f'"{name}" = "{sha256(artifact)}"\n')
+                (run / "run.toml").write_text("[artifact_sha256]\n" + records[-1], encoding="utf-8")
+            (published / "run.toml").write_text("[artifact_sha256]\n" + "".join(records), encoding="utf-8")
+            check_published_applications(root / "groceries", published, splice=root / "splice")
+            with self.assertRaisesRegex(ValueError, "Duplicate fresh application artifacts"):
+                check_published_applications(root / "groceries", published, splice=root / "groceries")
 
 if __name__=="__main__":unittest.main()
