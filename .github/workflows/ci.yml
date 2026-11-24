@@ -64,4 +64,8 @@ jobs:
         if: always()
         with:
           name: notebook-validation
-          path: .tools/notebook-runs/
+          path: |
+            .tools/notebook-runs/*/*-executed.ipynb
+            .tools/notebook-runs/*/delivery-validation.json
+            .tools/notebook-runs/*/demo/benchmark-review/review.json
+            .tools/notebook-runs/*/*/applications/validation.json
