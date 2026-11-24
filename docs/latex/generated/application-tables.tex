@@ -1,4 +1,5 @@
-% Generated from results/applications/groceries_top10.csv; do not hand-edit numbers.
+% Generated from results/applications/groceries_top10.csv.
+\newcommand{\TableGroceries}{%
 \begin{tabular}{rp{0.51\textwidth}rrrr}
 \toprule
 Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Count & Supp. (\%) & Conf. (\%) & Lift \\
@@ -14,4 +15,19 @@ Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Count & Supp. (\%) & Conf. (
 9 & butter, yogurt $\Rightarrow$ whole milk & 92 & 0.9354 & 63.89 & 2.500 \\
 10 & butter, root vegetables $\Rightarrow$ whole milk & 81 & 0.8236 & 63.78 & 2.496 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+
+% Generated from results/applications/dna_patterns.csv. First two ranks and first lengths 3 and 4.
+\newcommand{\TableSplice}{%
+\begin{tabular}{rp{0.43\columnwidth}rrr}
+\toprule
+Hạng & Pattern (vị trí, base) & EI & IE & N \\
+\midrule
+1 & $(+1,G),\allowbreak (+2,T)$ & 99.08 & 14.10 & 5.93 \\
+2 & $(-2,A),\allowbreak (-1,G)$ & 50.72 & 99.48 & 7.68 \\
+3 & $(+1,G),\allowbreak (+2,T),\allowbreak (+5,G)$ & 85.10 & 2.87 & 0.91 \\
+13 & $(-1,G),\allowbreak (+1,G),\allowbreak (+2,T),\allowbreak (+5,G)$ & 67.19 & 2.87 & 0.12 \\
+\bottomrule
+\end{tabular}%
+}

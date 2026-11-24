@@ -33,7 +33,7 @@ count bằng 0 để biểu diễn timeout. Các ngưỡng chính ở Bảng~\re
 \centering
 \caption{Grid minsup cố định; nguồn: \texttt{configs/experiments.toml}.}
 \label{tab:thresholds}
-\input{generated/thresholds}
+\TableThresholds
 \end{table}
 
 \subsection{Nguồn dữ liệu, chuẩn hóa và thống kê thực}
@@ -56,7 +56,7 @@ và SPMF nhận cùng byte file normalized; input SHA-256 được ghi vào từ
 \caption{Thống kê tính từ đúng file normalized: $n$ transactions, $m$ distinct items,
 TB/Max là số item/giao dịch; nguồn: \texttt{results/raw/dataset\_statistics.csv}.}
 \label{tab:datasets}
-\input{generated/datasets}
+\TableDatasets
 \end{table*}
 
 Bảng~\ref{tab:datasets} cho thấy không thể coi bốn CSDL có cùng đặc tính. Chess và
@@ -101,7 +101,7 @@ xác minh count-bin conversion trên các kích thước benchmark và boundary 
 \caption{Đối chiếu toàn bộ map trên grid bốn benchmark, mỗi ngưỡng có Basic/SPMF
 và BitVector/SPMF; nguồn: \texttt{results/correctness/comparisons.csv}.}
 \label{tab:correctness}
-\input{generated/correctness}
+\TableCorrectness
 \end{table}
 
 Bảng~\ref{tab:correctness} thống kê các phép đối chiếu, không phải chỉ tỉ lệ bằng
@@ -178,14 +178,14 @@ dưới ms; năm repetitions. Nguồn: raw benchmark CSV.}
 3\%, T10I4D100K 1\%. $S$ theo (\ref{eq:speedup}); nguồn: \texttt{optimization.csv}.}
 \label{tab:optimization}
 \setlength{\tabcolsep}{3pt}
-\input{generated/medium-runtime}
+\TableMediumRuntime
 \end{table}
 \begin{table}[tb]
 \centering
 \caption{Median end-to-end tại cùng các ngưỡng của Bảng~\ref{tab:optimization};
 nguồn: \texttt{results/raw/end\_to\_end\_medium.csv}.}
 \label{tab:e2e}
-\input{generated/medium-e2e}
+\TableMediumEndToEnd
 \end{table}
 
 Bảng~\ref{tab:optimization} và Bảng~\ref{tab:e2e} giúp đánh giá cùng ngưỡng dưới hai
@@ -264,7 +264,7 @@ mọi lần. Worker internal ghi RSS là NA vì không có peak riêng cho từn
 lớn hơn. Nguồn: \texttt{results/raw/memory\_comparison.csv}.}
 \label{tab:memory}
 \setlength{\tabcolsep}{3pt}
-\input{generated/memory}
+\TableMemory
 \end{table}
 
 Trong Bảng~\ref{tab:memory} và Hình~\ref{fig:memory}, mức giảm được tính
@@ -289,7 +289,7 @@ với tăng độ khó của search space.
 Nguồn: raw benchmark CSV và \texttt{cases.json}.}
 \label{tab:scalability}
 \setlength{\tabcolsep}{3pt}
-\input{generated/scalability}
+\TableScalability
 \end{table}
 
 Hình~\ref{fig:scalability} gồm ba panels để tách output khỏi runtime. Đọc và
@@ -321,7 +321,7 @@ Các mức có output rỗng cho thấy tác động của lọc singleton ở n
 đầy đủ. Nguồn: raw benchmark CSV và generator seed 42.}
 \label{tab:length}
 \setlength{\tabcolsep}{3pt}
-\input{generated/length}
+\TableLength
 \end{table}
 
 Bảng~\ref{tab:length} và Hình~\ref{fig:length} cần đọc cùng xác suất sinh dữ liệu.

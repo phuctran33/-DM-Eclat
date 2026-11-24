@@ -11,8 +11,7 @@ from collections import Counter
 from benchlib import ROOT, CONTRACT, sha256
 from benchmark_runner import aggregate
 
-# The original manifest still verifies the review PDF and duplicate figures
-# against the Git snapshot from before they were retired from the checkout.
+# The original manifest also covers release files now kept in Git history.
 ARCHIVED_RELEASE = "556602e66d79f90fa735100e4c58fd0ba59e6d91"
 
 
@@ -27,7 +26,12 @@ def check_manifest(root=ROOT):
         raise ValueError("Empty/duplicate benchmark artifact manifest")
     for row in rows:
         name = row["path"].replace("\\", "/")
-        if name == "docs/Member-A-review.pdf" or name.startswith("docs/latex/figures/"):
+        archived = (
+            name == "docs/Member-A-review.pdf"
+            or name.startswith(("docs/latex/figures/", "docs/latex/generated/"))
+            or (name.startswith("results/plots/") and name.endswith(".png"))
+        )
+        if archived:
             data = subprocess.check_output(["git", "show", f"{ARCHIVED_RELEASE}:{name}"], cwd=root)
             size, digest = len(data), hashlib.sha256(data).hexdigest()
         else:

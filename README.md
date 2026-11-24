@@ -15,7 +15,7 @@
 | [Groceries](notebooks/01_groceries.ipynb) | [Colab](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | 9.835 giỏ, 1.001 tập phổ biến, 22 luật và top-10 theo lift |
 | [Splice DNA](notebooks/02_splice_dna.ipynb) | [Colab](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | 3.185 mẫu hợp lệ, 381/209/48 tập theo EI/IE/N, 463 mẫu so sánh |
 
-Mở từng notebook rồi chọn **Runtime → Run all**. Mỗi notebook tự thiết lập, in commit và ghi kết quả mới vào thư mục riêng. Demo hiển thị đồ thị từ các phép đo đã lưu và chạy mới phần so khớp SPMF. [Trạng thái Colab](docs/RUBRIC_FINAL_AUDIT.md#colab)
+Mở từng notebook rồi chọn **Runtime → Run all**. Mỗi notebook tự thiết lập, in commit và ghi kết quả mới vào thư mục riêng. Demo vẽ đồ thị từ CSV đã đo vào thư mục phiên chạy và đối chiếu lại với SPMF. [Trạng thái Colab](docs/RUBRIC_FINAL_AUDIT.md#colab)
 
 ## Chạy nhanh
 
@@ -29,7 +29,58 @@ julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/bas
 julia --project test/runtests.jl
 ```
 
-Toy có 5 giao dịch, ngưỡng 2 và 7 tập phổ biến. Đổi `--backend bitset` và tên output để chạy bản BitVector, hoặc dùng `--min-count 2`. Kết quả dạng `1 2 #SUP: 3`. Lệnh trong đề gọi cùng suite với `julia --project=. tests/runtests.jl`. [Stdout Julia của lần kiểm cuối](docs/validation/julia-tests.txt)
+Toy có 5 giao dịch, ngưỡng 2 và 7 tập phổ biến. Đổi `--backend bitset` và tên output để chạy bản BitVector, hoặc dùng `--min-count 2`. Kết quả dạng `1 2 #SUP: 3`. Lệnh trong đề gọi cùng suite với `julia --project=. tests/runtests.jl`.
+
+<a id="kiem-thu-julia"></a>
+
+## Kết quả kiểm thử Julia
+
+<details>
+<summary>792/792 kiểm tra trong 16 nhóm (Julia 1.10.10)</summary>
+
+```text
+$ julia --project test/runtests.jl
+Test Summary:                     | Pass  Total  Time
+SPMF I/O and canonical comparison |   14     14  0.8s
+Test Summary:                           | Pass  Total  Time
+Threshold boundaries and API validation |   19     19  0.0s
+Test Summary:                    | Pass  Total  Time
+CLI round trip and failure paths |   12     12  5.3s
+Test Summary:                                          | Pass  Total  Time
+Edge cases, input ownership and packed-word boundaries |  267    267  1.1s
+Test Summary:                                      | Pass  Total  Time
+Eclat: five different databases, selected backends |   80     80  0.1s
+Test Summary:                                      | Pass  Total  Time
+Randomized oracle and transaction-order invariance |   80     80  0.3s
+Test Summary:                                             | Pass  Total  Time
+B: independently generated SPMF references and provenance |   68     68  0.2s
+Test Summary:                               | Pass  Total  Time
+Exact agreement with SPMF on five databases |   25     25  0.0s
+Test Summary:    | Pass  Total  Time
+Shared schema v1 |   33     33  1.3s
+Test Summary:                                     | Pass  Total  Time
+Association rules and PreparedDataset integration |   94     94  1.6s
+Test Summary:                      | Pass  Total  Time
+B: CSV and Groceries normalization |   18     18  0.5s
+Test Summary:                                            | Pass  Total  Time
+B: Splice normalization and independent class comparison |   24     24  0.5s
+Test Summary:                                          | Pass  Total  Time
+B: RFC4180 writer, record positions and rule artifacts |   12     12  0.4s
+Test Summary:                                          | Pass  Total  Time
+B: reject inconsistent DNA patterns and export ranking |    7      7  0.1s
+Test Summary:                                      | Pass  Total  Time
+B: real preprocessing CLI and supplied-pattern CLI |   11     11  7.2s
+Groceries: 7 frequent patterns, 9 rules, min_count=2
+Splice EI: 3 patterns, min_count=3
+Splice IE: 3 patterns, min_count=3
+Splice N: 0 patterns, min_count=3
+DNA comparisons: 2
+Groceries: 7 frequent patterns, 9 rules, min_count=2
+Test Summary:                                         | Pass  Total  Time
+M2: complete mining applications and output ownership |   28     28  1.2s
+```
+
+</details>
 
 ## Chạy notebook và kiểm chứng
 
@@ -40,12 +91,12 @@ python3 -m pip install -r requirements-notebook.txt
 python3 scripts/run_notebook.py
 ```
 
-Log, notebook đã chạy, bảng và `delivery-validation.json` nằm trong thư mục được in ở cuối. Bước cuối so hai kết quả mới với các bảng công bố, kiểm benchmark và PDF. Dùng `--notebook notebooks/01_groceries.ipynb` nếu chỉ cần một notebook. Có thể chạy pipeline Julia riêng cho từng ứng dụng với `scripts/run_applications.jl --dataset groceries|splice --output THƯ_MỤC_MỚI` sau khi tải nguồn tương ứng bằng `scripts/prepare_application_data.py`. [Hai kết quả công bố](results/applications/)
+Log, notebook đã chạy, bảng và `delivery-validation.json` nằm trong thư mục được in ở cuối. Bước cuối so hai kết quả mới với các bảng công bố, kiểm benchmark và PDF. Dùng `--notebook notebooks/01_groceries.ipynb` nếu chỉ cần một notebook. Có thể chạy pipeline Julia riêng cho từng ứng dụng với `scripts/run_applications.jl --dataset groceries|splice --output THƯ_MỤC_MỚI` sau khi tải nguồn tương ứng bằng `scripts/prepare_application_data.py`. [Hai kết quả công bố](results/README.md#ung-dung)
 
 <a id="benchmark"></a>
 ## Benchmark
 
-Bốn nguồn FIMI được pin SHA-256. Audit lại các phép đo, logs và nguồn Git bằng `python3 scripts/verify_artifacts.py`. Muốn đo lại trên Linux/macOS, từ môi trường đã cài gói vẽ chạy:
+Bốn nguồn FIMI được pin SHA-256. Lệnh `prepare_spmf.py` tải JAR SPMF 2.64b, kiểm phiên bản và SHA-256. SPMF dùng để đối chiếu kết quả Julia. [Trang SPMF](https://www.philippe-fournier-viger.com/spmf/) Audit lại các phép đo, logs và nguồn Git bằng `python3 scripts/verify_artifacts.py`. Muốn đo lại trên Linux/macOS, từ môi trường đã cài gói vẽ chạy:
 
 ```bash
 python3 scripts/prepare_spmf.py
@@ -56,11 +107,23 @@ python3 scripts/plot_results.py --results .tools/benchmark-new
 
 Dùng thư mục mới, hoặc `--resume` với checkpoint tương thích. Mac M1 ở lần đo công bố là một cấu hình tham chiếu. Chess tăng tốc warm 5,10× và giảm peak RSS 14,9% tại ngưỡng trung bình. Retail đạt 0,91× ở phép đo warm và BitVector dùng RSS cao hơn Basic trên T10I4D100K. [Phương pháp và giới hạn](docs/experiments.md) · [CSV và đồ thị](results/README.md)
 
-## Dữ liệu và báo cáo
+## Nguồn dữ liệu
 
-- Chess, Mushroom, Retail và T10I4D100K được tải từ FIMI. File chuẩn hóa lớn nhất khoảng 3,89 MiB. Repo lưu link và checksum. Điều kiện Retail yêu cầu ghi nguồn và gửi bản nộp đầu cùng bản cuối cho bên cung cấp. [Nguồn benchmark](data/benchmark/README.md)
-- Groceries dùng snapshot Git có revision và checksum. Splice dùng bộ UCI có giấy phép CC BY 4.0, tải bản học thuật hoặc ZIP UCI với cùng checksum. [Nguồn ứng dụng](data/applications/README.md) · [Manifest](data/manifest.csv)
-- Báo cáo nằm ở `docs/Report.pdf`. Để build bằng XeLaTeX, cài TeX Live theo hướng dẫn, rồi chạy `python3 -m pip install -r requirements-report.txt` và `python3 scripts/build_report.py --latexmk latexmk`. [LaTeX](docs/latex/README.md)
+- Chess, Mushroom, Retail và T10I4D100K được tải từ FIMI. File chuẩn hóa lớn nhất khoảng 3,89 MiB. Repo lưu link và checksum. Điều kiện Retail yêu cầu ghi nguồn và gửi bản nộp đầu cùng bản cuối cho bên cung cấp. [Nguồn benchmark](data/README.md#benchmark)
+- Groceries dùng snapshot Git có revision và checksum. Splice dùng bộ UCI có giấy phép CC BY 4.0, tải bản học thuật hoặc ZIP UCI với cùng checksum. [Nguồn ứng dụng](data/README.md#ung-dung) · [Manifest](data/manifest.csv)
+<a id="build-bao-cao"></a>
+
+## Build báo cáo
+
+Cần Python ≥3.11 và TeX Live với XeLaTeX, latexmk, IEEEtran, babel-vietnamese, TeX Gyre, booktabs, placeins, algorithm và algpseudocode. Từ thư mục gốc:
+
+```bash
+python3 -m pip install -r requirements-report.txt
+python3 scripts/application_tables.py --check
+python3 scripts/build_report.py --latexmk latexmk
+```
+
+Hình PDF lấy từ `results/plots/`. Các bảng sinh từ CSV đặt trong hai file LaTeX theo chương. Bước build kiểm trang, trích dẫn, font và tràn khung. Log nằm ở `.tools/report-build/`. Ngày và trình biên dịch có thể làm thay đổi byte PDF. [Nguồn LaTeX](docs/latex/) · [Hash bản phát hành](docs/report-build.json)
 
 ## Cấu trúc
 

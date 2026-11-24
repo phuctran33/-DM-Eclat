@@ -136,11 +136,11 @@ Không đồng nhất payload với peak process RSS.
 
 ## Bằng chứng kiểm tra
 
-`tests/test_correctness.jl` đếm vét cạn 5 fixtures và 20 CSDL sinh với
+`tests/test_miner.jl` đếm vét cạn 5 fixtures và 20 CSDL sinh với
 seed 42, kiểm cả input biên và phần đuôi của packed word.
 `tests/test_spmf.jl` so toàn bộ map của cả hai backend với 5 Java
 references tại 40%. [Manifest toy](../tests/reference/spmf/manifest.csv)
 
 Demo chạy Java SPMF để đối chiếu lại references. Hai notebook ứng dụng
 kiểm kết quả từ miner trên dữ liệu thực theo đúng từng input.
-[Stdout Julia](validation/julia-tests.txt) · [Phép đo](experiments.md)
+[Stdout Julia](../README.md#kiem-thu-julia) · [Phép đo](experiments.md)
