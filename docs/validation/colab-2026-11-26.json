@@ -1,0 +1,270 @@
+{
+  "status": "pass",
+  "source_commit": "9638a157d5d65f3f28184a2133292ff53ab6592f",
+  "launch": "Run all from public GitHub notebooks on fresh managed CPU runtimes",
+  "notebooks": [
+    {
+      "notebook": "notebooks/demo.ipynb",
+      "source_commit": "9638a157d5d65f3f28184a2133292ff53ab6592f",
+      "executed_code_cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "errors": 0,
+      "figures": 8,
+      "notebook_export_sha256": "4eef9b52a902a3d1e8b438d3c2370259b3f7b7ee00ae9d2861a2dc88548ea15c",
+      "runtime_stdout": [
+        "SOURCE COMMIT: 9638a157d5d65f3f28184a2133292ff53ab6592f RUNTIME: google-colab",
+        "Python 3.13.18 · Linux-6.6.159+-x86_64-with-glibc2.39",
+        "julia version 1.12.6",
+        "openjdk version \"21.0.12.1\" 2026-08-18",
+        "SPMF 2.64b; [0.001s][warning][os,container] Cgroup memory controller path at '/sys/fs/cgroup' seems to have moved to '/../../jupyter-children', detected limits won't be accurate; SHA256=c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250"
+      ],
+      "runtime": {
+        "captured_at": "2026-11-25T17:28:50.761144+00:00",
+        "backend": "google-colab",
+        "system": "Linux-6.6.159+-x86_64-with-glibc2.39",
+        "python": "3.13.18",
+        "has_nvidia_device": false,
+        "tpu_configured": false
+      },
+      "runtime_export_sha256": "49c39098c62082856c9e86fb172ffb2779068c96ac722e6836717eade8e1a746",
+      "evidence_sha256": {
+        "dataset-acquisition.json": "6bd33bbd79f22e2657e222de26bfb9aeabaa2c3aad4392e249d74322b26fa575",
+        "benchmark-review/review.json": "39d7716294169c8e78823726dc0c2943857cf754852953c8dc952d14ca4517c0",
+        "runtime.json": "6dfd0b623aeb0033b88d218d206f107366b5ee95b76f8e78f015bc3cb19f8015"
+      },
+      "julia_tests": [
+        {
+          "test_set": "SPMF I/O and canonical comparison",
+          "passed": 14,
+          "total": 14
+        },
+        {
+          "test_set": "Threshold boundaries and API validation",
+          "passed": 19,
+          "total": 19
+        },
+        {
+          "test_set": "CLI round trip and failure paths",
+          "passed": 12,
+          "total": 12
+        },
+        {
+          "test_set": "Edge cases, input ownership and packed-word boundaries",
+          "passed": 267,
+          "total": 267
+        },
+        {
+          "test_set": "Eclat: five different databases, selected backends",
+          "passed": 80,
+          "total": 80
+        },
+        {
+          "test_set": "Randomized oracle and transaction-order invariance",
+          "passed": 80,
+          "total": 80
+        },
+        {
+          "test_set": "B: independently generated SPMF references and provenance",
+          "passed": 68,
+          "total": 68
+        },
+        {
+          "test_set": "Exact agreement with SPMF on five databases",
+          "passed": 25,
+          "total": 25
+        },
+        {
+          "test_set": "Shared schema v1",
+          "passed": 33,
+          "total": 33
+        },
+        {
+          "test_set": "Association rules and PreparedDataset integration",
+          "passed": 94,
+          "total": 94
+        },
+        {
+          "test_set": "B: CSV and Groceries normalization",
+          "passed": 18,
+          "total": 18
+        },
+        {
+          "test_set": "B: Splice normalization and independent class comparison",
+          "passed": 24,
+          "total": 24
+        },
+        {
+          "test_set": "B: RFC4180 writer, record positions and rule artifacts",
+          "passed": 12,
+          "total": 12
+        },
+        {
+          "test_set": "B: reject inconsistent DNA patterns and export ranking",
+          "passed": 7,
+          "total": 7
+        },
+        {
+          "test_set": "B: real preprocessing CLI and supplied-pattern CLI",
+          "passed": 11,
+          "total": 11
+        },
+        {
+          "test_set": "M2: complete mining applications and output ownership",
+          "passed": 28,
+          "total": 28
+        }
+      ],
+      "benchmark": {
+        "frozen_artifacts": 46,
+        "measured_runs": 875,
+        "archived_full_maps": 70,
+        "live": [
+          {
+            "dataset": "chess",
+            "minsup": "0.85",
+            "n_patterns": 2669,
+            "input_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5",
+            "exact_match_rate": 1.0
+          },
+          {
+            "dataset": "mushroom",
+            "minsup": "0.5",
+            "n_patterns": 153,
+            "input_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640",
+            "exact_match_rate": 1.0
+          },
+          {
+            "dataset": "retail",
+            "minsup": "0.03",
+            "n_patterns": 32,
+            "input_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36",
+            "exact_match_rate": 1.0
+          },
+          {
+            "dataset": "T10I4D100K",
+            "minsup": "0.01",
+            "n_patterns": 385,
+            "input_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7",
+            "exact_match_rate": 1.0
+          }
+        ],
+        "sources": [
+          {
+            "dataset": "chess",
+            "source_url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/chess.dat",
+            "normalized_sha256": "341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5"
+          },
+          {
+            "dataset": "mushroom",
+            "source_url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/mushroom.dat",
+            "normalized_sha256": "06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640"
+          },
+          {
+            "dataset": "retail",
+            "source_url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.dat",
+            "normalized_sha256": "417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36"
+          },
+          {
+            "dataset": "T10I4D100K",
+            "source_url": "https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/T10I4D100K.dat",
+            "normalized_sha256": "fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7"
+          }
+        ]
+      },
+      "toy_exact_spmf_patterns": {
+        "basic": 7,
+        "boundary": 4,
+        "dense": 14,
+        "duplicates": 5,
+        "sparse": 0
+      },
+      "report_pdf_sha256": "bead1c907f4f363423e04008a87d98498dcb8444c4868998cfca0c0167038b7e"
+    },
+    {
+      "notebook": "notebooks/01_groceries.ipynb",
+      "source_commit": "9638a157d5d65f3f28184a2133292ff53ab6592f",
+      "executed_code_cells": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "errors": 0,
+      "figures": 1,
+      "notebook_export_sha256": "2bb18c0d463b02bc37ed79a5137376835b0c9bd98e67144b556a2fcb6921c509",
+      "runtime_stdout": [
+        "SOURCE COMMIT: 9638a157d5d65f3f28184a2133292ff53ab6592f RUNTIME: google-colab",
+        "Python 3.13.18 · Linux-6.6.159+-x86_64-with-glibc2.39",
+        "julia version 1.12.6",
+        "openjdk version \"21.0.12.1\" 2026-08-18",
+        "SPMF 2.64b; [0.001s][warning][os,container] Cgroup memory controller path at '/sys/fs/cgroup' seems to have moved to '/../../jupyter-children', detected limits won't be accurate; SHA256=c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250"
+      ],
+      "runtime": {
+        "captured_at": "2026-11-25T17:27:10.321230+00:00",
+        "backend": "google-colab",
+        "system": "Linux-6.6.159+-x86_64-with-glibc2.39",
+        "python": "3.13.18",
+        "has_nvidia_device": false,
+        "tpu_configured": false
+      },
+      "runtime_export_sha256": "c8cd24f37bf6fd75358ebfea3f7952863dacc88fe21e8d519dd21c74c5d3ba50",
+      "evidence_sha256": {
+        "dataset-source.json": "88498a5a91c3258e40dc03d871d9f1c4eeec8a6fbe5488a95c9895cab8b2c29c",
+        "applications/validation.json": "bf5bd64c49cbb38b5f4487648cfd55f9fdb33b9c7cd951742fb54b7530d56568",
+        "runtime.json": "06545809182062eb6d95fc8ae681b7703905c875fb91820043b1b23deab6a812"
+      },
+      "validation_stdout": [
+        "PASS independent Groceries audit: 22 rules and top 10",
+        "SPMF PASS groceries 1001"
+      ]
+    },
+    {
+      "notebook": "notebooks/02_splice_dna.ipynb",
+      "source_commit": "9638a157d5d65f3f28184a2133292ff53ab6592f",
+      "executed_code_cells": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "errors": 0,
+      "figures": 1,
+      "notebook_export_sha256": "138f37c9d3a056ed27d2988b2ad067f4c3fe7792c07bf625a27c1f7452d108ad",
+      "runtime_stdout": [
+        "SOURCE COMMIT: 9638a157d5d65f3f28184a2133292ff53ab6592f RUNTIME: google-colab",
+        "Python 3.13.18 · Linux-6.6.159+-x86_64-with-glibc2.39",
+        "julia version 1.12.6",
+        "openjdk version \"21.0.12.1\" 2026-08-18",
+        "SPMF 2.64b; [0.001s][warning][os,container] Cgroup memory controller path at '/sys/fs/cgroup' seems to have moved to '/../../jupyter-children', detected limits won't be accurate; SHA256=c67c2e56bdd2072eadc0e4bc96c8221cec38c9109f99c4b5f10be8eba64ec250"
+      ],
+      "runtime": {
+        "captured_at": "2026-11-25T17:33:57.749410+00:00",
+        "backend": "google-colab",
+        "system": "Linux-6.6.159+-x86_64-with-glibc2.39",
+        "python": "3.13.18",
+        "has_nvidia_device": false,
+        "tpu_configured": false
+      },
+      "runtime_export_sha256": "e5bfb509d83375dec35f1f156a074f52c3d2dbc6f59b3a4b89a9193760dee58f",
+      "evidence_sha256": {
+        "dataset-source.json": "608bd86be4b52315b9bdb9df27d2aac6faf0e8cd63515a9a0ecdcdfad6099096",
+        "applications/validation.json": "d338efb6ccbe6c80bed7800de8c46b6724a7ddcc3bc9568e2f43ebff84340a18",
+        "runtime.json": "758cd241482613cb6c4837d2d17d973de9fef68fa9b2abe5035d750e4bb34c45"
+      },
+      "validation_stdout": [
+        "DNA comparisons: 463",
+        "PASS independent Splice audit: 463 candidates, 864 positive counts below threshold",
+        "SPMF PASS splice_EI 381",
+        "SPMF PASS splice_IE 209",
+        "SPMF PASS splice_N 48"
+      ]
+    }
+  ]
+}
