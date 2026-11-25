@@ -1,8 +1,9 @@
 # Đối chiếu rubric ECLAT
 
-Đối chiếu đề HCMUS ngày 24/11/2026. Trọng số áp dụng cho bài Julia. PASS ghi
-kết quả kiểm kỹ thuật. Điểm là ước lượng của nhóm, giảng viên quyết định
-điểm chính thức. [Đề và rubric](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
+Đối chiếu đề HCMUS và phần giải đáp nhóm nhận được ngày 25/11/2026. Trọng số
+áp dụng cho Julia là 30 điểm cài đặt, 20 điểm thực nghiệm và 50 điểm ứng dụng.
+PASS ghi kết quả kiểm kỹ thuật. Điểm ước lượng để nhóm tự rà soát và điểm
+chính thức do giảng viên quyết định. [Đề và rubric](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
 
 | Mục | Điểm ước lượng | Trạng thái, bằng chứng và vị trí báo cáo |
 |---|---:|---|
@@ -15,21 +16,23 @@ kết quả kiểm kỹ thuật. Điểm là ước lượng của nhóm, giản
 | B3 · Phân tích và hướng tối ưu | 5/5 | **PASS.** Giải thích theo mật độ, dựng tidset, output và hai vùng đo. Hai đề xuất cụ thể là tidset thích nghi và gộp AND/popcount. [Phương pháp](experiments.md) · Ch. 2, phần hạn chế |
 | C1 · Groceries | 23/25 | **PASS kỹ thuật, Colab cuối chưa xác minh.** 9.835 giỏ, 169 item, 1.001 tập, 22 luật, top-10 và ba diễn giải kinh doanh. Kiểm chỉ số và thứ hạng độc lập, khớp Java SPMF. [Notebook](../notebooks/01_groceries.ipynb) · Ch. 3 A–B |
 | C2 · Splice DNA | 23/25 | **PASS kỹ thuật, Colab cuối chưa xác minh.** 3.185/3.190 mẫu giữ, 48 ID, 381/209/48 tập, 463 ứng viên. Đếm lại theo lớp, 864 count dương dưới ngưỡng và diễn giải GT/AG có nguồn. [Notebook](../notebooks/02_splice_dna.ipynb) · Ch. 3 C–D |
-| **Tổng** | **96/100** | Tạm giữ 2 điểm mỗi ứng dụng trong khi chờ chạy cả ba notebook cuối trên Colab. |
+| **Tổng ước lượng** | **96/100** | 50 điểm A–B có bằng chứng kỹ thuật. Giữ ước lượng 46/50 cho C trong khi chờ Colab. Đề không quy định trừ cố định 2 điểm mỗi notebook. Hosting và điều kiện Retail còn cần chốt. |
 
 A–B dùng Julia Base/stdlib cho miner. Python chuẩn chuẩn bị dữ liệu, gọi
 tiến trình và kiểm bằng chứng. Matplotlib vẽ, IPython hiển thị, nbclient
-chạy notebook local/CI. SPMF chỉ là oracle. Mỗi notebook ghi rõ vai trò
-thư viện theo giải đáp của giảng viên. Ba notebook độc lập áp dụng khuyến
-nghị tách demo và hai ứng dụng. Đề cho phép AI hỗ trợ khi sinh viên hiểu
-và giải thích được bài làm. [Vấn đáp](DEFENSE_GUIDE.md)
+chạy notebook local/CI. SPMF chỉ là oracle. Mỗi notebook ghi vai trò
+thư viện. Ba notebook độc lập dùng kernel Python gọi Julia, phù hợp phần
+giải đáp về các ví dụ CLI. Hai thí nghiệm tổng hợp và chia tập con đều cố
+định seed 42. Đề cho phép AI hỗ trợ khi sinh viên hiểu và giải thích được
+bài làm. [Vấn đáp](DEFENSE_GUIDE.md)
 
 <a id="bao-cao"></a>
 ## Báo cáo
 
 PDF IEEEtran conference A4, hai cột, 10 trang nội dung tiếng Việt và 1 trang
 tham khảo. Có 3 chương, công thức giải thích biến, chú thích/cross-reference
-và 11 nguồn gồm Zaki (2000). Hình lấy trực tiếp từ `results/plots/`; bảng
+và 12 nguồn gồm Zaki (2000). Giới hạn 10–15 trang tính trên nội dung chính.
+Bản này đủ 10 trang nội dung. Hình lấy từ `results/plots/`; bảng
 ứng dụng tạo từ CSV. Script kiểm số trang và log biên dịch, lưu SHA-256
 của PDF cùng nguồn và hình. [PDF](Report.pdf) · [Build](../README.md#build-bao-cao) ·
 [Hash nguồn](report-build.json)
@@ -44,21 +47,27 @@ của PDF cùng nguồn và hình. [PDF](Report.pdf) · [Build](../README.md#bui
 | Retail | 88.162 | 16.470 | 1.636.819 | 4.080.775 |
 | T10I4D100K | 100.000 | 870 | 1.374.931 | 3.922.248 |
 
-Đề nêu HF/Kaggle cho dữ liệu benchmark vượt kích thước repo và ưu tiên
-bản công khai sẵn có. File lớn nhất khoảng 3,89 MiB, dưới giới hạn GitHub
-100 MiB/file. Môn không ghi ngưỡng riêng. Nếu cần xác nhận, hỏi liệu bốn
-file dưới 4 MiB có thể dùng URL FIMI và checksum hay môn cần mirror theo
-quy định riêng. Cả bốn URL đã tải và kiểm đúng hash; bản chuẩn hóa chỉ
-thay khoảng trắng và cộng 1 vào ID của Retail/T10. [Rubric](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/) ·
-[Giới hạn GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) ·
-[Hash đầu vào](../results/raw/dataset_provenance.json)
+**Tải tự động đạt kiểm kỹ thuật, hosting chờ giảng viên xác nhận.** Đề ưu tiên
+bản công khai có sẵn trên Hugging Face hoặc Kaggle và yêu cầu dùng hai nền tảng
+này khi benchmark vượt kích thước repo. Trao đổi 25/11 nhấn mạnh tải tự động từ
+nguồn bền vững khi server gốc gặp sự cố. Chưa có phúc đáp cuối cho phương án FIMI
+có dự phòng. Bản chuẩn hóa lớn nhất khoảng 3,89 MiB. Kích thước này chưa quyết
+định yêu cầu hosting của môn. [Đề chính thức](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
 
-Retail đã ghi nguồn Brijs trong PDF. Nhóm còn cần gửi bản nộp đầu và bản
-cuối cho bên cung cấp theo hướng dẫn nguồn. FIMI chưa ghi rõ quyền tái
-phân phối cho Chess, Mushroom và T10. Groceries tải từ snapshot Git đã
-pin, Splice UCI có CC BY 4.0. Repo tải raw tại chỗ, công bố kết quả đã
-phân tích. [Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf) ·
-[Manifest](../data/manifest.csv)
+Tra API public của HF/Kaggle theo FIMI, T10I4D100K và các từ khóa itemset,
+Retail, Brijs. Các ứng viên chưa xác minh được snapshot và quyền dùng tương ứng.
+Demo thử RPI, Antwerp và SPMF theo cấu hình. Kiểm từ cache trống với RPI bị
+chặn cho thấy cả bốn đầu vào tải từ Antwerp và khớp hash. Bản SPMF của Chess,
+Retail và T10 cũng khớp; Mushroom SPMF trả 8.416 dòng nên bị loại. Khi chặn mọi
+nguồn, acquisition thoát khác 0 và giữ nguyên đầu vào đã có và bằng chứng gốc.
+[Liên kết tải và SHA-256](../data/README.md#benchmark) · [Cấu hình hiện hành](../configs/datasets.toml)
+
+Retail đã ghi nhận Tom Brijs và bài KDD 1999 trong PDF. Việc gửi bản nộp đầu
+và bản cuối kèm tên và ngày công bố đang chờ nhóm xác nhận. Hai kho FIMI chưa
+nêu quyền tái phân phối cụ thể cho Chess, Mushroom và T10. Groceries tải từ
+snapshot Git đã pin, Splice UCI có CC BY 4.0. Repo dùng các đường dẫn tải
+công khai và xuất kết quả phân tích. [Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf) ·
+[Manifest lịch sử](../data/manifest.csv)
 
 <a id="colab"></a>
 ## Colab và bàn giao
@@ -69,19 +78,22 @@ Các phiên Colab notebook tích hợp trước đây chỉ xác nhận bản c�
 
 | Notebook | Bằng chứng cần lưu từ Colab public main |
 |---|---|
-| [Demo](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) | Notebook có output, `benchmark-review/review.json`, 5 toy, 4 benchmark live và hash PDF |
-| [Groceries](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | Notebook có output, `applications/validation.json`, `SPMF PASS groceries 1001` và top-10 |
-| [Splice DNA](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | Notebook có output, `applications/validation.json` và `SPMF PASS` cho EI, IE, N |
+| [Demo](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) | Notebook có output, `dataset-acquisition.json`, `benchmark-review/review.json`, 5 toy, 4 benchmark live và hash PDF |
+| [Groceries](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | Notebook có output, `dataset-source.json`, `applications/validation.json`, `SPMF PASS groceries 1001` và top-10 |
+| [Splice DNA](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | Notebook có output, `dataset-source.json`, `applications/validation.json` và `SPMF PASS` cho EI, IE, N |
 
-Mở mỗi link trong runtime CPU mới, chọn **Run all**, giữ output và ghi
-`SOURCE COMMIT` từ ô đầu. Mỗi notebook in đường dẫn bằng chứng. Tải bản
-`.ipynb` có kết quả và JSON trước khi ngắt runtime. Local runner tạo
-`delivery-validation.json` khi cả ba cùng chạy từ một checkout.
+Mở mỗi link trong runtime CPU mới, chọn **Run all** và đối chiếu
+`SOURCE COMMIT` với public main. Giữ stdout phiên bản runtime và tải
+`.ipynb` có output cùng các JSON tương ứng dưới `OUTPUT` trước khi ngắt
+runtime. Local runner tạo `delivery-validation.json` khi cả ba cùng chạy
+từ một checkout.
 [Xem CI](https://github.com/phuctran33/-DM-Eclat/actions)
 
-README có tên, MSSV, phân công, link public, hướng dẫn chạy và stdout kiểm
-thử. Hai thành viên kiểm Group ID, thời hạn và nộp một URL GitHub công khai
-trên Moodle theo thông báo lớp.
+Repo GitHub công khai. README có tên, MSSV, phân công, link ba notebook,
+hướng dẫn có ví dụ và stdout 792 kiểm tra Julia. Phần chuẩn bị dữ liệu
+chạy trong notebook qua script của nhóm. Đề gợi ý Group ID ở repo root. Nhóm
+cần đối chiếu thông báo lớp về Group ID và thời hạn, rồi nộp đúng một URL
+GitHub công khai trên Moodle sau khi nghiệm thu.
 
 ## Bằng chứng gốc trong Git
 

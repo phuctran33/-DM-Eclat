@@ -67,5 +67,7 @@ jobs:
           path: |
             .tools/notebook-runs/*/*-executed.ipynb
             .tools/notebook-runs/*/delivery-validation.json
+            .tools/notebook-runs/*/demo/dataset-acquisition.json
             .tools/notebook-runs/*/demo/benchmark-review/review.json
+            .tools/notebook-runs/*/*/dataset-source.json
             .tools/notebook-runs/*/*/applications/validation.json

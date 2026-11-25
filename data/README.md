@@ -3,27 +3,49 @@
 <a id="benchmark"></a>
 ## Benchmark FIMI
 
-Từ thư mục gốc, chạy `python3 scripts/acquire_benchmarks.py`. Script kiểm
-SHA-256, giải nén gzip và chuẩn hóa khoảng trắng. Retail và T10I4D100K được
-cộng 1 vào mọi item ID để giữ ID dương. Giữ nguyên số dòng và cho cả ba backend
-đọc cùng file chuẩn hóa.
+Từ gốc repo, chạy `python3 scripts/acquire_benchmarks.py`. Có thể thêm
+`--report .tools/acquisition/sources.json` để lưu JSON vào đường dẫn mới.
+Demo tự lưu JSON trong thư mục `OUTPUT`. Script thử cache đã kiểm hash trước,
+rồi thử các URL công khai theo thứ tự trong cấu hình. `--offline` chỉ đọc cache.
+[Cấu hình tải hiện hành](../configs/datasets.toml)
 
-| Dữ liệu | Giao dịch | Items |
-|---|---:|---:|
-| Chess | 3.196 | 75 |
-| Mushroom | 8.124 | 119 |
-| Retail | 88.162 | 16.470 |
-| T10I4D100K | 100.000 | 870 |
+| Dữ liệu | Giao dịch | Items | Ưu tiên · FIMI RPI | Dự phòng · FIMI Antwerp | Dự phòng · SPMF |
+|---|---:|---:|---|---|---|
+| Chess | 3.196 | 75 | [gzip](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/chess.dat) | [text](https://fimi.uantwerpen.be/data/chess.dat) | [text](https://www.philippe-fournier-viger.com/spmf/publicdatasets/chess.txt) |
+| Mushroom | 8.124 | 119 | [gzip](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/mushroom.dat) | [text](https://fimi.uantwerpen.be/data/mushroom.dat) | — |
+| Retail | 88.162 | 16.470 | [gzip](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.dat) | [text](https://fimi.uantwerpen.be/data/retail.dat) | [text](https://www.philippe-fournier-viger.com/spmf/publicdatasets/retail.txt) |
+| T10I4D100K | 100.000 | 870 | [gzip](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/T10I4D100K.dat) | [text](https://fimi.uantwerpen.be/data/T10I4D100K.dat) | [text](https://www.philippe-fournier-viger.com/spmf/publicdatasets/T10I4D100K.txt) |
 
-URL và hash thô nằm trong [cấu hình](../configs/datasets.toml). Hash chuẩn
-hóa và thống kê thật nằm trong [provenance](../results/raw/dataset_provenance.json)
-và [CSV](../results/raw/dataset_statistics.csv). Dữ liệu thô được tải tại chỗ
-từ nguồn FIMI. FIMI chưa ghi rõ quyền tái phân phối cho Chess, Mushroom và
-T10. [Kho FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/)
+Script giải gzip theo magic bytes, chuẩn hóa khoảng trắng và giữ nguyên thứ tự
+giao dịch. Hai kho FIMI cần offset `+1` cho Retail và T10I4D100K. Bản SPMF của
+hai bộ này dùng ID dương sẵn, nên offset `0`. Chess và Mushroom dùng offset
+`0`. URL Mushroom trong danh mục SPMF trả 8.416 hàng nên bị loại khi kiểm nguồn.
+[Danh mục SPMF](https://www.philippe-fournier-viger.com/spmf/index.php?link=datasets.php)
+
+Khi kiểm các URL trong bảng, thứ tự giao dịch, tần suất từng item và phân bố
+độ rộng đều trùng bản đo. SHA-256 sau chuẩn hóa giống nhau theo từng bộ:
+
+| Dữ liệu | SHA-256 sau chuẩn hóa |
+|---|---|
+| Chess | `341d0ff8676e053dd3b417d61f84c732736154f987ce56975a099b07460957f5` |
+| Mushroom | `06206c73983251a9488414c4379a030e836bbeb6fe9eff1b5624a0193a811640` |
+| Retail | `417563fb5feb3711d4f761230ca78b76d100fe2ee0d3178fcc4fbb000d8d1c36` |
+| T10I4D100K | `fb2dd118ff822ff88d724e47d5a4cea6531c0bd6294397db4d36890c1450f1a7` |
+
+Cache nạp vào `.tools/acquisition/`, input chuẩn hóa vào `data/benchmark/`.
+Nếu một bộ hết nguồn hợp lệ, script báo lỗi trước khi ghi input chuẩn hóa.
+Manifest, provenance và CSV thống kê lưu lần đo công bố. JSON của phiên tải
+ghi URL thực tế, hash thô và hash chuẩn hóa riêng. [Manifest](manifest.csv) ·
+[Provenance gốc](../results/raw/dataset_provenance.json) · [Thống kê gốc](../results/raw/dataset_statistics.csv)
+
+Chess và Mushroom là biến thể UCI do Roberto Bayardo chuẩn bị. T10I4D100K
+là dữ liệu tổng hợp IBM Quest. Kho FIMI chưa nêu quyền tái phân phối cụ thể
+cho ba snapshot này. Repo chỉ lưu liên kết để tải trực tiếp. [Kho FIMI](https://fimi.uantwerpen.be/data/)
 
 Retail ghi nguồn Brijs, Swinnen, Vanhoof và Wets (KDD 1999, tr. 254–260).
-Nhóm cần gửi bản nộp đầu và bản cuối cho bên cung cấp theo điều kiện
-nguồn. [Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf)
+Điều kiện sử dụng yêu cầu gửi bản nộp đầu và bản cuối kèm tên và ngày công bố
+cho bên cung cấp. Đồ án nhóm ghi tên môn và ngày nộp thực tế khi xác nhận với bên
+cung cấp. [Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf)
 
 <a id="ung-dung"></a>
 ## Hai ứng dụng
@@ -36,8 +58,9 @@ nguồn. [Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/dat
   CC BY 4.0 và yêu cầu ghi nguồn. [UCI](https://doi.org/10.24432/C5M888)
 
 Chạy `python3 scripts/prepare_application_data.py --dataset all`, hoặc chọn
-`groceries` hay `splice`. Mỗi lượt lưu nguồn thực tế và kết quả chuẩn hóa.
-[Manifest](manifest.csv) · [Schema Julia](../docs/SCHEMA.md)
+`groceries` hay `splice`. Mỗi lượt lưu nguồn thực tế trong
+`data/applications/*_source.json` và notebook lưu một bản trong `OUTPUT`.
+[Manifest lịch sử](manifest.csv) · [Schema Julia](../docs/SCHEMA.md)
 
 <a id="toy-spmf"></a>
 ## Năm bộ toy và Java SPMF

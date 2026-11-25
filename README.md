@@ -15,7 +15,7 @@
 | [Groceries](notebooks/01_groceries.ipynb) | [Colab](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | 9.835 giỏ, 1.001 tập phổ biến, 22 luật và top-10 theo lift |
 | [Splice DNA](notebooks/02_splice_dna.ipynb) | [Colab](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | 3.185 mẫu hợp lệ, 381/209/48 tập theo EI/IE/N, 463 mẫu so sánh |
 
-Mở từng notebook rồi chọn **Runtime → Run all**. Mỗi notebook tự thiết lập, in commit và ghi kết quả mới vào thư mục riêng. Demo vẽ đồ thị từ CSV đã đo vào thư mục phiên chạy và đối chiếu lại với SPMF. [Trạng thái Colab](docs/RUBRIC_FINAL_AUDIT.md#colab)
+Mở từng notebook trong runtime CPU mới và chọn **Runtime → Run all**. Mỗi notebook tự cài môi trường, tải dữ liệu và in commit đang chạy. Demo đối chiếu lại với SPMF và vẽ đồ thị từ CSV đã đo. Lưu notebook có output và các JSON được in dưới `OUTPUT` để nghiệm thu. [Trạng thái Colab](docs/RUBRIC_FINAL_AUDIT.md#colab)
 
 ## Chạy nhanh
 
@@ -96,7 +96,7 @@ Log, notebook đã chạy, bảng và `delivery-validation.json` nằm trong th�
 <a id="benchmark"></a>
 ## Benchmark
 
-Bốn nguồn FIMI được pin SHA-256. Lệnh `prepare_spmf.py` tải JAR SPMF 2.64b, kiểm phiên bản và SHA-256. SPMF dùng để đối chiếu kết quả Julia. [Trang SPMF](https://www.philippe-fournier-viger.com/spmf/) Audit lại các phép đo, logs và nguồn Git bằng `python3 scripts/verify_artifacts.py`. Muốn đo lại trên Linux/macOS, từ môi trường đã cài gói vẽ chạy:
+Script tải bốn bộ benchmark từ FIMI tại RPI, thử tiếp kho Đại học Antwerp và các bản SPMF đã xác minh. Mỗi input phải khớp SHA-256 sau chuẩn hóa với lần đo gốc. `prepare_spmf.py` tải JAR SPMF 2.64b, kiểm phiên bản và SHA-256 để đối chiếu kết quả Julia. `python3 scripts/verify_artifacts.py` kiểm các phép đo, logs và nguồn Git. Để đo lại trên Linux/macOS, dùng môi trường đã cài gói vẽ và chạy các lệnh sau. [Trang SPMF](https://www.philippe-fournier-viger.com/spmf/)
 
 ```bash
 python3 scripts/prepare_spmf.py
@@ -109,8 +109,8 @@ Dùng thư mục mới, hoặc `--resume` với checkpoint tương thích. Mac M
 
 ## Nguồn dữ liệu
 
-- Chess, Mushroom, Retail và T10I4D100K được tải từ FIMI. File chuẩn hóa lớn nhất khoảng 3,89 MiB. Repo lưu link và checksum. Điều kiện Retail yêu cầu ghi nguồn và gửi bản nộp đầu cùng bản cuối cho bên cung cấp. [Nguồn benchmark](data/README.md#benchmark)
-- Groceries dùng snapshot Git có revision và checksum. Splice dùng bộ UCI có giấy phép CC BY 4.0, tải bản học thuật hoặc ZIP UCI với cùng checksum. [Nguồn ứng dụng](data/README.md#ung-dung) · [Manifest](data/manifest.csv)
+- Demo lưu URL thực tế, offset và checksum của Chess, Mushroom, Retail và T10I4D100K trong `dataset-acquisition.json`. Điều kiện Retail yêu cầu ghi nguồn và gửi bản nộp đầu cùng bản cuối cho bên cung cấp. [URL tải và hash chuẩn hóa](data/README.md#benchmark)
+- Groceries dùng snapshot Git có revision và checksum. Splice dùng bộ UCI có giấy phép CC BY 4.0, tải bản học thuật hoặc ZIP UCI với cùng checksum. Mỗi notebook ứng dụng lưu `dataset-source.json`. [Nguồn ứng dụng](data/README.md#ung-dung) · [Manifest lịch sử](data/manifest.csv)
 <a id="build-bao-cao"></a>
 
 ## Build báo cáo
@@ -135,4 +135,4 @@ Hình PDF lấy từ `results/plots/`. Các bảng sinh từ CSV đặt trong ha
 | `notebooks/` | Ba notebook Python gọi Julia và một file setup chung |
 | `results/`, `docs/` | Bằng chứng thực nghiệm, báo cáo và tài liệu |
 
-Để ôn vấn đáp, chạy toy, tự tính giao TID rồi lần kết quả theo [Kiến trúc](docs/ARCHITECTURE.md). Tiếp theo đọc hai phạm vi đo và đối chiếu một luật Groceries hoặc một mẫu Splice. [Câu hỏi vấn đáp](docs/DEFENSE_GUIDE.md)
+Để ôn vấn đáp, đọc mục tiêu và luồng ECLAT, rồi chọn một kết quả benchmark và một kết quả ứng dụng để giải thích quyết định thiết kế. [Kiến trúc](docs/ARCHITECTURE.md) · [Câu hỏi vấn đáp](docs/DEFENSE_GUIDE.md)

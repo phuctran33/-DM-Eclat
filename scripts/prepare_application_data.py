@@ -13,6 +13,10 @@ SPLICE_HASH="ebbae10c85d3c285e2a2489a37e42bc2ee8d91d15005e391a9962fa3389a114f"
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def check_groceries(path):
+    if digest(path) != GROC_HASH:
+        raise ValueError("Groceries pinned source checksum mismatch")
+
 def fetch(url, path, offline, *, read_verified=None):
     if path.exists():
         return read_verified(path) if read_verified else None
@@ -64,8 +68,7 @@ def prepare(dataset,offline=False):
     destination.mkdir(parents=True,exist_ok=True)
     if dataset=="groceries":
         source=cache/"groceries-source.csv"
-        fetch(GROC_URL,source,offline)
-        if digest(source)!=GROC_HASH: raise ValueError("Groceries pinned source checksum mismatch")
+        fetch(GROC_URL,source,offline,read_verified=check_groceries)
         with source.open(encoding="utf-8",newline="") as stream:
             baskets=list(csv.reader(stream,strict=True))
         if len(baskets)!=9835 or len({item for row in baskets for item in row})!=169:
@@ -93,16 +96,6 @@ def prepare(dataset,offline=False):
                         adapter="copy raw records without modification",
                         n_source_records=len(rows),output_sha256=digest(output))
     (destination/f"{dataset}_source.json").write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    manifest=ROOT/"data/manifest.csv"
-    with manifest.open(encoding="utf-8",newline="") as stream:
-        reader=csv.DictReader(stream); fields=reader.fieldnames; rows=list(reader)
-    for row in rows:
-        if row["dataset"]==dataset:
-            row.update(original_source=GROC_URL if dataset=="groceries" else "https://doi.org/10.24432/C5M888",
-                       public_snapshot_url=provenance["source_url"],revision=provenance["source_revision"],
-                       sha256=digest(output),local_path=output.relative_to(ROOT).as_posix(),status="verified_source")
-    with manifest.open("w",encoding="utf-8",newline="") as stream:
-        writer=csv.DictWriter(stream,fieldnames=fields,lineterminator="\n"); writer.writeheader(); writer.writerows(rows)
     print(json.dumps(provenance,ensure_ascii=False))
 
 if __name__=="__main__":
