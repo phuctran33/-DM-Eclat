@@ -37,19 +37,17 @@ count bằng 0 để biểu diễn timeout. Các ngưỡng chính ở Bảng~\re
 \end{table}
 
 \subsection{Nguồn dữ liệu, chuẩn hóa và thống kê thực}
-Bốn CSDL được tải từ kho FIMI học thuật của Zaki~\cite{fimi}. Ưu tiên tìm snapshot
-HF/Kaggle nhưng không xác định được một bản chung phù hợp cho đủ bốn CSDL; sử
-dụng nguồn học thuật gốc, pin nội dung bằng raw SHA-256. Đây là snapshot theo hash,
-không phải tuyên bố một revision HF/Kaggle chưa xác minh. Acquisition script từ
-chối checksum khác để tránh chạy trên dữ liệu đã đổi. Dữ liệu raw và normalized
-không commit vào Git; repo giữ URL, hash, license notes và mã tải tái lập.
+Bốn CSDL trong lần đo lấy từ kho FIMI của Zaki tại RPI~\cite{fimi}. Khi tái lập,
+script thử RPI, kho FIMI tại Đại học Antwerp~\cite{fimiantwerp}, rồi các bản đã
+kiểm ở danh mục dữ liệu SPMF nếu có. Mỗi bản tải phải cho cùng SHA-256 sau chuẩn
+hóa với lần đo. Notebook ghi nguồn thực tế và hash theo phiên. Manifest và số
+liệu công bố ghi nhận lần đo gốc; Git lưu URL, hash, điều kiện sử dụng và mã tải.
 
-Server trả gzip ngay tại URL kết thúc bằng \texttt{.dat}; script nhận diện magic
-bytes trước giải nén. Chess/Mushroom vốn có ID dương. Retail và T10I4D100K có ID
-0, nên cộng 1 cho \emph{mọi} item ID của hai CSDL đó để giữ hợp đồng parser. Đây
-là song ánh nên không đổi containment, support hoặc số patterns. Không bỏ dòng,
-không deduplicate transactions, không sửa parser để nhận input invalid. Cả Julia
-và SPMF nhận cùng byte file normalized; input SHA-256 được ghi vào từng row đo.
+Script nhận diện gzip từ đầu file. Chess và Mushroom dùng ID gốc. Với Retail và
+T10I4D100K, cộng 1 cho mọi item ID của các bản FIMI để chuyển sang miền ID dương
+của parser. Hai bản dự phòng ở SPMF đã dùng miền ID này. Phép cộng là song ánh,
+bảo toàn quan hệ chứa và support. Chuẩn hóa giữ thứ tự và số lần lặp của các hàng
+giao dịch. Cả Julia và SPMF đọc cùng file, có SHA-256 ghi trong từng hàng kết quả đo.
 
 \begin{table*}[tb]
 \centering
@@ -68,9 +66,10 @@ một phiên bản đã lọc ở nguồn khác. Mật độ được tính bằ
  \rho=\frac{\sum_i |t_i|}{nm}=\frac{\overline{\ell}}{m},
  \label{eq:density}
 \end{equation}
-trong đó $\overline{\ell}$ là mean width. File manifest ghi điều kiện dùng dữ liệu
-Retail và attribution Tom Brijs và trích dẫn công trình được donor yêu cầu~\cite{brijs1999}; các nguồn
-còn lại không được gán giấy phép do nhóm tự suy đoán. Chỉ chia sẻ mã acquisition và thống kê, không tái phát hành raw.
+trong đó $\overline{\ell}$ là mean width. Dữ liệu Retail do Tom Brijs cung cấp.
+Nhóm dẫn công trình được yêu cầu~\cite{brijs1999}; điều kiện nguồn yêu cầu gửi
+bản nộp đầu và bản cuối cho bên cung cấp. Nhóm công bố mã tải và thống kê,
+còn dữ liệu thô được lấy trực tiếp từ các kho công khai khi tái lập.
 
 \subsection{Đối chiếu correctness trước timing}
 Với mỗi case, chạy ba backends trên cùng file, tính absolute threshold bằng

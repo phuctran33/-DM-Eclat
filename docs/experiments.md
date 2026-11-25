@@ -8,25 +8,20 @@ Không coi các con số này là cấu hình bắt buộc của API Julia ≥1.
 
 ## Dữ liệu
 
-`python3 scripts/acquire_benchmarks.py` tải bản FIMI từ nguồn học thuật gốc,
-kiểm raw SHA-256 trong `configs/datasets.toml`, giải gzip theo magic bytes và tạo
-file numeric SPMF. Không lấy một bản Hugging Face/Kaggle chưa xác minh để gọi là
-snapshot chuẩn: đã tìm nhưng không xác định được bộ bốn phù hợp. Bản FIMI được
-pin theo **nội dung**, không có revision Git do nguồn không cung cấp.
+`python3 scripts/acquire_benchmarks.py` kiểm cache rồi thử FIMI tại RPI, FIMI
+tại Đại học Antwerp và các bản SPMF đã kiểm. Nó giải gzip theo magic bytes,
+kiểm các hàng numeric SPMF và so SHA-256 sau chuẩn hóa với input đã đo. Retail
+và T10I4D100K dùng offset +1 ở hai bản FIMI có item ID 0. Bản SPMF đã dùng ID
+dương. Các hàng và thứ tự được giữ nguyên. Ba backend đọc cùng file chuẩn hóa.
+[URL và offset theo nguồn](../data/README.md#benchmark)
 
-Retail và T10I4D100K: cộng **1 cho mọi item ID**, vì raw có 0 và shared parser chỉ
-nhận ID dương. Chess/Mushroom không đổi ID. Chỉ chuẩn hóa whitespace; không bỏ,
-gộp hay sắp lại transaction rows. Raw đã sorted/unique trong từng dòng; bất ngờ
-khác định dạng làm acquisition fail. Ba backend dùng cùng file normalized.
-
-Provenance, transformations, normalized hashes và số byte:
-`results/raw/dataset_provenance.json`; nguồn/license trong `data/manifest.csv`.
-`dataset_statistics.csv` tính từ file đang dùng: actual n, distinct m, mean/max
-width, density=mean_width/m. Không commit raw datasets hoặc JAR.
-FIMI không ghi license rõ cho mọi tập; ghi đúng trạng thái đó. Retail được credit
-Tom Brijs và trích Brijs et al. (KDD 1999, pp. 254–260), theo điều kiện tại
-https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf; việc gửi
-bản nghiên cứu cho donor chưa được tự động thực hiện.
+`results/raw/dataset_provenance.json`, `results/raw/dataset_statistics.csv` và
+`data/manifest.csv` lưu bằng chứng của lần đo gốc. CSV thống kê tính số hàng,
+số item phân biệt, độ rộng trung bình/tối đa và mật độ bằng độ rộng trung bình
+chia số item. Demo ghi URL và checksum của phiên hiện tại trong
+`dataset-acquisition.json`. Điều kiện của Retail áp dụng cho chính bộ dữ liệu,
+bao gồm ghi nguồn Tom Brijs và gửi các bản báo cáo theo tài liệu của bên cung cấp.
+[Điều kiện Retail](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/retail.pdf)
 
 ## Correctness gate
 

@@ -1,14 +1,14 @@
 {
   "status": "pass",
   "compiler": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
-  "pdf_sha256": "14bf56d5db3ea27ca013e4bdd0dbba5498d7f062bc4f5112ce73d2717c0189c1",
+  "pdf_sha256": "bead1c907f4f363423e04008a87d98498dcb8444c4868998cfca0c0167038b7e",
   "source_sha256": {
     "docs/latex/Report.tex": "b0c97e7df8248c6d94bc02c0524304bb15ab2bce9f522256460d28c769372929",
     "docs/latex/generated/application-tables.tex": "5012374893bb24d76074038b4a43d68615b74b43f5900d8e0857b32889a772fa",
     "docs/latex/generated/benchmark-tables.tex": "c92364d4bf4553308ac7140476998992f8a90a0a729d43b24059224e06e52307",
-    "docs/latex/references.bib": "3238bbd49b7be2aaf960d8aada33453fbbbb9eea1b534e8b653e114da6944932",
+    "docs/latex/references.bib": "374397972feda0f381d67e93736182d21e5c4ad0aa79afb09c0c9effa31f8700",
     "docs/latex/sections/01-implementation.tex": "493f7ec86c1d1f09785f3f8447b95823d242eb061850ce0ef7bd66b2d186e687",
-    "docs/latex/sections/02-evaluation.tex": "949cebe783e7756b3e4aa11a77af1910fe810cb21ef404ed96edbea40c363b80",
+    "docs/latex/sections/02-evaluation.tex": "c2ec8c5cff5f282cf6fb27a3e9da50727aa8ab6890e2a8048dcf4fdba75b36ec",
     "docs/latex/sections/03-applications.tex": "a13f288d52e75534f60c7988840bd9f251990acfa3c6ab54ffab7482e4480844",
     "results/plots/memory.pdf": "21a98688f6165cd57a8355f95e92e3038d1821fdaed77aa5631036df717a218c",
     "results/plots/output-size.pdf": "7184527e9ef940e5d507fc83e35d9fb5b51d36efb60d6876f462a6203b3a1bfe",

@@ -4,6 +4,7 @@ import hashlib
 from importlib.util import find_spec
 import os
 from pathlib import Path
+import platform
 import re
 import shutil
 import subprocess
@@ -91,7 +92,7 @@ def setup(root, in_colab, name):
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     runtime = "google-colab" if in_colab else "local/CI"
     print(f"SOURCE COMMIT: {commit} RUNTIME: {runtime}")
-    print(f"Python {sys.version.split()[0]}")
+    print(f"Python {sys.version.split()[0]} · {platform.platform()}")
     julia = find_julia(in_colab)
     java = find_java(in_colab)
     os.environ["ECLAT_JULIA"] = julia

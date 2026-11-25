@@ -1,6 +1,8 @@
 """Controller checks: real processes, strict maps, count boundaries and aggregation."""
 import csv
 import contextlib
+import gzip
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -11,8 +13,93 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+import acquire_benchmarks as acquisition
 from benchlib import ROOT, compare, json_write, logpath, measure, minimum_count, read_patterns, sha256, spmf_threshold
 from benchmark_runner import aggregate, cases, load_checkpoint, main
+
+
+class AcquisitionTests(unittest.TestCase):
+    primary = {"id": "rpi", "url": "https://primary.invalid/dataset", "item_offset": 1}
+    mirror = {"id": "mirror", "url": "https://mirror.invalid/dataset", "item_offset": 0}
+    dataset = {"name": "toy", "sources": [primary, mirror]}
+    canonical = b"1 2\n2 4\n"
+    expected = hashlib.sha256(canonical).hexdigest()
+
+    def test_fallback_checks_offset_and_cache_without_retries_offline(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp)
+            (cache / "toy.dat").write_bytes(b"<html>old bad cache</html>")
+
+            def download(command, **kwargs):
+                staging = Path(command[-1])
+                if command[-3] == self.primary["url"]:
+                    staging.write_bytes(b"0 1\n")
+                    raise subprocess.CalledProcessError(28, command, stderr="timeout")
+                self.assertEqual(command[-3], self.mirror["url"])
+                staging.write_bytes(gzip.compress(b" 1  2 \r\n2\t4\r\n"))
+
+            with patch.object(acquisition.subprocess, "run", side_effect=download) as request:
+                data, record = acquisition.acquire(self.dataset, cache, self.expected, False)
+                self.assertEqual(request.call_count, 2)
+                self.assertTrue(all(call.kwargs["timeout"] > 0 for call in request.call_args_list))
+            self.assertEqual(data, self.canonical)
+            self.assertEqual(record["source_url"], self.mirror["url"])
+            self.assertEqual(record["item_offset"], 0)
+            self.assertTrue(record["gzip"])
+            self.assertFalse(record["from_cache"])
+            self.assertEqual(record["raw_sha256"], sha256(cache / "toy.mirror.dat"))
+            self.assertEqual({p.name for p in cache.iterdir()}, {"toy.dat", "toy.mirror.dat"})
+            with patch.object(acquisition.subprocess, "run") as request:
+                self.assertTrue(acquisition.acquire(self.dataset, cache, self.expected, True)[1]["from_cache"])
+                request.assert_not_called()
+
+    def test_rejects_malformed_transactions(self):
+        for text in [b"", b"1 1\n", b"2 1\n", b"0 1\n", b"<html></html>", b"1 +2\n", b"1\n\n2\n"]:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                acquisition.normalize(text, 0)
+
+    def test_bad_sources_do_not_publish_inputs_report_or_rewrite_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = root / "configs/datasets.toml"
+            config.parent.mkdir()
+            config.write_text('[[datasets]]\nname="toy"\n[[datasets.sources]]\nid="rpi"\n'
+                              'url="https://primary.invalid/dataset"\nitem_offset=1\n'
+                              '[[datasets]]\nname="second"\n[[datasets.sources]]\nid="rpi"\n'
+                              'url="https://primary.invalid/second"\nitem_offset=1\n'
+                              '[[datasets.sources]]\nid="mirror"\nurl="https://mirror.invalid/second"\nitem_offset=0\n',
+                              encoding="utf-8")
+            provenance = root / "results/raw/dataset_provenance.json"
+            json_write(provenance, [dict(name=name, normalized_sha256=self.expected) for name in ("toy", "second")])
+            manifest = root / "data/manifest.csv"
+            output = root / "data/benchmark/toy.txt"
+            output.parent.mkdir(parents=True)
+            output.write_bytes(b"keep existing input")
+            manifest.write_bytes(b"keep historical manifest")
+            statistics = provenance.with_name("dataset_statistics.csv")
+            statistics.write_bytes(b"keep measured statistics")
+            before = {path: path.read_bytes() for path in (output, manifest, statistics, provenance)}
+            cache = root / "cache"
+            report = root / "session/sources.json"
+
+            def download(command, **kwargs):
+                url = command[-3]
+                raw = {self.primary["url"]: b" 0 1\r\n1 3\r\n",
+                       "https://primary.invalid/second": b"<html>maintenance</html>",
+                       "https://mirror.invalid/second": b"1 3\n2 4\n"}[url]
+                Path(command[-1]).write_bytes(raw)
+
+            with patch.object(acquisition, "ROOT", root), patch.object(acquisition.subprocess, "run", side_effect=download) as request:
+                with self.assertRaises(FileExistsError):
+                    acquisition.prepare(cache, report=manifest)
+                request.assert_not_called()
+                with self.assertRaisesRegex(ValueError, "second.*integer item IDs.*SHA-256 mismatch"):
+                    acquisition.prepare(cache, report=report)
+                self.assertEqual(request.call_count, 3)
+            self.assertFalse(report.exists())
+            self.assertFalse(output.with_name("second.txt").exists())
+            self.assertEqual({p.name for p in cache.iterdir()}, {"toy.dat"})
+            self.assertEqual({path: path.read_bytes() for path in before}, before)
 
 
 class ControllerTests(unittest.TestCase):

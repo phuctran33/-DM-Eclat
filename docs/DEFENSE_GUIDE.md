@@ -1,106 +1,104 @@
 # Chuẩn bị vấn đáp ECLAT
 
-Chạy toy trước, tự tính tidsets rồi lần một kết quả từ mã đến bảng báo cáo.
-[Cấu trúc và luồng thực thi](ARCHITECTURE.md).
+Buổi vấn đáp dự kiến từ 07–12/12/2026, theo trao đổi ngày 25/11. Tập trung
+trình bày phần mỗi người đã làm, công cụ đã dùng, lý do chọn phương pháp và
+bài học rút ra. Giảng viên hướng tới trao đổi về bài làm thay vì yêu cầu
+tính tay công thức hoặc chạy code tại chỗ. Mỗi người nên đọc cả ba chương
+và tập giải thích hai quyết định do thành viên còn lại phụ trách.
+[Phân công](../README.md) · [Kiến trúc](ARCHITECTURE.md)
 
-1. **ECLAT đang trả gì?** `mine` trả mọi itemset khác rỗng có absolute support
-   đạt `min_count`. `Pattern.items` là tuple ID tăng dần và `support` là số
-   giao dịch chứa itemset. Relative support là số đó chia số giao dịch.
+1. **Nhóm giải quyết bài toán gì?** Tìm mọi tập item khác rỗng xuất hiện
+   trong đủ số giao dịch, kèm số giao dịch chứa tập đó. Cùng miner Julia
+   được dùng cho benchmark, luật giỏ hàng và mẫu quanh điểm nối DNA.
 
-2. **Vì sao dùng vertical layout?** Với mỗi item, lưu các vị trí giao dịch chứa
-   nó. Một vị trí chứa hợp hai itemset khi nó nằm trong cả hai tidsets. Số TID
-   trong giao chính là support. `baseline.jl` tránh quét lại horizontal input
-   cho từng candidate.
+2. **ECLAT khai thác bằng cách nào?** Mỗi item có tập TID ghi các giao dịch
+   chứa nó. Giao hai tập TID cho đúng các giao dịch chứa hợp hai itemset.
+   DFS mở rộng theo thứ tự item ID và tỉa cả nhánh khi support dưới ngưỡng.
+   Nhờ đó mỗi itemset được xét theo một đường tăng dần mà không cần quét
+   lại toàn bộ dữ liệu ngang tại mỗi ứng viên.
 
-3. **DFS sinh đủ và không lặp bằng cách nào?** Mỗi class có cùng prefix và
-   extensions tăng dần. Chỉ ghép với sibling đứng sau, nối extension cuối và
-   giao tidsets. Mỗi key có một đường tăng dần. Các tiền tố của một tập frequent
-   đều frequent, nên đường đó tồn tại.
+3. **Nhóm bám theo bài Zaki ở đâu?** Giữ biểu diễn dọc và các lớp tương đương
+   tiền tố. Cài đặt nhóm dựng cặp đầu bằng giao singleton rồi đi sâu ngay
+   khi có một lớp con. Hai kiểu tidset dùng chung DFS, Julia dispatch theo
+   kiểu dữ liệu tại bước giao. Mỗi phép giao trả tidset riêng để bảo toàn
+   tidset của các nhánh anh em. [Bài gốc](https://doi.org/10.1109/69.846291)
 
-4. **Pruning xảy ra khi nào?** Support của superset không lớn hơn subset. Giao
-   dưới `min_count` bị loại cùng hậu duệ. Toy `basic` có 5 hàng, minsup 40% cho
-   count 2, nên `(1,2,3)` với support 2 vẫn ra output. Có 7 patterns.
+4. **Vì sao chọn BitVector? Khi nào chọn Basic?** BitVector đóng gói mỗi
+   giao dịch bằng một bit và giao theo từ máy, có lợi khi nhiều tidset dày.
+   Basic giao hai danh sách TID đã sắp bằng hai con trỏ và phù hợp với giao
+   thưa. Ở ngưỡng trung bình, tỉ số thời gian warm Basic/BitVector là 5,10
+   trên Chess và 0,91 trên Retail. Chi phí dựng mask và bộ nhớ bitmap trở
+   nên đáng kể khi mỗi item xuất hiện trong ít giao dịch.
 
-5. **Khác paper Zaki ở đâu?** Giữ vertical tidsets và prefix equivalence
-   classes. Code duyệt sâu ngay sau khi dựng một lớp con và tạo F2 bằng giao
-   singleton. Fig. 12 của paper dựng các lớp con rồi gọi đệ quy. Bản nhóm không
-   dùng horizontal recovery để đếm cặp.
+5. **Vì sao chọn bốn benchmark?** Chess và Mushroom làm rõ tác động của
+   dữ liệu dày với chiều rộng lần lượt 37 và 23. Retail có nhiều item hiếm
+   và đủ lớn để chia tập con. T10I4D100K bổ sung trường hợp thưa tổng hợp
+   100.000 hàng. Demo thử các kho công khai và kiểm hash sau chuẩn hóa để
+   mọi backend đọc đúng input đã đo. [Nguồn và đặc điểm](../data/README.md#benchmark)
 
-6. **Multiple dispatch và ownership ở đâu?** Public API đổi Symbol thành tag.
-   Julia chọn methods theo positional argument type. DFS dùng một atom type
-   cụ thể, hai methods `intersect_tids` trả bộ nhớ mới. AND tại chỗ có thể
-   sửa tidset cha và làm sai các sibling sau.
+6. **SPMF và unit test phát hiện lỗi gì?** Vét cạn và các ca ngẫu nhiên kiểm
+   logic DFS chung. Java SPMF là oracle độc lập chạy cùng dữ liệu và cùng
+   ngưỡng đếm. Nhóm kiểm toàn bộ map itemset → support, gồm tập thừa, tập
+   thiếu và support sai, nên hai đầu ra bằng số lượng vẫn có thể trượt.
+   Có cả ca đúng bằng ngưỡng và ca output rỗng hợp lệ.
 
-7. **So sánh chi phí list và bitmap.** Giao list hai con trỏ tốn tối đa
-   `O(|Ta|+|Tb|)`; giao và đếm bitmap tốn `O(ceil(n/64))` từ máy trên máy đo.
-   Mask chứa n bits dù giao thưa. DFS giữ các lớp đang duyệt và toàn bộ output,
-   có thể tới `2^m−1` itemsets với m items.
+7. **Nhóm kiểm soát ngưỡng giữa Julia và Java thế nào?** CLI đọc ngưỡng từ
+   chuỗi hữu tỉ. Harness chọn tỉ lệ nằm trong cùng khoảng ngưỡng đếm cho
+   SPMF, tránh khác biệt tại biên làm tròn. Khi giải thích kết quả, chỉ
+   rõ hai backend dùng cùng số giao dịch tối thiểu.
 
-8. **Vì sao Retail có thể chậm hơn?** Ít item đạt ngưỡng và nhiều giao nhỏ nên
-   lợi ích AND bị hạn chế. Bản BitVector vẫn đọc để đếm singleton rồi dựng
-   mask. Ở ngưỡng trung bình, tỉ số median warm Basic/BitVector trên Retail
-   là 0,91, còn Chess là 5,10. Đây là số của cấu hình đã đo.
+8. **Đo runtime và RAM ra sao?** End-to-end tính từ tiến trình mới, gồm
+   startup, JIT, đọc, khai thác và ghi, dùng để so ba backend. Warm Julia
+   đo đọc và khai thác sau warm-up, trước khi ghi file và so map. Peak
+   RSS từ `/usr/bin/time` là đỉnh bộ nhớ cư trú toàn tiến trình. Bytes do
+   `@timed` báo là lượng cấp phát tích lũy trong vùng đo Julia.
 
-9. **Tại sao 0,07 trên 100 giao dịch cho count 7?** CLI dùng rational từ chuỗi,
-   không đưa số qua Float64 trước ceil. Khi benchmark, SPMF nhận giá trị nằm
-   giữa khoảng cho cùng absolute count. Item trùng trong một hàng bị từ chối,
-   còn hai hàng trùng nội dung vẫn được đếm riêng.
+9. **Kết quả nói lên điều gì?** 35 cấu hình có 70 phép so full map và 875
+   phép đo OK. Median và min–max của năm lượt cho thấy BitVector có lợi ở
+   Chess, nhưng đổi biểu diễn có thể tốn thời gian hơn trên Retail hoặc
+   tốn RSS hơn trên T10. Muốn biết vì sao, cần xem mật độ tidset, chi phí
+   dựng biểu diễn, ngưỡng và số tập phải xuất. [Kết quả](../results/README.md)
 
-10. **Oracle có vai trò gì?** Vét cạn đếm trực tiếp trên toy, kiểm lỗi có thể
-    xảy ra ở DFS chung. SPMF là cài đặt Java riêng. So itemset → support,
-    missing/extra/wrong support, chẳng hạn sparse ở 40% có output rỗng hợp lệ.
+10. **Scalability và thí nghiệm độ rộng giúp hiểu gì?** Retail lấy các tập
+    con lồng nhau từ cùng hoán vị seed 42 và giữ relative minsup. Thử độ
+    rộng giữ số hàng, số item và ngưỡng, lấy các tiền tố từ hoán vị từng
+    hàng. Số tập phổ biến cũng thay đổi theo dữ liệu. Một đường xu hướng
+    trên máy đo chưa đủ để kết luận độ phức tạp tổng quát.
 
-11. **Hai vùng thời gian khác gì?** End-to-end tính startup/JIT, I/O, mining
-    và chờ process cho cả ba backend. Warm Julia đo đọc/kiểm và khai thác sau
-    warm-up trong cùng process, loại ghi file và bước kiểm equality. Chỉ
-    so sánh backend ở vùng đo tương ứng.
+11. **Nhóm tiền xử lý Groceries thế nào?** Mỗi dòng nguồn xác định một giỏ.
+    Pipeline chuẩn hóa tên, gộp item trùng trong cùng giỏ rồi mã hóa 169
+    sản phẩm; mọi giỏ vẫn có ID riêng. Sau khai thác 9.835 giỏ, Julia giải
+    mã lại tên hàng trong 22 luật. Top-10 xếp theo lift sau khi lọc confidence.
 
-12. **Peak RAM lấy từ đâu?** `/usr/bin/time` lấy peak RSS của process, gồm
-    runtime, input, intermediate và output. `@timed` đếm bytes cấp phát
-    tích lũy trong vùng Julia. Chúng trả lời hai câu hỏi khác nhau.
+12. **Support, confidence và lift có nghĩa gì khi đọc một luật?** Support
+    mô tả độ phổ biến của hai vế cùng xuất hiện. Confidence cho biết trong
+    các giỏ có vế trái, bao nhiêu phần cũng có vế phải. Lift so tỉ lệ này
+    với mức nền của vế phải. Luật hạng 1 có confidence 63,33% và lift 3,273,
+    gợi ý thử trưng bày hoặc giới thiệu mua kèm. Quan hệ quan sát cần kiểm
+    bằng thí nghiệm trước khi kết luận về tác động kinh doanh.
 
-13. **Tin bộ số liệu benchmark dựa vào gì?** Có cùng input/hash/count, exact
-    map trước đo, kiểm output từng lần, năm repeats và median/min–max.
-    Có 35 cấu hình, 875 số đo OK và 70 phép đối chiếu. Kết quả đo giới hạn
-    trong một máy, thứ tự chạy và file cache đã dùng.
+13. **Vì sao DNA phải mã hóa vị trí?** Cùng một base ở hai vị trí mang ý
+    nghĩa khác nhau quanh ranh giới đã căn chỉnh. Nhóm chọn sáu vị trí
+    mỗi bên, tạo tối đa 48 ID vị trí–base. Từ 3.190 mẫu, giữ 3.185 mẫu có
+    cửa sổ A/C/G/T. Nhãn EI/IE/N dùng chia lớp, còn giao dịch chỉ chứa ID
+    vị trí–base.
 
-14. **Scalability và width thay đổi gì?** Retail dùng nested subsets từ một
-    permutation seed 42 và giữ relative minsup. Thử width giữ n, m và
-    minsup, chọn uniform items không hoàn lại. Kích thước output cũng đổi,
-    nên không suy ra độ phức tạp tuyến tính từ đường thời gian.
+14. **Vì sao có bước đếm lại theo lớp?** Mine riêng cho EI/IE/N ở ngưỡng
+    20% được 381/209/48 tập. Sau khi hợp 463 mẫu dài 2–4, đếm trực tiếp
+    trên từng lớp để có cả support dương dưới ngưỡng ở lớp khác. Nhờ đó
+    so được tần suất giữa các lớp có kích thước khác nhau.
 
-15. **Vì sao chọn Groceries?** Một lượt mua định nghĩa tự nhiên một transaction.
-    Mapping của 169 sản phẩm giúp giải mã luật từ 9.835 giỏ. Ngưỡng 0,5%
-    tương ứng 50 giỏ và minconf 0,60 cho 1.001 itemsets, 22 luật và đủ top-10.
+15. **Mẫu DNA và hai giới hạn ứng dụng là gì?** Cặp GT ngay sau ranh giới
+    có support 99,08% ở EI và 5,93% ở N. Cặp AG ngay trước ranh giới có
+    support 99,48% ở IE và 7,68% ở N. Kết quả phù hợp motif donor và
+    acceptor thường gặp trong mẫu căn chỉnh. Việc tổng quát sang dữ liệu
+    mới cần validation riêng. Luật giỏ hàng cũng phụ thuộc cửa hàng,
+    khoảng thời gian lấy mẫu và cách đặt ngưỡng.
+    [Nguồn motif GT/AG](https://doi.org/10.1093/nar/28.21.4364)
 
-16. **Support, confidence, lift khác nhau thế nào?** Với hai vế A, B và n
-    giỏ, support là count(A∪B)/n, confidence là count(A∪B)/count(A), lift là
-    confidence chia count(B)/n. Luật hạng 1 có 57/90 giỏ, confidence 63,33%,
-    lift 3,273 so với nền other vegetables 19,35%. Là giả thuyết gợi ý mua
-    kèm cần kiểm trên nhóm đối chứng. Hai ví dụ khác ở Chương 3.
-
-17. **Vì sao chọn cửa sổ Splice 25:36?** Lấy sáu vị trí mỗi phía ranh giới đã
-    căn chỉnh, vị trí là một phần của item. Có 48 IDs cho 12×4. Loại 5 mẫu
-    có ký tự mơ hồ trong cửa sổ, giữ 3.185/3.190 mẫu. Không đưa nhãn vào miner.
-
-18. **Vì sao tính support theo lớp rồi đếm lại?** EI/IE/N có 765/766/1.654
-    mẫu giữ. Cùng ngưỡng 20% tương ứng 153/154/331 counts. Mine được
-    381/209/48 patterns và hợp 463 candidates độ dài 2–4. Một mẫu dưới
-    ngưỡng ở lớp khác vẫn có thể có count dương, nên phải recount.
-
-19. **Ý nghĩa sinh học và giới hạn?** Cặp GT ngay sau ranh giới có support
-    99,08% ở EI và 5,93% ở N. Cặp AG ngay trước ranh giới có support 99,48%
-    ở IE và 7,68% ở N. Phù hợp motif donor/acceptor thường gặp, nhưng đây
-    là mô tả trên tập mẫu đã căn chỉnh, chưa đánh giá classifier hay cơ chế.
-    [Nguồn đối chiếu motif GT/AG](https://doi.org/10.1093/nar/28.21.4364).
-
-20. **Tối ưu tiếp và demo nhanh?** Thử chọn list/mask theo mật độ tidset để cải
-    thiện nhánh thưa. Thử gộp AND và popcount hoặc dùng lại buffer ở nơi không
-    còn tham chiếu để giảm cấp phát. Muốn demo từ repo root, chạy các lệnh dưới,
-    rồi mở CSV ứng dụng và hình chương 2 theo [README](../README.md).
-
-```bash
-julia --project=. scripts/mine.jl --input data/toy/basic.txt --output .tools/demo-basic.txt --minsup 40% --backend list
-julia --project=. scripts/compare_spmf.jl .tools/demo-basic.txt tests/reference/spmf/basic.txt
-python -B scripts/run_notebook.py
-```
+16. **Nhóm học được gì và sẽ thử tiếp điều gì?** So toàn bộ map phát hiện
+    lỗi mà đếm output bỏ sót. Chọn cấu trúc dữ liệu theo mật độ có triển
+    vọng hơn dùng một backend cho mọi case. Hai hướng tiếp theo là thử
+    tidset thích nghi và giảm cấp phát bằng cách gộp phép AND với đếm bit.
+    Khi bàn giao cần giữ hash input, log đúng vùng đo và nguồn tải đủ ổn
+    định để người khác kiểm lại kết quả. [Phương pháp](experiments.md)
