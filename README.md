@@ -17,6 +17,8 @@
 
 Mở từng notebook trong runtime CPU mới và chọn **Runtime → Run all**. Mỗi notebook tự cài môi trường, tải dữ liệu và in commit đang chạy. Demo đối chiếu lại với SPMF và vẽ đồ thị từ CSV đã đo. Lưu notebook có output và các JSON được in dưới `OUTPUT` để nghiệm thu. [Trạng thái Colab](docs/RUBRIC_FINAL_AUDIT.md#colab)
 
+Ngày 26/11/2026, cả ba notebook đã chạy hết trên ba runtime Colab CPU mới. Demo qua 792 kiểm tra Julia và khớp SPMF trên 5 bộ toy và 4 benchmark. Hai ứng dụng khớp SPMF và xuất đủ hình. [Bằng chứng Run all và SHA-256](docs/validation/colab-2026-11-26.json)
+
 ## Chạy nhanh
 
 Cần Git và Julia ≥1.9. Thêm Python ≥3.11, Java ≥21 và curl để tải dữ liệu, kiểm SPMF và chạy notebook. Miner sử dụng Julia Base và thư viện chuẩn.

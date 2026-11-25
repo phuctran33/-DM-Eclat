@@ -1,6 +1,7 @@
 # Đối chiếu rubric ECLAT
 
-Đối chiếu đề HCMUS và phần giải đáp nhóm nhận được ngày 25/11/2026. Trọng số
+Đối chiếu đề HCMUS, phần giải đáp ngày 25/11/2026 và kết quả Colab ngày
+26/11/2026. Trọng số
 áp dụng cho Julia là 30 điểm cài đặt, 20 điểm thực nghiệm và 50 điểm ứng dụng.
 PASS ghi kết quả kiểm kỹ thuật. Điểm ước lượng để nhóm tự rà soát và điểm
 chính thức do giảng viên quyết định. [Đề và rubric](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
@@ -14,9 +15,9 @@ chính thức do giảng viên quyết định. [Đề và rubric](https://hcmus
 | B1 · Benchmark correctness | 5/5 | **PASS.** 70 phép so trọn map trên 35 cấu hình, 105/105 hash đầu ra khớp đầu ra đã đo. Demo so lại một ngưỡng trung bình mỗi bộ. [Đối chiếu 35 cấu hình](validation/benchmark-maps-2026-11-23.json) · Ch. 2, phần correctness |
 | B2 · Runtime, RAM, scalability | 10/10 | **PASS.** 4 bộ × 6 ngưỡng, 5 tập con Retail và 6 độ rộng tổng hợp. 875 lượt OK, có peak RSS, output size và min–max qua 5 lượt. [Phép đo](../results/raw/benchmark_runs.csv) · Ch. 2, các hình và bảng hiệu năng |
 | B3 · Phân tích và hướng tối ưu | 5/5 | **PASS.** Giải thích theo mật độ, dựng tidset, output và hai vùng đo. Hai đề xuất cụ thể là tidset thích nghi và gộp AND/popcount. [Phương pháp](experiments.md) · Ch. 2, phần hạn chế |
-| C1 · Groceries | 23/25 | **PASS kỹ thuật, Colab cuối chưa xác minh.** 9.835 giỏ, 169 item, 1.001 tập, 22 luật, top-10 và ba diễn giải kinh doanh. Kiểm chỉ số và thứ hạng độc lập, khớp Java SPMF. [Notebook](../notebooks/01_groceries.ipynb) · Ch. 3 A–B |
-| C2 · Splice DNA | 23/25 | **PASS kỹ thuật, Colab cuối chưa xác minh.** 3.185/3.190 mẫu giữ, 48 ID, 381/209/48 tập, 463 ứng viên. Đếm lại theo lớp, 864 count dương dưới ngưỡng và diễn giải GT/AG có nguồn. [Notebook](../notebooks/02_splice_dna.ipynb) · Ch. 3 C–D |
-| **Tổng ước lượng** | **96/100** | 50 điểm A–B có bằng chứng kỹ thuật. Giữ ước lượng 46/50 cho C trong khi chờ Colab. Đề không quy định trừ cố định 2 điểm mỗi notebook. Hosting và điều kiện Retail còn cần chốt. |
+| C1 · Groceries | 25/25 | **PASS trên Colab CPU.** 9.835 giỏ, 169 item, 1.001 tập, 22 luật, top-10 và ba diễn giải kinh doanh. Kiểm chỉ số và thứ hạng độc lập, khớp Java SPMF. [Notebook](../notebooks/01_groceries.ipynb) · Ch. 3 A–B |
+| C2 · Splice DNA | 25/25 | **PASS trên Colab CPU.** 3.185/3.190 mẫu giữ, 48 ID, 381/209/48 tập, 463 ứng viên. Đếm lại theo lớp, 864 count dương dưới ngưỡng và diễn giải GT/AG có nguồn. [Notebook](../notebooks/02_splice_dna.ipynb) · Ch. 3 C–D |
+| **Tổng tự đánh giá** | **100/100** | Cả chín tiêu chí trong bảng có bằng chứng, gồm Run all trên Colab cho Demo và hai ứng dụng. Yêu cầu hosting và điều kiện Retail được ghi ở mục nguồn dữ liệu. |
 
 A–B dùng Julia Base/stdlib cho miner. Python chuẩn chuẩn bị dữ liệu, gọi
 tiến trình và kiểm bằng chứng. Matplotlib vẽ, IPython hiển thị, nbclient
@@ -47,12 +48,14 @@ của PDF cùng nguồn và hình. [PDF](Report.pdf) · [Build](../README.md#bui
 | Retail | 88.162 | 16.470 | 1.636.819 | 4.080.775 |
 | T10I4D100K | 100.000 | 870 | 1.374.931 | 3.922.248 |
 
-**Tải tự động đạt kiểm kỹ thuật, hosting chờ giảng viên xác nhận.** Đề ưu tiên
+**Tải tự động đã kiểm trên Colab, cách áp dụng yêu cầu hosting chờ giảng viên xác nhận.** Đề ưu tiên
 bản công khai có sẵn trên Hugging Face hoặc Kaggle và yêu cầu dùng hai nền tảng
 này khi benchmark vượt kích thước repo. Trao đổi 25/11 nhấn mạnh tải tự động từ
 nguồn bền vững khi server gốc gặp sự cố. Chưa có phúc đáp cuối cho phương án FIMI
-có dự phòng. Bản chuẩn hóa lớn nhất khoảng 3,89 MiB. Kích thước này chưa quyết
-định yêu cầu hosting của môn. [Đề chính thức](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/)
+có dự phòng. Bốn file chuẩn hóa tổng cộng khoảng 8,49 MiB, file lớn nhất
+3,89 MiB. Đề chưa nêu ngưỡng kích thước cụ thể. Demo trên Colab tải đủ cả
+bốn bộ từ RPI và từng SHA-256 chuẩn hóa khớp bản đo.
+[Đề chính thức](https://hcmus-cs-ta.github.io/lab-book/data-mining/projects/itemset/) · [Bằng chứng tải Colab](validation/colab-2026-11-26.json)
 
 Tra API public của HF/Kaggle theo FIMI, T10I4D100K và các từ khóa itemset,
 Retail, Brijs. Các ứng viên chưa xác minh được snapshot và quyền dùng tương ứng.
@@ -72,15 +75,19 @@ công khai và xuất kết quả phân tích. [Điều kiện Retail](https://w
 <a id="colab"></a>
 ## Colab và bàn giao
 
-**BLOCKED — actual Colab execution not verified** cho ba notebook cuối.
-Chạy kernel Jupyter sạch và CI Ubuntu là hai bằng chứng khác môi trường.
-Các phiên Colab notebook tích hợp trước đây chỉ xác nhận bản cũ.
+**PASS trên Google Colab CPU ngày 26/11/2026.** Đã chọn Run all từ các link
+GitHub public trên ba runtime Google Compute Engine mới. Các notebook in
+`RUNTIME: google-colab` và SHA `9638a157d5d65f3f28184a2133292ff53ab6592f`.
+Bản `.ipynb` tải từ Colab có mã các ô khớp commit nguồn, thứ tự thực thi
+đầy đủ và 0 lỗi. Bản tóm tắt ghi phiên bản Python, Julia, Java, số kiểm
+tra cùng hash của các file tải về và JSON kiểm chứng.
+[Bằng chứng nghiệm thu](validation/colab-2026-11-26.json)
 
-| Notebook | Bằng chứng cần lưu từ Colab public main |
-|---|---|
-| [Demo](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) | Notebook có output, `dataset-acquisition.json`, `benchmark-review/review.json`, 5 toy, 4 benchmark live và hash PDF |
-| [Groceries](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | Notebook có output, `dataset-source.json`, `applications/validation.json`, `SPMF PASS groceries 1001` và top-10 |
-| [Splice DNA](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | Notebook có output, `dataset-source.json`, `applications/validation.json` và `SPMF PASS` cho EI, IE, N |
+| Notebook | Ô đã chạy | Kết quả trên Colab |
+|---|---:|---|
+| [Demo](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/demo.ipynb) | 7/7 | 792 kiểm tra Julia, 5 toy và 4 benchmark khớp SPMF, 8 hình, 46 artifact hashes và hash PDF |
+| [Groceries](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/01_groceries.ipynb) | 4/4 | 1.001 tập khớp SPMF, 22 luật, top-10 và biểu đồ độ rộng |
+| [Splice DNA](https://colab.research.google.com/github/phuctran33/-DM-Eclat/blob/main/notebooks/02_splice_dna.ipynb) | 4/4 | 381/209/48 tập khớp SPMF, 463 ứng viên và biểu đồ support |
 
 Mở mỗi link trong runtime CPU mới, chọn **Run all** và đối chiếu
 `SOURCE COMMIT` với public main. Giữ stdout phiên bản runtime và tải
