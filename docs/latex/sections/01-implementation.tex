@@ -2,86 +2,92 @@
 \label{sec:implementation}
 
 \subsection{Bài toán và phạm vi cài đặt}
-Khai thác tập phổ biến (frequent itemset mining, FIM) tìm các tổ hợp item xuất hiện
-trong đủ số quan sát. Kết quả là đầu vào của bài toán luật kết hợp: cùng một tập
-phổ biến có thể sinh nhiều luật có confidence và lift khác nhau~\cite{agrawal1994}.
-Trong đồ án, thuật toán được viết bằng Julia, không gọi thư viện FIM để thực hiện
-mining. SPMF chỉ đóng vai trò tham chiếu độc lập và đối tượng so sánh thời gian.
-Hai backend của nhóm cùng trả mọi tập phổ biến và support tuyệt đối, gồm cả các
-tập không đóng và không tối đại. Việc giữ đầy đủ kết quả cần thiết để tra support
-của các tập con khi sinh luật, nhưng cũng làm chi phí bộ nhớ phụ thuộc output.
+Khai thác tập phổ biến (frequent itemset mining, FIM) tìm những tập mục xuất
+hiện trong đủ số giao dịch. Các tập tìm được là đầu vào của bước sinh luật
+kết hợp (association rule)~\cite{agrawal1994}. Một tập phổ biến có thể sinh
+nhiều luật vì mỗi cách chia các mục thành hai vế cho một quan hệ khác nhau.
+Nhóm tự cài đặt ECLAT bằng Julia và dùng SPMF để đối chiếu kết quả, so sánh
+thời gian thực thi. Hai bản đều trả về mọi tập phổ biến cùng độ hỗ trợ tuyệt
+đối, kể cả các tập không đóng và không tối đại. Kết quả đầy đủ cho phép tra
+độ hỗ trợ của các tập con khi sinh luật, đồng thời làm chi phí bộ nhớ phụ
+thuộc vào số lượng và độ dài của các tập tìm được.
 
-Gọi $D=(t_1,\ldots,t_n)$ là dãy $n$ giao dịch; $I$ là tập $m$ item phân biệt;
-$t_i\subseteq I$ và $X\subseteq I$, $X\ne\emptyset$. Dùng dãy thay vì loại trùng
-các giao dịch: hai giỏ hàng giống nội dung vẫn là hai giao dịch riêng biệt, có hai TID khác nhau. Tidset và
-support count của $X$ được định nghĩa bởi
+Gọi $D=(t_1,\ldots,t_n)$ là dãy $n$ giao dịch và $I$ là tập gồm $m$ mục
+phân biệt. Mỗi giao dịch $t_i\subseteq I$ có TID là chỉ số $i$ bắt đầu từ 1,
+nên hai giao dịch giống nội dung vẫn có hai mã riêng. Với tập mục
+$X\subseteq I$ khác rỗng, $T(X)$ là tập mã giao dịch (tidset) của $X$ và
+$\sigma(X)$ là độ hỗ trợ tuyệt đối, tức số giao dịch chứa $X$.
 \begin{equation}
  T(X)=\{i\in\{1,\ldots,n\}:X\subseteq t_i\},\quad
  \sigma(X)=|T(X)|.
  \label{eq:support}
 \end{equation}
-Khi $n>0$, relative support là $s(X)=\sigma(X)/n$. Với minsup tương đối
-$\theta\in(0,1]$, cài đặt dùng
+Khi $n>0$, độ hỗ trợ tương đối là $s(X)=\sigma(X)/n$. Ngưỡng hỗ trợ tối thiểu
+(minimum support, minsup) ở dạng tỷ lệ được ký hiệu là $\theta\in(0,1]$.
+Chương trình đổi tỷ lệ này thành ngưỡng đếm $\tau$ và trả về tập kết quả $F$.
 \begin{equation}
  \tau=\max\{1,\lceil\theta n\rceil\},\qquad
  F=\{X\subseteq I:X\ne\emptyset,\ \sigma(X)\ge\tau\}.
  \label{eq:threshold}
 \end{equation}
-Dấu bằng được giữ: support đúng ngưỡng vẫn frequent. CSDL rỗng hoặc $\tau>n$
-trả vector rỗng; không định nghĩa relative support bằng phép chia cho không.
-API trong RAM chấp nhận giao dịch rỗng, vẫn tính nó trong $n$, còn blank line
-trong file được xem là khoảng trắng và không tạo giao dịch. Chính sách khác nhau
-này là tường minh, tránh thay đổi denominator khi đọc dữ liệu ứng dụng.
+Tập mục có độ hỗ trợ đúng bằng $\tau$ vẫn là tập phổ biến. Nếu cơ sở dữ liệu
+rỗng hoặc $\tau>n$, hàm trả về danh sách rỗng. Khi nhận giao dịch trực tiếp
+trong bộ nhớ, hàm tính cả giao dịch rỗng vào $n$. Trong tệp SPMF, dòng trống
+được xem là khoảng trắng.
 
-Ví dụ $\theta=0.07,n=100$ phải cho $\tau=7$. CLI phân tích chuỗi thập phân
-thành \texttt{Rational\{BigInt\}}, rồi tính ceiling chính xác; không đi qua
-Float64. Dạng \texttt{40\%} và \texttt{0.4} cùng biểu diễn $2/5$.
-Không nhận scientific notation hay giá trị ngoài $(0,1]$ qua CLI. API mining nhận
-absolute count nguyên dương, tách biệt quyết định ngưỡng khỏi thuật toán.
+Với $\theta=0{,}07$ và $n=100$, ngưỡng đếm phải bằng 7. Giao diện dòng lệnh
+(command-line interface, CLI) đọc số thập phân bằng
+\texttt{Rational\{BigInt\}} để phép làm tròn lên cho kết quả chính xác.
+Hai đối số \texttt{40\%} và \texttt{0.4} cùng biểu diễn $2/5$. Đối số tỷ lệ
+phải nằm trong $(0,1]$ và dùng dạng thập phân hoặc phần trăm. Hàm khai thác
+nhận trực tiếp ngưỡng đếm nguyên dương.
 
-\subsection{Biểu diễn vertical và phân hoạch prefix}
-Trong horizontal layout, mỗi hàng chứa các item của một transaction. Vertical
-layout lưu danh sách TID cho từng item; TID là chỉ số 1-based sau bước chuẩn bị.
-Công thức then chốt là
+\subsection{Biểu diễn dọc và phân hoạch theo tiền tố}
+Trong biểu diễn ngang (horizontal layout), mỗi hàng chứa các mục của một
+giao dịch. Biểu diễn dọc (vertical layout) lưu danh sách TID cho từng
+mục. Nhờ đó có thể đếm số giao dịch chứa hợp của hai tập mục $X$ và $Y$
+bằng một phép giao.
 \begin{equation}
  T(X\cup Y)=T(X)\cap T(Y).
  \label{eq:intersection}
 \end{equation}
-Một TID nằm ở vế trái khi transaction chứa cả $X$ lẫn $Y$, đúng với điều kiện
-nằm trong cả hai tập ở vế phải. Bởi vậy không cần quét toàn bộ horizontal database
-để đếm từng candidate. Nếu $X\subseteq Y$ thì $T(Y)\subseteq T(X)$, suy ra
-$\sigma(Y)\le\sigma(X)$. Đây là tính anti-monotone dùng để prune: candidate có
-support nhỏ hơn $\tau$ không có frequent descendant.
+Giao dịch chứa $X\cup Y$ khi nó chứa đồng thời $X$ và $Y$, nên hai vế của
+(\ref{eq:intersection}) nhận cùng các TID. Nếu $X\subseteq Y$ thì
+$T(Y)\subseteq T(X)$, suy ra $\sigma(Y)\le\sigma(X)$. Tính chất phản đơn
+điệu (anti-monotonicity) cho phép tỉa nhánh (pruning) ngay khi một tập ứng
+viên dưới ngưỡng, vì mở rộng tập đó chỉ có thể giữ nguyên hoặc giảm độ hỗ trợ.
 
-Cố định item order theo ID tăng dần. Với prefix tăng $P$, các atom trong một lớp
-đại diện cho $P\mathbin{\|}x$, với $x$ là item mở rộng. DFS giữ $P$ trong một
-vector chung. Mỗi atom lưu $x$ và tidset của $P\mathbin{\|}x$. Các item $x$
-tăng theo thứ tự của lớp. Chỉ ghép
-atom hiện tại với sibling đứng sau. Lớp con cho $P\mathbin{\|}x$ chứa các
-$P\mathbin{\|}x\mathbin{\|}y$ đạt ngưỡng với $y>x$. Phân hoạch này vừa cung cấp
-đường đi canonical vừa giới hạn số lớp trung gian phải xử lý đồng thời.
+Thuật toán sắp các mục theo mã tăng dần và gom các tập có chung tiền tố $P$
+vào một lớp. Mỗi phần tử của lớp (atom) lưu mục mở rộng $x$ và tidset của
+$P\mathbin{\|}x$, trong đó $\|$ là phép nối. Để tạo lớp con cho
+$P\mathbin{\|}x$, thuật toán chỉ ghép với các phần tử đứng sau. Lớp con
+chứa những tập $P\mathbin{\|}x\mathbin{\|}y$ đạt ngưỡng với $y>x$. Cách
+phân hoạch này cho mỗi tập một đường duyệt duy nhất và giới hạn số lớp
+trung gian cần giữ đồng thời.
 
-\subsection{Liên hệ với Zaki (2000) và lựa chọn adaptation}
-Nguồn thuật toán chính là Zaki~\cite{zaki2000}: mục 4.1 trình bày support counting
-qua tid-lists; mục 4.2 phân rã lattice theo prefix; mục 5.4 mô tả Eclat bằng
-prefix equivalence và bottom-up search. Fig.~12 dựng các lớp con trước khi gọi
-đệ quy. Nhóm giữ nguyên cơ sở giao tidsets và phân hoạch, đồng thời chọn duyệt
-theo chiều sâu (depth-first search, DFS): xử lý hết một lớp con trước sibling.
-Thuật toán~\ref{alg:dfs} phản ánh mã nhóm và không phải bản chép nguyên Fig.~12.
-Tài liệu SPMF cũng mô tả một phiên bản Eclat theo DFS~\cite{spmf}.
+\subsection{Quan hệ với thuật toán của Zaki}
+Zaki~\cite{zaki2000} trình bày cách đếm độ hỗ trợ bằng danh sách TID ở mục
+4.1 và cách phân hoạch dàn tập mục (lattice) theo tiền tố ở mục 4.2. ECLAT
+trong mục 5.4 dùng các lớp tương đương theo tiền tố và tìm kiếm từ dưới
+lên (bottom-up search). Giả mã tại Hình~12 của bài báo tạo các lớp con
+trước khi gọi đệ quy. Cài đặt của nhóm kế thừa phép giao tidset và cách
+phân lớp. Với lịch duyệt theo chiều sâu (depth-first search, DFS),
+chương trình xử lý xong từng lớp con trước khi xét phần tử kế tiếp.
+Thuật toán~\ref{alg:dfs} mô tả lịch duyệt này. Tài liệu SPMF cũng trình
+bày một bản ECLAT dùng DFS~\cite{spmf}.
 
-Một lựa chọn khác liên quan $F_2$. Trong mã nhóm, các cặp singleton frequent được
-giao trực tiếp trong RAM. Nhóm không triển khai bước vertical-to-horizontal
-recovery và bộ đếm cặp tam giác của mục 5.1. Vì vậy kết quả giữ cùng ngữ nghĩa
-FIM nhưng không được xem là tái tạo toàn bộ các tối ưu và kiến trúc lưu trữ của
-paper. Không dùng diffsets, maximal-clique partitioning hay chỉ xuất maximal sets.
-Ghi chú chi tiết và ánh xạ từng mục paper nằm trong \path{docs/ARCHITECTURE.md}.
+Gọi $F_1$ và $F_2$ lần lượt là tập các mục đơn và tập các cặp mục đạt
+ngưỡng. Nhóm dựng $F_2$ bằng cách giao trực tiếp các danh sách TID ở $F_1$
+trong bộ nhớ. Cách này cho cùng tập phổ biến mà không cần bước khôi phục
+dữ liệu ngang và bộ đếm cặp dạng tam giác của mục 5.1. Phạm vi cài đặt tập
+trung vào phân lớp theo tiền tố và liệt kê đầy đủ các tập phổ biến.
+Tệp \path{docs/ARCHITECTURE.md} đối chiếu từng bước với bài báo.
 
 \begin{algorithm}[tb]
-\caption{DFS prefix extension chung cho hai backend}
+\caption{Duyệt theo chiều sâu và mở rộng tiền tố trong hai bản ECLAT}
 \label{alg:dfs}
 \begin{algorithmic}[1]
-\Require Tiền tố $P$ (ban đầu rỗng), các atom $S$ tăng theo item, ngưỡng $\tau$
+\Require Tiền tố $P$ ban đầu rỗng, lớp $S$ sắp theo mã mục, ngưỡng $\tau$ và kết quả $F$
 \Function{DFS}{$P,S,\tau,F$}
 \For{$i=1,\ldots,|S|$}
   \State $a\gets S_i$
@@ -92,41 +98,39 @@ Ghi chú chi tiết và ánh xạ từng mục paper nằm trong \path{docs/ARCH
     \State $b\gets S_j$
     \State $U\gets\operatorname{intersect}(a.tids,b.tids)$
     \If{$\operatorname{support}(U)\ge\tau$}
-      \State thêm atom $(b.item,U)$ vào $C$
+      \State thêm phần tử $(b.item,U)$ vào $C$
     \EndIf
   \EndFor
   \If{$C$ khác rỗng}
     \State \Call{DFS}{$P,C,\tau,F$}
   \EndIf
-  \State bỏ item cuối của $P$
+  \State bỏ mục cuối của $P$
 \EndFor
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{ECLAT Basic: verticalization và phép giao}
-Backend Basic ở \path{src/algorithm/baseline.jl}. Duyệt từng transaction theo
-\texttt{enumerate}, thêm TID vào dictionary từ item đến \texttt{Vector\{Int\}}.
-Validation đã bảo đảm mỗi item có tối đa một lần trong một transaction; TID được
-thêm tăng dần nên lists tự sorted, không phải sort lại. Các singleton dưới
-$\tau$ bị loại khỏi danh sách atom; các key còn lại được sort tăng ID. Một transaction
-lặp nội dung vẫn được thêm với TID mới, đúng định nghĩa tại (\ref{eq:support}).
+\subsection{Basic ECLAT dùng danh sách TID tăng dần}
+Bản Basic trong \path{src/algorithm/baseline.jl} duyệt các giao dịch theo
+thứ tự dòng để thêm TID vào danh sách của từng mục. Mỗi mục chỉ xuất hiện
+một lần trong một giao dịch hợp lệ, vì vậy các danh sách TID vừa tạo đã
+tăng dần và không có phần tử lặp. Sau khi lọc các mục đơn dưới ngưỡng
+$\tau$, thuật toán sắp các mục còn lại theo mã để tạo lớp ban đầu.
 
-Phép \texttt{intersect\_tids} dùng hai con trỏ $i,j$, bắt đầu tại vị trí đầu của
-hai lists $A,B$. Nếu $A_i=B_j$, ghi TID và tăng cả hai; nếu nhỏ hơn, chỉ tăng con
-trỏ của giá trị nhỏ hơn. Dừng khi một list hết. Các phần tử đã đi qua không còn
-khả năng khớp với phần suffix của list kia, nên quy tắc không bỏ sót giao. Mỗi
-con trỏ tăng tối đa độ dài list; không dùng vòng lặp membership tuyến tính lồng
-nhau. Hai input chỉ đọc; kết quả cấp phát mới, có size hint bằng độ dài list ngắn.
-Cách này xử lý đúng cả giao rỗng lẫn một trong hai lists rỗng.
+Hàm \texttt{intersect\_tids} đặt hai con trỏ $i$ và $j$ ở đầu hai danh sách
+$A$ và $B$. Khi $A_i=B_j$, hàm ghi TID đó và tăng cả hai con trỏ. Với hai
+giá trị khác nhau, chỉ con trỏ ở giá trị nhỏ hơn tiến lên vì giá trị đó
+không thể khớp với phần còn lại của danh sách kia. Phép giao dừng khi một
+danh sách đã duyệt hết và trả về danh sách mới, kể cả khi giao rỗng.
+Bộ nhớ cấp trước dựa trên độ dài của danh sách ngắn hơn.
 
 \begin{table}[tb]
 \centering
-\caption{Ví dụ tự xây dựng: horizontal và vertical layout, $n=4,\tau=2$.}
+\caption{Biểu diễn ngang và dọc của cùng bốn giao dịch với ngưỡng $\tau=2$.}
 \label{tab:trace}
 \begin{tabular}{clcl}
 \toprule
-TID & Transaction & Item & TID-list \\
+TID & Giao dịch & Mục & Danh sách TID \\
 \midrule
 1 & $\{1,2,3\}$ & 1 & $[1,2,4]$ \\
 2 & $\{1,3\}$ & 2 & $[1,3,4]$ \\
@@ -136,159 +140,195 @@ TID & Transaction & Item & TID-list \\
 \end{tabular}
 \end{table}
 
-Theo Bảng~\ref{tab:trace}, ba singletons có support 3. Nhánh đầu emit $\{1\}$;
-giao với item 2 cho $[1,4]$ và với item 3 cho $[1,2]$. Lớp prefix 1 gồm hai atom
-frequent $\{1,2\}$ và $\{1,3\}$. Sau khi emit $\{1,2\}:2$, phép giao hai atom
-con chỉ cho $[1]$: candidate $\{1,2,3\}$ có support 1 và bị prune. Quay lui,
-emit $\{1,3\}:2$. Nhánh item 2 còn sinh $\{2,3\}:[1,3]$, cuối cùng emit item 3.
-Kết quả có 6 itemsets. Ví dụ minh họa này khác fixture \texttt{basic.txt} thực tế,
-có 5 transactions và 7 patterns tại 40\%; tách biệt hai ví dụ tránh gán nhầm expected.
+Theo Bảng~\ref{tab:trace}, cả ba mục đơn đều xuất hiện trong 3 giao dịch.
+Ở nhánh đầu, giao danh sách của mục 1 với danh sách của mục 2 cho
+$[1,4]$, còn giao với danh sách của mục 3 cho $[1,2]$. Hai tập $\{1,2\}$
+và $\{1,3\}$ đều đạt ngưỡng và vào lớp con của tiền tố 1. Giao tiếp hai
+danh sách này chỉ còn $[1]$, nên ứng viên $\{1,2,3\}$ bị loại. Khi quay
+lui, nhánh của mục 2 sinh thêm $\{2,3\}$ với danh sách $[1,3]$. Ví dụ cho
+6 tập phổ biến, gồm ba mục đơn và ba cặp. Tệp kiểm thử \texttt{basic.txt}
+chứa 5 giao dịch và cho 7 tập ở ngưỡng 40\%.
 
-\subsection{Kiểu dữ liệu, API và xử lý vào/ra}
-Bảng~\ref{tab:types} tóm tắt các kiểu của schema v1.0.0. Hai backends dispatch từ
-\texttt{mine} sang representation cụ thể, nhưng gọi chung
-\texttt{enumerate\_class!}. Vì vậy ordering, phát candidate và pruning không bị
-thay đổi giữa hai phép đo. Các vector atom và tidset trong hot loop có kiểu cụ thể;
-mỗi atom có một item kiểu \texttt{Int}. Khi xuất, DFS sao chép tiền tố
-\texttt{Vector\{Int\}} thành tuple bất biến để lần quay lui sau giữ nguyên kết quả.
+\subsection{Kiểu dữ liệu và xử lý đầu vào, đầu ra}
+Bảng~\ref{tab:types} tóm tắt các kiểu dữ liệu theo lược đồ v1.0.0. Từ
+đối số \texttt{backend}, hàm \texttt{mine} chọn cách biểu diễn TID rồi
+gọi cùng hàm \texttt{enumerate\_class!}. Hai bản vì vậy duyệt các mục theo
+cùng thứ tự, sinh cùng các tập ứng viên và tỉa nhánh theo cùng một
+điều kiện. Trong vòng lặp chính, mục mở rộng có kiểu \texttt{Int}, còn
+kiểu của tidset được xác định theo bản cài đặt. DFS dùng lại một
+\texttt{Vector\{Int\}} để lưu tiền tố đang xét. Mỗi khi ghi nhận một tập
+phổ biến, hàm sao chép tiền tố thành bộ có thứ tự bất biến (\texttt{Tuple}),
+nên các bước quay lui không làm đổi kết quả đã lưu.
 
 \begin{table}[tb]
 \centering
-\caption{Các kiểu dữ liệu thực tế trong implementation.}
+\caption{Các kiểu dữ liệu dùng trong ECLAT và hai ứng dụng.}
 \label{tab:types}
 \begin{tabular}{ll}
 \toprule
 Kiểu & Nội dung chính \\
 \midrule
-\texttt{Itemset} & Tuple ID dương tăng, không trùng \\
-\texttt{Pattern} & Canonical key và support tuyệt đối \\
-\texttt{ListAtom} & Item mở rộng và danh sách TID \\
-\texttt{BitsetAtom} & Item mở rộng và \texttt{BitVector} \\
-\texttt{PreparedDataset} & Transactions, mapping và metadata \\
+\texttt{Itemset} & Bộ mã mục dương, tăng dần \\
+\texttt{Pattern} & Tập mục và độ hỗ trợ tuyệt đối \\
+\texttt{ListAtom} & Mục mở rộng và danh sách TID \\
+\texttt{BitsetAtom} & Mục mở rộng và \texttt{BitVector} \\
+\texttt{PreparedDataset} & Giao dịch, bảng mã và thông tin kèm theo \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-API gọi \texttt{mine(transactions,min\_count)} với keyword
-\texttt{backend=:list}; backend còn lại là
-\texttt{:bitset}; trả \texttt{Vector\{Pattern\}}. Parser đọc numeric SPMF TXT,
-bỏ blank và các dòng bắt đầu bằng \texttt{\#}, \texttt{\%}, \texttt{@}. Item không
-dương, item lặp hoặc dòng không tăng bị reject; parser không âm thầm chuẩn hóa
-lỗi. Input caller không bị thay đổi. Các bước chuẩn bị benchmark chuyển ID 0 về
-ID dương được ghi nhận riêng ở Chương~\ref{sec:evaluation}.
+Hàm \texttt{mine(transactions,min\_count)} trả về
+\texttt{Vector\{Pattern\}}. Đối số \texttt{backend=:list} chọn bản Basic,
+còn \texttt{:bitset} chọn bản BitVector. Bộ đọc tệp SPMF dạng số bỏ qua
+dòng trống và các dòng bắt đầu bằng \texttt{\#}, \texttt{\%} hoặc
+\texttt{@}. Dòng giao dịch hợp lệ gồm các mã nguyên dương, tăng dần và
+không lặp. Hàm báo lỗi khi dữ liệu sai định dạng và không sửa giao dịch
+của người gọi. Cách đổi mã 0 trong dữ liệu thực nghiệm được trình bày
+ở Chương~\ref{sec:evaluation}.
 
-Writer sắp theo độ dài, sau đó tuple items rồi ghi
-\texttt{1 2 \#SUP: 3}. Output ổn định độc lập thứ tự DFS và bị từ chối nếu có key
-lặp. Comparator đọc về dictionary key canonical và support nguyên; reject duplicate
-output kể cả khi dòng có cùng support. Với fixture \texttt{basic.txt}, hai lựa chọn
-CLI \texttt{--minsup 0.4} và \texttt{--min-count 2} cho cùng byte output. Các lệnh
-chạy trong \path{scripts/mine.jl}; CLI bắt lỗi option trùng, thiếu tham số, hai dạng
-support cùng lúc và output trùng input. Test round trip chạy cả hai backend.
+Khi ghi tệp, chương trình sắp các tập theo độ dài rồi theo thứ tự từ điển
+của dãy mã. Thứ tự ghi vì vậy ổn định qua các lượt duyệt. Dòng
+\texttt{1 2 \#SUP: 3} biểu diễn tập $\{1,2\}$ xuất hiện trong 3 giao dịch.
+Bộ đối chiếu chuẩn hóa thứ tự mục trong mỗi tập, đọc độ hỗ trợ dưới dạng
+số nguyên và báo lỗi nếu một tập xuất hiện nhiều lần trong kết quả.
+Trên \texttt{basic.txt}, \texttt{--minsup 0.4} và \texttt{--min-count 2}
+cho hai tệp giống nhau từng byte. Giao diện ở \path{scripts/mine.jl} kiểm
+tra đối số thiếu hoặc trùng, trường hợp chỉ định cả hai dạng ngưỡng và
+đường dẫn đầu ra trùng đầu vào. Bộ kiểm thử đọc lại tệp do cả hai bản ghi.
 
 \subsection{Tính đúng đắn và quản lý bộ nhớ}
-\textit{Invariant về support.} Singleton tidsets đúng theo cách dựng từ từng TID.
-Giả sử các atom ở một lớp chứa tidset đúng. Khi ghép hai atom cùng prefix,
-(\ref{eq:intersection}) cho tidset chính xác của key union. Chỉ candidate đạt
-$\tau$ được đưa vào lớp con, nên mọi Pattern được emit có support đúng và frequent.
+\textit{Độ hỗ trợ đúng.} Danh sách TID của mỗi mục đơn được dựng trực
+tiếp từ các giao dịch chứa mục đó. Giả sử mọi phần tử trong một lớp
+đều giữ tidset chính xác. Khi ghép hai phần tử cùng tiền tố, công thức
+(\ref{eq:intersection}) cho tidset chính xác của hợp hai tập mục. Lớp
+con chỉ nhận ứng viên đạt $\tau$, nên mọi tập được ghi nhận đều phổ biến
+và có độ hỗ trợ đúng.
 
-\textit{Không trùng.} Một key canonical $x_1<\cdots<x_k$ chỉ có một chuỗi prefix
-$x_1,x_1x_2,\ldots,x_1\cdots x_k$. Quy tắc chỉ ghép later siblings không cho đường
-hoán vị hoặc sibling khác tạo lại cùng key. Không emit empty prefix.
+\textit{Tính duy nhất.} Với một tập gồm $k$ mã theo thứ tự
+$x_1<\cdots<x_k$, chuỗi tiền tố $x_1,x_1x_2,\ldots,x_1\cdots x_k$ là
+duy nhất. Quy tắc ghép với phần tử đứng sau loại mọi đường duyệt theo
+hoán vị khác. Kết quả chỉ gồm các tập khác rỗng.
 
-\textit{Đầy đủ.} Nếu $X$ frequent thì mọi tập con cần cho các bước giao tạo prefix
-của $X$ đều frequent. Chúng không thể bị prune. Theo quy nạp trên độ dài prefix,
-DFS sẽ xét đúng extension tiếp theo và cuối cùng emit $X$. Như vậy thuật toán
-xuất mọi frequent itemset, không chỉ các phần tử cực đại của lattice.
+\textit{Tính đầy đủ.} Nếu $X$ phổ biến thì mọi tập con cần để tạo các
+tiền tố của $X$ đều đạt ngưỡng theo tính phản đơn điệu. Theo quy nạp trên
+độ dài tiền tố, DFS xét được từng bước mở rộng trên đường duy nhất đó và
+cuối cùng ghi nhận $X$. Lập luận áp dụng cho mọi tập phổ biến, kể cả
+những tập nằm trong một tập phổ biến lớn hơn.
 
-Mỗi candidate có tidset mới; không chia sẻ buffer mutable với parent. Khi đệ quy
-trở về, lớp con hết được sử dụng có thể được garbage collector thu hồi. Tuy nhiên
-các ancestor classes vẫn đang hoạt động; không áp dụng bound ``chỉ hai mức'' của
-một lịch duyệt khác. Output vector giữ toàn bộ Patterns đến khi mining kết thúc;
-writer cũng tạo vector được sắp thứ tự. Các phần này cùng tham gia peak RAM.
+Mỗi phép giao cấp vùng nhớ riêng cho tidset mới để các nhánh sau còn
+dùng được tidset cha. Sau khi quay lui, bộ thu gom rác (garbage collector,
+GC) có thể thu hồi các lớp đã duyệt xong. Trong lúc đi sâu, các lớp tổ
+tiên vẫn được giữ, nên số lớp tồn tại đồng thời phụ thuộc vào độ sâu.
+Chương trình cũng giữ tất cả kết quả trong bộ nhớ và tạo một danh sách
+đã sắp xếp để ghi tệp. Cả hai phần đều góp vào mức sử dụng bộ nhớ cực đại.
 
-\subsection{Tối ưu BitVector}
-Backend ở \path{src/algorithm/bitset.jl} đếm singletons trước, chỉ cấp bitmap cho
-items đạt $\tau$, sau đó duyệt transactions lần nữa để đặt bit. Với $n$ giao dịch,
-bit thứ $i$ bằng 1 khi item xuất hiện ở TID $i$. BitVector là mảng bit đóng gói
-của Julia~\cite{juliaarrays}; phép \texttt{a .\& b} tạo giao mới và \texttt{count}
-đếm bit được đặt. Cài đặt sử dụng API công khai, không thao tác trực tiếp internal
-chunks. Các độ dài không chia hết cho word size được kiểm tra riêng.
+\subsection{Tối ưu bằng BitVector}
+Bản BitVector ở \path{src/algorithm/bitset.jl} đếm các mục đơn trong
+lượt quét đầu và chỉ cấp mặt nạ bit cho các mục đạt $\tau$. Ở lượt quét
+thứ hai, chương trình đặt bit thứ $i$ bằng 1 nếu mục xuất hiện trong
+giao dịch có TID $i$. Julia lưu \texttt{BitVector} dưới dạng mảng bit
+đóng gói~\cite{juliaarrays}. Phép \texttt{a .\& b} thực hiện AND để
+tạo mặt nạ giao, sau đó \texttt{count} đếm các bit bằng 1
+(popcount). Cả hai thao tác dùng giao diện công khai của Julia.
 
-Ở bước đệ quy, chỉ phép giao và hàm support khác Basic. Không dùng in-place AND
-vào mask cha, không giới hạn độ dài pattern và không thay đổi item ordering để tạo
-lợi thế benchmark. AND rồi count hiện là hai thao tác; chưa fuse chúng hay reuse
-candidate buffers. Hai cách biểu diễn do đó có cùng cây liệt kê và cùng kết quả,
-nhưng chi phí xử lý tidsets khác nhau. Correctness về ownership được kiểm bằng
-repeated calls, invariance khi đảo transactions và oracle trên dữ liệu ngẫu nhiên.
+Hai bản duyệt cùng cây ứng viên và ghi nhận cùng các tập phổ biến.
+Khác biệt trong bước đệ quy nằm ở chi phí giao và đếm TID. Bản BitVector
+tạo mặt nạ mới tại mỗi phép giao để bảo toàn mặt nạ cha. Phép AND và
+phép đếm bit vẫn là hai thao tác riêng. Bộ kiểm thử kiểm tra các lần gọi
+lặp, đảo thứ tự giao dịch và so với phép đếm vét cạn trên dữ liệu ngẫu
+nhiên. Những trường hợp có số giao dịch không chia hết cho kích thước
+từ máy giúp kiểm tra các bit ở cuối mặt nạ.
 
 \subsection{Phân tích thời gian và bộ nhớ}
-Gọi $L=\sum_{i=1}^n|t_i|$, $m_1=|F_1|$, $C$ là tập candidate intersections thực
-sự được thực hiện, và $w$ là số bit/word. Với $c\in C$, hai tidsets đầu vào là
-$T_{c,a},T_{c,b}$. Basic có chi phí giao
+Gọi $L=\sum_{i=1}^n|t_i|$ là tổng số lượt xuất hiện của các mục,
+$m_1=|F_1|$ là số mục đơn đạt ngưỡng và $w$ là số bit trong một từ máy.
+Ký hiệu $C$ chỉ tập các phép giao thực sự được thực hiện. Với $c\in C$,
+hai tidset đầu vào là $T_{c,a}$ và $T_{c,b}$. Tổng chi phí giao theo
+danh sách của bản Basic là
 \begin{equation}
  T_{\mathrm{join,list}}=O\!\left(\sum_{c\in C}
  (|T_{c,a}|+|T_{c,b}|)\right).
  \label{eq:list-cost}
 \end{equation}
-Verticalization cần $O(L)$ và sort IDs cần $O(m\log m)$. BitVector dựng masks với
-chi phí $O(L+m_1\lceil n/w\rceil)$ ngoài sorting, còn tổng giao/count là
+Dựng danh sách TID cần $O(L)$ và sắp mã mục cần $O(m\log m)$. Ngoài
+bước sắp mã, bản BitVector cần $O(L+m_1\lceil n/w\rceil)$ để đếm mục
+đơn và dựng mặt nạ. Tổng chi phí giao và đếm bit là
 \begin{equation}
  T_{\mathrm{join,bit}}=O\!\left(|C|\lceil n/w\rceil\right).
  \label{eq:bit-cost}
 \end{equation}
-Hai công thức mô tả phần giao tidset. DFS sao chép tiền tố đã tăng dần khi xuất
-mỗi tập, với chi phí tổng cộng $O(\sum_{X\in F}|X|)$. Constructor công khai
-vẫn sắp xếp và kiểm tra các item do người gọi truyền vào. Khi ghi file, writer
-sắp các tập và ghi $\sum_{X\in F}|X|$ ID. Chi phí đọc, kiểm input và GC còn phụ thuộc dữ liệu. Trường hợp mọi tập con frequent có
-$|F|=2^m-1$; không có bound tuyến tính vô điều kiện. Các kết quả graph-theoretic
-với giả thiết sparsity ở Appendix A của paper không thay thế phân tích cài đặt này.
+Hai biểu thức trên chỉ tính phần xử lý tidset. DFS sao chép tiền tố đã
+sắp theo mã khi ghi nhận mỗi tập, với chi phí tổng cộng
+$O(\sum_{X\in F}|X|)$. Khi nhận tập mục từ người gọi, hàm tạo
+\texttt{Pattern} còn sắp xếp và kiểm tra các mã. Bước ghi tệp sắp các
+tập rồi ghi $\sum_{X\in F}|X|$ mã. Các bước đọc, kiểm tra dữ liệu và
+thu gom rác cũng góp vào tổng thời gian. Nếu mọi tập con khác rỗng
+đều phổ biến thì $|F|=2^m-1$. Vì vậy chi phí còn phụ thuộc kích thước
+kết quả. Phân tích trong Phụ lục A của bài báo Zaki dựa trên các giả
+thiết về độ thưa của đồ thị.
 
-Bộ nhớ gồm horizontal input $O(L)$, vertical data, active classes, một giao tạm và
-output. Một list dùng khoảng $8|T|$ byte payload trên máy 64-bit, còn một bitmap
-cần $8\lceil n/64\rceil$ byte cộng overhead object/array. So payload, điểm cân bằng
-xấp xỉ $|T|/n=1/64$; đây chỉ là heuristic vì dictionary, allocation và cache còn
-ảnh hưởng. Lists co ngắn khi đi sâu vào sparse intersections, bitmap vẫn dài $n$.
-BitVector có thể giảm chi phí trên dense cases nhưng không được giả định luôn
-nhanh hơn hoặc luôn giảm resident set size (RSS). Peak process RSS còn gồm runtime
-và biên dịch just-in-time (JIT); dữ liệu
-cấp phát tích lũy từ \texttt{@timed} là metric khác.
+Trong bộ nhớ, dữ liệu ngang giữ $O(L)$ mục cùng các hàng giao dịch.
+Nhóm còn lưu biểu diễn dọc, các lớp đang duyệt, kết quả giao tạm và
+các tập đã tìm được. Trên máy 64 bit, một danh sách chứa tidset $T$
+cần khoảng $8|T|$ byte cho các mã, còn mặt nạ dùng
+$8\lceil n/64\rceil$ byte để chứa bit. Hai lượng này xấp xỉ bằng nhau
+khi $|T|/n=1/64$. Ước lượng chỉ tính dữ liệu nằm trong hai cấu trúc.
+Dung lượng cấp trước, phần quản lý đối tượng và bộ nhớ đệm cũng ảnh
+hưởng đến hiệu năng. Khi xuống các lớp sâu, danh sách TID có thể ngắn
+dần trong khi mặt nạ còn đủ $n$ bit. Bộ nhớ cư trú cực đại còn bao
+gồm môi trường thực thi và biên dịch tức thời (just-in-time, JIT).
+Số byte do \texttt{@timed} ghi nhận là lượng cấp phát tích lũy trong
+phạm vi đo.
 
-Nhóm đo lại riêng thay đổi cách lưu và xuất tiền tố trên Windows x86-64,
-Julia 1.10.10, một luồng, năm lượt đọc và khai thác sau warm-up. Trên Chess
-70\% (48\,731 tập), trung vị của Basic giảm từ 1\,592,4 xuống 1\,436,8~ms,
-BitVector từ 84,5 xuống 50,0~ms. Mỗi bản tiết kiệm khoảng 40~MB cấp phát.
-Trên Retail 3\% (32 tập), mức giảm chỉ khoảng 22~kB và trung vị tăng
-từ 248,2 lên 307,7~ms với Basic, từ 257,1 lên 286,1~ms với BitVector.
-Kết quả đầu ra ở hai phiên bản khớp từng byte. Số đo từng lượt nằm trong
-\path{docs/validation/dfs-prefix-warm.csv}.
+Ngoài tối ưu chính bằng BitVector, nhóm đo riêng ảnh hưởng của cách
+lưu tiền tố DFS trên Windows x86-64 với Julia 1.10.10 và một luồng.
+Phiên bổ sung có 40 lượt, gồm năm lần đọc và khai thác sau chạy khởi
+động cho mỗi tổ hợp phiên bản, bộ dữ liệu và cách biểu diễn. Trên
+Chess ở ngưỡng 70\% với 48\,731 tập, trung vị của Basic giảm từ
+1\,592,4 xuống 1\,436,8~ms, còn BitVector giảm từ 84,5 xuống 50,0~ms.
+Mỗi bản giảm khoảng 40~MB cấp phát. Trên Retail ở ngưỡng 3\% với 32
+tập, lượng cấp phát giảm khoảng 22~kB, trong khi trung vị tăng từ
+248,2 lên 307,7~ms ở Basic và từ 257,1 lên 286,1~ms ở BitVector.
+Đầu ra trước và sau thay đổi khớp từng byte. Do bản cũ luôn chạy
+trước bản mới, các trung vị mô tả phiên đo này.
+Số đo từng lượt nằm trong \path{docs/validation/dfs-prefix-warm.csv}.
 
-\subsection{Kiểm thử, association rules và tái lập}
-Bộ kiểm thử mặc định bật cả hai backend và SPMF references. Oracle độc lập liệt
-kê mọi subset của tối đa 12 items rồi đếm trực tiếp trên horizontal transactions;
-không dùng phép giao của miner. Năm fixtures basic/dense/sparse/duplicates/boundary
-được kiểm ở count 1, count 2, $n$ và $n+1$. Thêm 20 DB ngẫu nhiên seed 42,
-CSDL/transaction rỗng, một item, ID không liên tiếp, database dày, input invalid,
-caller ownership và các kích thước 63/64/65/127/128/129 giao dịch. Các test cuối
-cho cả phần mining, schema, rules và CLI được lưu nguyên stdout.
+\subsection{Kiểm thử, sinh luật và tái lập}
+Bộ kiểm thử đối chiếu cả hai bản với kết quả SPMF và bộ đếm vét cạn.
+Bộ đếm độc lập liệt kê mọi tập con của tối đa 12 mục rồi đếm trực
+tiếp trên các giao dịch dạng ngang. Năm bộ dữ liệu nhỏ
+(\texttt{basic}, \texttt{dense}, \texttt{sparse}, \texttt{duplicates},
+\texttt{boundary}) được thử với ngưỡng đếm 1, 2, $n$ và $n+1$.
+Nhóm kiểm thêm 20 cơ sở dữ liệu ngẫu nhiên với giá trị khởi tạo bộ
+sinh (seed) bằng 42. Bộ kiểm thử còn xét dữ liệu rỗng, giao dịch
+rỗng, mã không liên tiếp, dữ liệu dày và đầu vào sai.
+Các trường hợp 63, 64, 65, 127, 128 và 129 giao dịch kiểm tra ranh
+giới từ máy. Bộ kiểm thử còn xác nhận dữ liệu đầu vào giữ nguyên sau
+khi gọi hàm. README lưu đầu ra của các kiểm thử khai thác, lược đồ,
+luật kết hợp và giao diện dòng lệnh.
 
-Tại minsup 40\%, cả hai backend khớp toàn bộ tập mục và support với Java
-SPMF 2.64b trên năm CSDL toy, đạt 10/10 phép so sánh (100\%). SPMF trả lần
-lượt 7, 14, 5, 4 và 0 tập trên basic, dense, duplicates, boundary và sparse.
-Ở sparse, cả ba map đều rỗng. Manifest lưu hash của JAR, input, output và lệnh chạy. Comparator xác minh toàn bộ key/support,
-đếm missing, extra, wrong support; hai output rỗng vẫn là một trường hợp hợp lệ,
-không tự suy correctness của các trường hợp có output từ ví dụ rỗng. Trên benchmark,
-runner còn đối chiếu từng cấu hình trước khi đo và kiểm output của từng repetition.
+Ở ngưỡng 40\%, cả hai bản khớp toàn bộ tập phổ biến và độ hỗ trợ với
+SPMF 2.64b, đạt 10 trên 10 phép đối chiếu (100\%). SPMF trả lần lượt
+7, 14, 5, 4 và 0 tập trên \texttt{basic}, \texttt{dense},
+\texttt{duplicates}, \texttt{boundary} và \texttt{sparse}. Trường hợp
+\texttt{sparse} kiểm tra kết quả rỗng. Hồ sơ kiểm thử lưu mã băm của
+tệp JAR, dữ liệu vào, kết quả và lệnh chạy. Bộ đối chiếu kiểm riêng
+các tập thiếu, tập thừa và tập có độ hỗ trợ sai. Trên dữ liệu thực
+nghiệm, chương trình đối chiếu trước khi đo và kiểm lại kết quả sau
+mỗi lượt.
 
-Helper \texttt{association\_rules} dùng support dictionary đầy đủ, xét mọi phân
-hoạch $X=A\cup B$ với hai phía khác rỗng, rời nhau. Confidence được lọc bằng tỉ số
-counts chính xác trước khi xuất Float64; subset support thiếu là lỗi. Duyệt tập con
-đệ quy không phụ thuộc bitmask có số bit cố định. Luật được sort theo lift,
-confidence, support giảm dần, rồi length và keys tăng dần theo schema. Test dùng
-PreparedDataset để gọi mine và kiểm cả consequent nhiều item.
+Hàm \texttt{association\_rules} dùng độ hỗ trợ của các tập phổ biến để
+xét mọi cách chia $X=A\cup B$ thành hai vế khác rỗng và rời nhau. Hàm
+so ngưỡng độ tin cậy (confidence) bằng tỷ số của các số đếm trước khi
+chuyển sang \texttt{Float64}, đồng thời báo lỗi nếu thiếu độ hỗ trợ
+của tập con. Phép duyệt đệ quy không phụ thuộc độ rộng từ máy.
+Cách xếp hạng các luật được trình bày ở
+Chương~\ref{sec:applications}. Kiểm thử có cả luật với hậu kiện gồm
+nhiều mục trên dữ liệu đã chuẩn bị bằng \texttt{PreparedDataset}.
 \ifdefined\MemberAOnly
-Hai ứng dụng dùng kết quả này để kiểm riêng ánh xạ item, chuẩn bị giao dịch và
-toàn bộ kết quả khai thác.
+Hai ứng dụng dùng cùng hàm khai thác và kiểm riêng cách mã hóa, các
+giao dịch đã chuẩn bị và kết quả khai thác.
 \else
-Chương~\ref{sec:applications} dùng cùng API trên hai bộ dữ liệu thực, kiểm riêng
-ánh xạ item, chuẩn bị giao dịch và toàn bộ kết quả khai thác.
+Hai ứng dụng ở Chương~\ref{sec:applications} dùng cùng hàm khai thác và
+kiểm riêng cách mã hóa, các giao dịch đã chuẩn bị và kết quả thu được.
 \fi

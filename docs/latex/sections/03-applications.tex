@@ -1,130 +1,174 @@
 \section{Chương 3: Ứng dụng thực tế}
 \label{sec:applications}
 
-\subsection{Groceries: dữ liệu và phương pháp}
-Groceries gồm 9.835 giỏ và 169 nhóm sản phẩm. CSV từ kho
-\emph{Machine Learning with R} được pin commit~\cite{groceries_source_b};
-arules mô tả dữ liệu thu trong 30 ngày~\cite{groceries_documentation_b}.
-Mỗi dòng nguồn là một giỏ. Bước chuyển đổi gán mã giỏ và xuất 43.367 cặp
-\texttt{basket\_id,item\_name}. Julia chuẩn hóa NFC, chữ thường và khoảng
-trắng rồi gán mã sản phẩm theo thứ tự từ điển. Mỗi sản phẩm chỉ tính một lần
-trong một giỏ. Hai giỏ giống nội dung vẫn được đếm riêng.
+\begin{table*}[!t]
+\centering\small
+\caption{Mười luật kết hợp đứng đầu theo lift trên Groceries. Số giỏ tính cho cả hai vế. Bảng hiển thị các chỉ số đã làm tròn.}
+\label{tab:groceries-top10-m2}
+\TableGroceries
+\end{table*}
 
-Minsup $0{,}005$ cho ngưỡng $\lceil0{,}005\times9835\rceil=50$ giỏ.
-Minconf $0{,}60$ yêu cầu hậu kiện xuất hiện ở ít nhất 60\% giỏ thỏa tiền kiện.
-Hai backend cùng trả 1.001 tập phổ biến. Với $A,B$ khác rỗng, rời nhau,
-$n$ là số giỏ và $\sigma$ là số giao dịch chứa tập mục:
+\subsection{Dữ liệu và cách sinh luật trên Groceries}
+Groceries gồm 9\,835 giỏ và 169 nhóm sản phẩm. Nhóm dùng một phiên
+bản cố định của tệp CSV trong kho \emph{Machine Learning with
+R}~\cite{groceries_source_b}. Tài liệu \texttt{arules} mô tả dữ liệu
+được thu trong 30 ngày~\cite{groceries_documentation_b}. Mỗi dòng
+tệp nguồn là một giỏ. Chương trình gán mã giỏ và chuyển tệp thành
+43\,367 cặp \texttt{basket\_id,item\_name}. Julia chuẩn hóa tên về
+dạng NFC của Unicode, chuyển sang chữ thường và chuẩn hóa khoảng
+trắng, sau đó gán mã sản phẩm theo thứ tự từ điển. Mỗi sản phẩm chỉ
+tính một lần trong một giỏ. Hai giỏ giống nội dung vẫn được đếm riêng.
 
+Nhóm chọn minsup $0{,}005$ để giữ các tổ hợp ít gặp nhưng vẫn xuất
+hiện trong ít nhất $\lceil0{,}005\times9835\rceil=50$ giỏ. Ngưỡng
+độ tin cậy tối thiểu (minimum confidence, minconf) là $0{,}60$,
+tức hậu kiện phải xuất hiện trong ít nhất 60\% số giỏ thỏa tiền
+kiện. Hai bản ECLAT cùng tìm được 1\,001 tập phổ biến.
+
+Gọi $A$ là tiền kiện và $B$ là hậu kiện, cả hai khác rỗng và rời
+nhau. Ký hiệu $n$ là số giỏ, còn $\sigma(X)$ là số giỏ chứa $X$.
+Độ hỗ trợ của luật là tỷ lệ giỏ chứa cả hai vế. Độ tin cậy là tỷ lệ
+giỏ chứa $B$ trong số những giỏ đã chứa $A$. Lift so độ tin cậy
+với tỷ lệ xuất hiện của $B$ trong toàn bộ dữ liệu.
 \begin{align}
 \operatorname{supp}(A\Rightarrow B)&=\sigma(A\cup B)/n,\\
 \operatorname{conf}(A\Rightarrow B)&=\sigma(A\cup B)/\sigma(A),\\
 \operatorname{lift}(A\Rightarrow B)&=\operatorname{conf}(A\Rightarrow B)/(\sigma(B)/n).
 \end{align}
-Từ mỗi tập phổ biến, chương trình xét mọi cách chia thành hai vế và dùng tỉ
-số đếm chính xác để lọc confidence. Có 22 luật, xếp giảm dần theo lift,
-confidence và support. Khi bằng nhau, ưu tiên hợp hai vế ngắn hơn rồi mã
-sản phẩm nhỏ hơn. Bảng top-10 lấy mười luật đứng đầu.
+Từ mỗi tập phổ biến, chương trình xét mọi cách chia thành hai vế
+và dùng tỷ số chính xác của các số đếm để lọc theo độ tin cậy.
+Có 22 luật đạt ngưỡng, xếp giảm dần theo lift, độ tin cậy và độ
+hỗ trợ trước khi làm tròn. Nếu cả ba chỉ số bằng nhau, chương
+trình ưu tiên hợp hai vế ngắn hơn rồi xét thứ tự từ điển của
+mã ở hai vế.
 
-\begin{table*}[t]
-\centering\small
-\caption{Top-10 Groceries theo lift; support/confidence hiển thị phần trăm,
-rank và metric gốc không làm tròn trước khi lọc/sort.}
-\label{tab:groceries-top10-m2}
-\TableGroceries
-\end{table*}
+\subsection{Ý nghĩa kinh doanh của các luật trên Groceries}
+Luật đứng đầu trong Bảng~\ref{tab:groceries-top10-m2} có tiền kiện
+gồm \emph{citrus fruit}, \emph{root vegetables} và \emph{whole milk}.
+Trong 90 giỏ có đủ ba nhóm hàng này, 57 giỏ cũng có \emph{other
+vegetables}. Độ tin cậy 63,33\% cao hơn tỷ lệ nền
+$1903/9835=19{,}35\%$, tương ứng lift 3,273. Nhóm rau này là một
+ứng viên để thử gợi ý mua kèm cho các giỏ thỏa tiền kiện. Độ hỗ
+trợ 0,5796\%, tức 57 giỏ trên toàn bộ dữ liệu, giới hạn phạm vi
+mà số liệu trực tiếp mô tả.
 
-\subsection{Groceries: kết quả và ý nghĩa kinh doanh}
-Bảng~\ref{tab:groceries-top10-m2} cho thấy luật hạng 1:
-citrus fruit, root vegetables, whole milk $\Rightarrow$ other vegetables.
-Có 57/90 giỏ thỏa hậu kiện, support $0{,}5796\%$, confidence $63{,}33\%$, cao hơn tỷ lệ nền
-$1903/9835=19{,}35\%$, lift $3{,}273$. Có thể thử gợi ý/bố trí nhóm rau khi
-giỏ đã có trái cây, rau củ và sữa; toàn luật chỉ xuất hiện ở 57 giỏ nên chưa
-đủ để áp dụng đại trà.
+Luật hạng 5 gợi ý \emph{whole milk} khi giỏ chứa \emph{root
+vegetables}, \emph{tropical fruit} và \emph{yogurt}. Độ tin cậy
+là $56/80=70\%$ so với tỷ lệ nền của sữa là 25,55\%. Luật có độ
+hỗ trợ 0,5694\% và lift 2,740. Với cùng hậu kiện, luật hạng 9
+chỉ cần \emph{butter} và \emph{yogurt}. Có $92/144=63{,}89\%$
+giỏ thỏa hậu kiện, với lift 2,500 và độ hỗ trợ 0,9354\%.
+Tiền kiện ngắn và độ hỗ trợ cao hơn luật hạng 1 khiến luật
+hạng 9 là một lựa chọn khi ưu tiên phạm vi thử nghiệm.
 
-Luật hạng 5: root vegetables, tropical fruit, yogurt $\Rightarrow$ whole milk,
-support $0{,}5694\%$, confidence $56/80=70\%$, lift $2{,}740$, so với tỷ lệ nền sữa $25{,}55\%$.
-Gợi ý sữa theo nhóm giỏ này là giả thuyết bán chéo cần A/B test.
-Luật hạng 9: butter, yogurt $\Rightarrow$ whole milk có $92/144=63{,}89\%$,
-lift $2{,}500$, support $0{,}9354\%$. Support cao hơn luật hạng 1 nhưng lift
-thấp hơn nên đứng sau theo tiêu chí đã chọn; tiền kiện ngắn có thể thuận tiện
-hơn khi thiết kế thử nghiệm thực tế.
+Trong 9\,835 giỏ, có 580 giỏ thỏa tiền kiện của ít nhất một
+trong mười luật đứng đầu. Có 353 giỏ thỏa cả hai vế của ít nhất
+một luật, chiếm 3,59\% tổng số giỏ. Vì một giỏ có thể thỏa nhiều
+luật, hai con số này đếm số giỏ phân biệt để mô tả phạm vi áp
+dụng của các gợi ý.
 
-Trong 9.835 giỏ, 580 giỏ thỏa tiền kiện của ít nhất một luật top-10. Có
-353 giỏ thỏa đồng thời cả hai vế của ít nhất một luật ($3{,}59\%$ tổng số
-giỏ). Mỗi giỏ có thể thỏa nhiều luật, nên số giỏ phân biệt cho biết phạm vi
-áp dụng của gợi ý bán kèm khi xét cả top-10.
+Lift đo mức đồng xuất hiện so với giả thiết độc lập. Độ hỗ trợ
+thấp và việc chọn luật trên cùng dữ liệu có thể làm thứ hạng
+thiếu ổn định. Dữ liệu thiếu giá, thời điểm và nhóm đối chứng,
+nên các luật phù hợp để đặt giả thuyết bán chéo. Một thử nghiệm
+A/B có thể phân ngẫu nhiên các giỏ đủ điều kiện vào nhóm nhận
+gợi ý và nhóm đối chứng rồi so tỷ lệ thêm sản phẩm giữa hai nhóm.
 
-Lift đo mức đồng xuất hiện so với giả thiết độc lập. Support thấp và việc chọn
-top-10 trên cùng dữ liệu có thể làm thứ hạng thiếu ổn định. Dữ liệu thiếu giá,
-thời điểm và nhóm đối chứng. Để đánh giá bán chéo, có thể thử gợi ý mua kèm
-và so tỷ lệ thêm sản phẩm giữa các nhóm giỏ đủ điều kiện.
-
-\subsection{Splice DNA: mã hóa và audit}
-UCI Splice~\cite{splice} có 3.190 chuỗi với nhãn EI (exon--intron),
-IE (intron--exon) và N (không thuộc hai lớp điểm nối). Nhóm lấy bản lưu tại
-Đại học Szeged~\cite{splice_mirror_b}, kiểm SHA-256 và giữ mã quan sát
-cùng thứ tự dòng.
-File \texttt{splice.data} trong ZIP chính thức của UCI có cùng SHA-256 và
-được dùng làm nguồn dự phòng.
-Cửa sổ Julia 25:36 tương ứng $-6,\ldots,-1,+1,\ldots,+6$. Với EI/IE, tọa độ
-tính theo hai phía ranh giới được chú thích. Với N, chúng tính quanh tâm cửa
-sổ đối chứng. Mỗi item là cặp (vị trí, base), gồm 48 ID cố định theo A/C/G/T.
-Mã hóa theo vị trí phân biệt cùng một nucleotide ở hai phía. Nhãn được giữ riêng.
-Mỗi mẫu sinh một giao dịch nếu cả 12 vị trí là A, C, G hoặc T. Ký hiệu mơ
-hồ ngoài cửa sổ vẫn được chấp nhận. Bảng~\ref{tab:splice-preparation-b}
-cho biết năm mẫu bị loại và ngưỡng đếm từng lớp. Ngưỡng tương đối 20\%
-cho cùng yêu cầu về tỷ lệ lặp lại dù kích thước ba lớp khác nhau.
-
-\begin{table}[htbp]
+\subsection{Mã hóa và chuẩn bị dữ liệu Splice DNA}
+\begin{table}[!tb]
 \centering
-\caption{Audit Splice; count threshold bằng ceil của 20\% số mẫu giữ mỗi lớp.}
+\caption{Số mẫu trước và sau khi lọc theo lớp. Ngưỡng đếm là 20\% số mẫu giữ lại, làm tròn lên.}
 \label{tab:splice-preparation-b}
 \begin{tabular}{lrrrr}
 \toprule
-Lớp & Raw & Giữ & Loại & Ngưỡng \\
+Lớp & Ban đầu & Giữ lại & Loại & Ngưỡng đếm \\
 \midrule
 EI & 767 & 765 & 2 & 153 \\
 IE & 768 & 766 & 2 & 154 \\
-N & 1.655 & 1.654 & 1 & 331 \\
+N & 1\,655 & 1\,654 & 1 & 331 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Splice DNA: kết quả so sánh ba lớp}
-Hai backend khớp đủ kết quả ở từng lớp, lần lượt 381/209/48 tập.
-EI có tập dài tới 6 item. Bảng so sánh lấy hợp các tập phổ biến của ba lớp
-rồi giữ độ dài 2--4, được 463 ứng viên. Chương trình đếm lại mỗi ứng viên
-trên cả EI/IE/N. Có 864 cặp ứng viên và lớp cho count dương dù dưới ngưỡng.
-Gán chúng bằng 0 sẽ làm sai chênh lệch support.
-Thứ hạng giảm dần theo $\max(s_{EI},s_{IE},s_N)-\min(s_{EI},s_{IE},s_N)$,
-trong đó $s_c$ là tỷ lệ mẫu giữ của lớp $c$ chứa ứng viên. Khi bằng nhau,
-xét tiếp support lớn nhất giảm dần, độ dài và mã item tăng dần.
-Bảng~\ref{tab:dna-m2} trích bảng đã sort và có đại diện 2, 3, 4 item.
+Bộ Splice của UCI~\cite{splice} có 3\,190 chuỗi, mỗi chuỗi gồm
+60 vị trí và có mã quan sát cùng nhãn. EI là ranh giới từ exon
+sang intron, IE là ranh giới từ intron sang exon, còn N chỉ
+các chuỗi ngoài hai lớp điểm nối. Nhóm dùng bản lưu tại Đại
+học Szeged~\cite{splice_mirror_b}, xác minh SHA-256 và giữ
+mã quan sát theo thứ tự dòng. Tệp \texttt{splice.data} trong
+ZIP chính thức của UCI có cùng giá trị băm và là nguồn dự phòng.
 
-\begin{table}[htbp]
+Cửa sổ gồm 12 nucleotide tại chỉ số \texttt{25:36} trong Julia,
+tương ứng $-6,\ldots,-1,+1,\ldots,+6$. Với EI và IE, tọa độ
+tính từ ranh giới đã chú thích. Với N, tọa độ tính quanh tâm
+cửa sổ đối chứng. Mỗi mục là một cặp vị trí và nucleotide. Bốn
+khả năng A, C, G và T tại mỗi vị trí tạo thành 48 mã cố định.
+Chẳng hạn, cùng một nucleotide ở hai phía ranh giới sẽ có hai
+mã khác nhau. Nhãn lớp được lưu riêng khỏi giao dịch.
+
+Mỗi chuỗi tạo một giao dịch nếu cả 12 vị trí đều xác định là
+A, C, G hoặc T. Ký hiệu mơ hồ ngoài cửa sổ vẫn được chấp nhận.
+Bảng~\ref{tab:splice-preparation-b} cho thấy năm mẫu bị loại,
+còn lại 3\,185 mẫu.
+Nhóm khai thác riêng từng lớp để xác định các tổ hợp phổ biến
+trong từng loại ranh giới và trong nhóm đối chứng. Minsup 20\%
+áp cùng yêu cầu về tỷ lệ xuất hiện dù số mẫu giữa các lớp khác
+nhau. Chương trình đổi tỷ lệ này thành ngưỡng đếm theo số mẫu
+được giữ ở mỗi lớp.
+
+\subsection{So sánh các mẫu nucleotide giữa ba lớp}
+\begin{table}[!tb]
 \centering\small
-\caption{Support (\%) của patterns mined thật; rank theo bảng đầy đủ 463 rows.}
+\caption{Độ hỗ trợ (\%) của bốn mẫu trên EI, IE và N. Hạng tính trong danh sách 463 ứng viên.}
 \label{tab:dna-m2}
 \TableSplice
 \end{table}
 
-$(+1,G),(+2,T)$ gặp ở EI $758/765=99{,}08\%$, IE $108/766=14{,}10\%$,
-N $98/1654=5{,}93\%$. Mức đồng xuất hiện bên phải ranh giới chênh lệch
-lớn giữa các lớp. $(-2,A),(-1,G)$ gặp ở IE $762/766=99{,}48\%$, EI
-$388/765=50{,}72\%$, N $127/1654=7{,}68\%$, cho mô tả tương ứng ở bên trái.
-GT sau ranh giới EI và AG trước ranh giới IE phù hợp với hai dinucleotide
-thường gặp tại vị trí cho và nhận của intron ở động vật có vú~\cite{burset2000}.
-Chênh lệch EI--N và IE--N lần lượt là $93{,}16$ và $91{,}80$ điểm phần trăm.
-Sự hiện diện trong cả lớp N cho thấy từng cặp base riêng lẻ không đủ để
-nhận diện điểm nối.
-Tập 4 item hạng 13 xuất hiện $514/22/2$ lần ở EI/IE/N. Với nhiều điều
-kiện hơn, support EI giảm còn $67{,}19\%$.
-Kết quả mô tả mức đồng xuất hiện trên bộ chuỗi đã căn chỉnh. Cửa sổ,
-ngưỡng và quy tắc xử lý ký hiệu mơ hồ ảnh hưởng đến các mẫu tìm được.
-Muốn đánh giá khả năng nhận diện điểm nối trên chuỗi mới cần dữ liệu độc lập.
+Hai bản ECLAT khớp kết quả trên từng lớp, với 381 tập ở EI,
+209 tập ở IE và 48 tập ở N. Tập dài nhất ở EI có 6 mục. Để so
+sánh, nhóm lấy hợp các tập phổ biến của ba lớp và
+giữ những tập dài từ 2 đến 4 mục, thu được 463 ứng viên. Sau đó,
+chương trình đếm lại mỗi ứng viên trên cả ba lớp. Trong 864
+trường hợp, mẫu có xuất hiện ở một lớp nhưng số lần xuất hiện
+chưa đạt ngưỡng của lớp đó. Các số đếm này vẫn góp vào chênh
+lệch độ hỗ trợ.
+
+Nhóm xếp hạng theo chênh lệch độ hỗ trợ giảm dần,
+$\max(s_{EI},s_{IE},s_N)-\min(s_{EI},s_{IE},s_N)$, trong đó
+$s_c$ là tỷ lệ mẫu giữ lại ở lớp $c$ có chứa ứng viên. Khi
+chênh lệch bằng nhau, chương trình xét độ hỗ trợ lớn nhất theo
+thứ tự giảm dần, sau đó đến độ dài và mã mục theo thứ tự tăng
+dần. Bảng~\ref{tab:dna-m2} trích bốn mẫu đại diện cho độ dài
+2, 3 và 4 mục, với thứ hạng trong danh sách đầy đủ.
+
+Cặp $(+1,G),(+2,T)$ xuất hiện trong $758/765=99{,}08\%$ mẫu
+EI, $108/766=14{,}10\%$ mẫu IE và $98/1654=5{,}93\%$ mẫu N.
+Ở phía bên kia ranh giới, cặp $(-2,A),(-1,G)$ xuất hiện trong
+$762/766=99{,}48\%$ mẫu IE, $388/765=50{,}72\%$ mẫu EI và
+$127/1654=7{,}68\%$ mẫu N. Tính từ tỷ lệ trước khi làm tròn,
+chênh lệch giữa EI và N đối với cặp đầu là 93,16 điểm phần
+trăm, còn chênh lệch giữa IE và N đối với cặp sau là 91,80
+điểm phần trăm.
+
+GT ngay sau ranh giới EI và AG ngay trước ranh giới IE phù
+hợp với hai cặp nucleotide thường gặp ở vị trí cho và vị trí
+nhận của intron ở động vật có vú~\cite{burset2000}. Cả hai cặp
+cũng xuất hiện trong lớp N, vì vậy sự có mặt của từng cặp
+chưa đủ để nhận diện điểm nối. Mẫu 4 mục ở hạng 13 có số đếm
+lần lượt là 514 ở EI, 22 ở IE và 2 ở N. Khi thêm điều kiện
+về nucleotide ở các vị trí khác, độ hỗ trợ ở EI giảm còn
+67,19\%.
+
+Các tỷ lệ trên mô tả sự đồng xuất hiện trong bộ chuỗi đã căn
+chỉnh. Cửa sổ, ngưỡng và cách xử lý ký hiệu mơ hồ ảnh hưởng
+đến tập mẫu thu được. Để đánh giá khả năng nhận diện điểm nối
+trên chuỗi mới, cần kiểm tra trên dữ liệu độc lập.
 
 \subsection{Kiểm chứng và khả năng tái lập}
-Python đếm lại support và kiểm thứ hạng. Với cùng ngưỡng đếm nguyên, Java
-SPMF 2.64b khớp cả tập và support cho 1.001/381/209/48 tập trên
-Groceries/EI/IE/N. Ba notebook trong README in commit đang chạy. Hai notebook
-ứng dụng tải nguồn dữ liệu, chạy Julia và tạo lại các bảng, hình từ kết quả mới.
+Chương trình Python đếm lại độ hỗ trợ trực tiếp từ các giao
+dịch và đối chiếu thứ hạng. Với cùng ngưỡng đếm, SPMF 2.64b
+khớp toàn bộ tập và độ hỗ trợ của 1\,001 tập trên Groceries
+cùng 381, 209 và 48 tập trên ba lớp Splice. README dẫn đến
+ba notebook có ghi mã phiên bản của mỗi lần chạy. Hai notebook
+ứng dụng tải dữ liệu, chạy bản Julia của nhóm và tạo bảng, hình
+từ kết quả mới.

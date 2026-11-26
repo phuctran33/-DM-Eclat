@@ -1,15 +1,15 @@
 {
   "status": "pass",
   "compiler": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
-  "pdf_sha256": "d6a3806881ab2af616ee5cb862e0e3e5b35e0bbd57b78a709cb73a69df332ed3",
+  "pdf_sha256": "7811fa725e532c837af54973903255a0a9d52852447cb7deeb85b8cfffa2316b",
   "source_sha256": {
-    "docs/latex/Report.tex": "fc2942048bbb43720bc73563fbac1dfa616b8e7a13c1ee292fb4bb78b188d1ee",
-    "docs/latex/generated/application-tables.tex": "5012374893bb24d76074038b4a43d68615b74b43f5900d8e0857b32889a772fa",
-    "docs/latex/generated/benchmark-tables.tex": "c92364d4bf4553308ac7140476998992f8a90a0a729d43b24059224e06e52307",
+    "docs/latex/Report.tex": "51a6ca965f374cdd4ce7401f9753880619cd5b092829b9ccaf71b7caf9a6cfc4",
+    "docs/latex/generated/application-tables.tex": "f6cbb3920e1baac3f323d1af1b00bf1fe583d226521c803bf92deb6994949798",
+    "docs/latex/generated/benchmark-tables.tex": "22ddd6a20f3ab760647ecd8d7b4bce544a7cf58a662ad3648f47e21493f187fc",
     "docs/latex/references.bib": "374397972feda0f381d67e93736182d21e5c4ad0aa79afb09c0c9effa31f8700",
-    "docs/latex/sections/01-implementation.tex": "e689cd0de347c0c33427a2e95ec92468cb2e071a81e3fd6ddcf4b64ba4ba3047",
-    "docs/latex/sections/02-evaluation.tex": "455db5d89fdaf1859987d3d5fcba09e0e956c3d94fca15d2c18bf7218876a0b6",
-    "docs/latex/sections/03-applications.tex": "8ca8b0b031cc4bf81f184a9acc763cefdc7d4237d47e5ef8b7a074613383aba9",
+    "docs/latex/sections/01-implementation.tex": "662d943e9a6b6ddba73a91a8ff3b4ac1349ac37aec5fc6ee961d94bb0142ffa7",
+    "docs/latex/sections/02-evaluation.tex": "034401ff6be58507e293224eead5ba62eeda93f47c62c715df38931757400263",
+    "docs/latex/sections/03-applications.tex": "5d7c11bd37dac9d4f5700eeb8fc4fb485b8e944973df127a81cc0d480ef444f3",
     "results/plots/memory.pdf": "21a98688f6165cd57a8355f95e92e3038d1821fdaed77aa5631036df717a218c",
     "results/plots/output-size.pdf": "7184527e9ef940e5d507fc83e35d9fb5b51d36efb60d6876f462a6203b3a1bfe",
     "results/plots/runtime-T10I4D100K.pdf": "5e7771a5a0d2443bfc62450df8b0ae5ce60d7dac73119f39898a93a8b9b84210",
@@ -19,7 +19,7 @@
     "results/plots/scalability.pdf": "a59d1ef57acf3c54ebcf31d27ef9d36615e15fd322dd55bdcd7eef42ce7da3aa",
     "results/plots/transaction-length.pdf": "b63f82849c5a1b5469285f441688248a118bfabdf46dd04020eb0c547ea005e2"
   },
-  "pdf_pages": 11,
-  "body_pages": 10,
-  "reference_start_page": 11
+  "pdf_pages": 12,
+  "body_pages": 11,
+  "reference_start_page": 12
 }
