@@ -36,18 +36,18 @@ Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐH
 \maketitle
 
 \begin{abstract}
-Nhóm cài đặt ECLAT bằng Julia để tìm mọi tập mục phổ biến và support tuyệt đối.
-Hai bản dùng danh sách TID tăng dần hoặc BitVector, cùng duyệt theo chiều sâu
-trên các lớp tiền tố. Kiểm chứng kết hợp vét cạn, dữ liệu ngẫu nhiên và Java
-SPMF. Cả 70 phép đối chiếu toàn bộ tập mục và support trên lưới thực nghiệm
-đều khớp. Phép đo trên Chess, Mushroom, Retail và T10I4D100K tách thời gian
-đầu cuối khỏi thời gian đọc và khai thác sau khởi động Julia. Tại ngưỡng
-trung bình, tỉ số median Basic/BitVector đạt 5,10 trên Chess và 0,91 trên
-Retail. Peak RSS và các thí nghiệm thay đổi số dòng, độ rộng giao dịch giúp
-giải thích tác động của mật độ tidset, chi phí dựng biểu diễn và kích thước
-đầu ra. Cùng mã khai thác sinh 22 luật trên Groceries và 463 mẫu so sánh ba
-lớp trên Splice DNA. Hai ứng dụng khớp SPMF và cho các liên hệ mô tả trên
-dữ liệu quan sát. Số đo hiệu năng giới hạn trong môi trường đã công bố.
+Nhóm cài đặt ECLAT bằng Julia để tìm mọi tập mục phổ biến và số giao dịch
+chứa mỗi tập. Hai bản cùng duyệt theo chiều sâu, dùng danh sách mã giao dịch
+(TID) tăng dần hoặc mảng bit (BitVector). Cả 70 phép đối chiếu tập mục và
+support với Java SPMF trên lưới thực nghiệm đều khớp. Trên bốn bộ dữ liệu,
+SPMF có thời gian đầu cuối trung vị (median, giá trị giữa của năm lần đo đã
+sắp thứ tự) thấp nhất ở 23/24 cấu hình. Khi chỉ đo bước đọc và khai thác
+trong Julia đã khởi động, tỉ số trung vị Basic/BitVector tại ngưỡng giữa
+là 5,10 trên Chess và 0,91 trên Retail. Nhóm cũng đo mức bộ nhớ vật lý cao
+nhất mà tiến trình chiếm dụng (peak RSS), thay đổi số giao dịch và độ rộng
+giao dịch để khảo sát chi phí của hai cách biểu diễn. Hai ứng dụng sinh 22
+luật trên Groceries và 463 mẫu so sánh ba lớp trên Splice DNA. Các kết quả
+mô tả liên hệ trong dữ liệu quan sát.
 \end{abstract}
 
 \begin{IEEEkeywords}

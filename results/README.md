@@ -11,8 +11,7 @@
 | `applications/` | Kết quả mined, luật và top-10 Groceries, mẫu Splice và provenance |
 | `logs/benchmark-logs.tar.gz` | OS RSS, stdout, stderr, lệnh chạy và hash output |
 
-Chạy `python3 scripts/verify_artifacts.py` từ clone đầy đủ để kiểm
-manifest, nguồn tại commit đo và archive. Khi cần xem log, dùng
+Chạy `python3 scripts/verify_artifacts.py` để đối chiếu các tệp hiện hành, CSV và log nén. Thêm `--history` trong clone đầy đủ để kiểm cả các tệp chỉ còn trong Git và mã nguồn tại commit đo. Khi cần xem log, dùng
 `tar -tzf results/logs/benchmark-logs.tar.gz` để liệt kê và `tar -xOf`
 để đọc một mục. [Phương pháp đo](../docs/experiments.md) ·
 [Đối chiếu rubric và lịch sử](../docs/RUBRIC_FINAL_AUDIT.md)

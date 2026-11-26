@@ -109,6 +109,8 @@ python3 scripts/plot_results.py --results .tools/benchmark-new
 python3 scripts/verify_artifacts.py
 ```
 
+Kiểm thêm tệp và mã nguồn cũ bằng `python3 scripts/verify_artifacts.py --history` trong clone đầy đủ. Luồng demo mặc định dùng các tệp có trong checkout hiện tại.
+
 Dùng output directory mới hoặc rỗng để giữ bằng chứng đã publish. Controller từ
 chối mọi output directory có sẵn nội dung trước khi sinh subsets/synthetic, ghi
 metadata, logs hay CSV, kể cả khi không có checkpoint (như checkout mới của repo).
@@ -118,6 +120,27 @@ Resume đọc lại các input đã sinh và kiểm hash trước khi ghi; khôn
 khi checkpoint không hợp lệ hoặc signature đã thay đổi.
 Không dùng resume sau khi đổi mã/config. Có thể chạy riêng `--phase runtime`,
 `--phase scalability`, `--phase length` với output riêng. Dùng `--julia /đường/dẫn/julia` khi executable chưa có trong PATH.
+
+<a id="dfs-prefix"></a>
+
+## Đo thay đổi cách lưu tiền tố DFS
+
+So sánh checkout `47bc0e6` (atom lưu toàn bộ tuple) với DFS dùng một tiền tố `Vector{Int}` và một item mở rộng trên mỗi atom. Hai bản chạy cùng máy Windows x86-64, Julia 1.10.10, một luồng. Mỗi tổ hợp dữ liệu/backend chạy trong một tiến trình riêng, đo năm lượt sau khi làm nóng chính cấu hình đó. Đo bản cũ trước, bản sửa sau. Vùng đo gồm đọc, kiểm tra và khai thác. Ghi tệp, đối chiếu và GC chủ động nằm ngoài đồng hồ. Mọi đầu ra của hai bản khớp SHA-256 đã đối chiếu với SPMF. [40 phép đo, byte cấp phát và hash](validation/dfs-prefix-warm.csv)
+
+| Dữ liệu, minsup | Backend | Số tập | Trung vị cũ → mới (ms) | Byte cấp phát cũ → mới mỗi lượt |
+|---|---|---:|---:|---:|
+| Chess 70% | Danh sách | 48.731 | 1.592,4 → 1.436,8 | 1.235.722.350 → 1.195.564.910 |
+| Chess 70% | BitVector | 48.731 | 84,5 → 50,0 | 96.144.686 → 55.987.246 |
+| Retail 3% | Danh sách | 32 | 248,2 → 307,7 | 123.749.130 → 123.726.810 |
+| Retail 3% | BitVector | 32 | 257,1 → 286,1 | 99.458.442 → 99.436.122 |
+
+Trên Chess, thay đổi cách lưu và xuất tiền tố tiết kiệm khoảng 40 MB cấp phát cho mỗi backend. Retail chỉ xuất 32 tập, tiết kiệm khoảng 22 kB, trong khi trung vị thời gian tăng ở cả hai backend. Năm lượt trong một phiên và thứ tự đo cố định giới hạn kết luận về thời gian. Các hình và bảng của Chương 2 vẫn dùng dữ liệu Apple M1 tại `49dafc9`.
+
+Để tái lập, chạy lệnh sau trong mỗi checkout sau khi chuẩn bị input đúng hash. Lặp với backend `bitset` và với `data/benchmark/retail.txt 0.03`. Chọn đích riêng cho từng lần chạy để so hash và giữ stdout CSV.
+
+```bash
+julia -t 1 --startup-file=no --project=. scripts/benchmark_worker.jl --batch data/benchmark/chess.txt 0.70 list 5 .tools/chess-list-output.txt
+```
 
 ## Artifacts và giới hạn
 

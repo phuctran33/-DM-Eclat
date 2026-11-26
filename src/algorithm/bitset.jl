@@ -20,6 +20,6 @@ function mine(::BitsetBackend, transactions::Vector{Vector{Int}}, min_count::Int
         mask = get(vertical, item, nothing)
         mask === nothing || (mask[tid] = true)
     end
-    atoms = BitsetAtom[BitsetAtom((item,), vertical[item]) for item in items]
-    return enumerate_class!(Pattern[], atoms, min_count)
+    atoms = BitsetAtom[BitsetAtom(item, vertical[item]) for item in items]
+    return enumerate_class!(Pattern[], Int[], atoms, min_count)
 end

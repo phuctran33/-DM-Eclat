@@ -20,10 +20,18 @@ def read(path):
         return list(csv.DictReader(stream))
 
 
-def check_manifest(root=ROOT):
+def historical_blob(root, commit, name):
+    result = subprocess.run(["git", "show", f"{commit}:{name}"], cwd=root, capture_output=True)
+    if result.returncode:
+        raise ValueError(f"Historical audit needs {commit}:{name}. Run --history in a full clone.")
+    return result.stdout
+
+
+def check_manifest(root=ROOT, *, history=False):
     rows = read(root / "results/raw/artifact_sha256.csv")
     if not rows or len({row["path"] for row in rows}) != len(rows):
         raise ValueError("Empty/duplicate benchmark artifact manifest")
+    checked = 0
     for row in rows:
         name = row["path"].replace("\\", "/")
         archived = (
@@ -32,23 +40,25 @@ def check_manifest(root=ROOT):
             or (name.startswith("results/plots/") and name.endswith(".png"))
         )
         if archived:
-            data = subprocess.check_output(["git", "show", f"{ARCHIVED_RELEASE}:{name}"], cwd=root)
+            if not history:
+                continue
+            data = historical_blob(root, ARCHIVED_RELEASE, name)
             size, digest = len(data), hashlib.sha256(data).hexdigest()
         else:
             path = root / name
             size, digest = path.stat().st_size, sha256(path)
         if size != int(row["size_bytes"]) or digest != row["sha256"]:
             raise ValueError(f"Changed measured artifact: {name}")
-    return len(rows)
+        checked += 1
+    return checked
 
 
-def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results",type=Path,default=ROOT/"results")
-    args=parser.parse_args()
-    root=args.results.resolve()
+def verify_artifacts(root=ROOT / "results", *, history=False):
+    checked = 0
     if root == ROOT / "results":
-        print(f"PASS {check_manifest()} frozen artifact hashes (including archived Git paths)")
+        checked = check_manifest(history=history)
+        scope = "current and archived release" if history else "current release"
+        print(f"PASS {checked} {scope} artifact hashes")
     rows=read(root/"raw/benchmark_runs.csv")
     comparisons=read(root/"correctness/comparisons.csv")
     assert list(rows[0])==CONTRACT["tables"]["benchmark_runs"]
@@ -56,7 +66,6 @@ def main():
     assert len({r["run_id"] for r in rows})==len(rows),"Duplicate run_id"
     cases=json.loads((root/"raw/cases.json").read_text(encoding="utf-8"))
     protocol=json.loads((root/"raw/protocol.json").read_text(encoding="utf-8"))
-    environment=json.loads((root/"raw/environment.json").read_text(encoding="utf-8"))
     if all(r["status"]=="ok" for r in rows):
         expected=len(cases)*protocol["config"]["repeats"]*5
         assert len(rows)==expected,(len(rows),expected)
@@ -80,11 +89,13 @@ def main():
                 assert math.isclose(float(actual[key]),value,rel_tol=1e-12,abs_tol=1e-12),(key,actual[key],value)
             else:
                 assert actual[key]==str(value),(key,actual[key],value)
-    measured_commit=environment["git_commit"]
-    for path,digest in protocol["source_hashes"].items():
-        frozen=subprocess.check_output(["git","show",f"{measured_commit}:{path}"],cwd=ROOT)
-        assert hashlib.sha256(frozen).hexdigest()==digest,f"Frozen source mismatch: {path}"
-    print(f"PASS frozen measurement source: {measured_commit}")
+    if history:
+        environment = json.loads((root / "raw/environment.json").read_text(encoding="utf-8"))
+        measured_commit = environment["git_commit"]
+        for path, digest in protocol["source_hashes"].items():
+            frozen = historical_blob(ROOT, measured_commit, path)
+            assert hashlib.sha256(frozen).hexdigest() == digest, f"Frozen source mismatch: {path}"
+        print(f"PASS frozen measurement source: {measured_commit}")
     archive=root/"logs/benchmark-logs.tar.gz"
     with tarfile.open(archive,"r:gz") as logs:
         for row in rows:
@@ -99,5 +110,13 @@ def main():
     print(f"PASS {len(cases)} cases, {len(rows)} measurements, {len(comparisons)} exact full-map comparisons")
     print("Statuses:",dict(Counter(r["status"] for r in rows)))
     print("PASS shared headers, unique run IDs, thresholds/counts/hashes, aggregates and archived OS logs")
-if __name__=="__main__":
-    main()
+    return checked
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--results", type=Path, default=ROOT / "results")
+    parser.add_argument("--history", action="store_true",
+                        help="Also check archived release files and measurement source against Git history (full clone)")
+    args = parser.parse_args()
+    verify_artifacts(args.results.resolve(), history=args.history)

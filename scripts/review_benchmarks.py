@@ -1,20 +1,21 @@
-"""Member B: audit A's frozen evidence and live-check four full benchmark maps.
+"""Check published benchmark evidence and live-check four full benchmark maps.
 
 This is a correctness review, not a new timing/RSS experiment.
 """
 from __future__ import annotations
 import argparse
+from contextlib import redirect_stdout
 import csv
 import json
 import os
 from pathlib import Path
 import platform
 import subprocess
-import sys
 import time
 import tomllib
 from benchlib import ROOT, compare, minimum_count, read_patterns, sha256, spmf_threshold
 from prepare_spmf import JAR_HASH
+from verify_artifacts import verify_artifacts
 
 def csv_rows(path):
     with Path(path).open(encoding="utf-8", newline="") as stream:
@@ -39,7 +40,7 @@ def require_equal(own, reference, label):
 
 def current_sources():
     paths=["Project.toml","schemas/contracts.toml","scripts/mine.jl",
-           "scripts/review_benchmarks.py","scripts/benchlib.py","scripts/prepare_spmf.py"]
+           "scripts/review_benchmarks.py","scripts/verify_artifacts.py","scripts/benchlib.py","scripts/prepare_spmf.py"]
     paths += [p.relative_to(ROOT).as_posix() for p in sorted((ROOT/"src").rglob("*.jl"))]
     return {p:sha256(ROOT/p) for p in paths}
 
@@ -64,8 +65,10 @@ def main():
     cases=json.loads((ROOT/"results/raw/cases.json").read_text("utf-8"))
     coverage=check_coverage(cases)
     env={**os.environ,"JULIA_NUM_THREADS":"1"}
-    frozen=run([sys.executable,"-B","scripts/verify_artifacts.py"],out/"frozen-artifacts",env)
-    print((out/"frozen-artifacts.stdout.log").read_text("utf-8"),end="",flush=True)
+    audit_log = out / "frozen-artifacts.stdout.log"
+    with audit_log.open("w", encoding="utf-8") as log, redirect_stdout(log):
+        checked_artifacts = verify_artifacts()
+    print(audit_log.read_text(encoding="utf-8"), end="", flush=True)
     jar=ROOT/"tools/spmf.jar"
     if sha256(jar)!=JAR_HASH: raise ValueError("Wrong SPMF JAR")
     config=tomllib.loads((ROOT/"configs/experiments.toml").read_text("utf-8"))
@@ -102,7 +105,7 @@ def main():
                 recorded_at=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),
                 platform=platform.platform(),source_commit=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),
                 source_sha256=current_sources(),measured_commit=measured["git_commit"],
-                frozen_artifact_count=len(csv_rows(ROOT/"results/raw/artifact_sha256.csv")),
+                frozen_artifact_count=checked_artifacts,
                 archived_cases=len(cases),support_levels=coverage,live_cases=records,
                 spmf_jar_sha256=JAR_HASH,
                 julia_version=subprocess.check_output([args.julia,"--version"],text=True).strip(),
@@ -112,6 +115,6 @@ def main():
     report["archived_measurements"]=len(csv_rows(ROOT/"results/raw/benchmark_runs.csv"))
     report["archived_full_map_comparisons"]=len(csv_rows(ROOT/"results/correctness/comparisons.csv"))
     (out/"review.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n","utf-8")
-    print(f"PASS frozen hashes {report['frozen_artifact_count']}; four live datasets; no measurement artifacts overwritten",flush=True)
+    print(f"PASS current release hashes {report['frozen_artifact_count']}; four live datasets; no measurement artifacts overwritten",flush=True)
 
 if __name__=="__main__":main()

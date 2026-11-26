@@ -32,6 +32,8 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ matrix.os == 'ubuntu-latest' && '0' || '1' }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -40,14 +42,14 @@ jobs:
       - run: python tests/test_application_sources.py -v
       - run: python tests/test_plot_results.py -v
       - run: python -B tests/test_delivery.py -v
+      - name: Verify historical benchmark evidence
+        if: matrix.os == 'ubuntu-latest'
+        run: python -B scripts/verify_artifacts.py --history
 
   notebooks:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          # The notebook verifies benchmark sources at their original measurement commit.
-          fetch-depth: 0
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1.11'

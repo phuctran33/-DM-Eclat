@@ -24,24 +24,26 @@ tid_support(tids::Vector{Int}) = length(tids)
 
 """Enumerate an ordered prefix class, shared by both representations.
 
-Atoms contain prefix+extension and its exact tidset. Joining only later siblings
-creates one increasing path per itemset. Children own their tidsets; parent
-classes remain read-only. DFS retains active ancestor classes, not all lattice
-levels. All qualifying patterns are retained in the returned vector.
+Each atom holds an extension item and the exact tidset of prefix plus extension.
+Joining only later siblings gives one increasing path per itemset. The search
+reuses its prefix vector; each emitted pattern owns an immutable key. Children
+own their tidsets and do not mutate their parents.
 """
-function enumerate_class!(patterns::Vector{Pattern}, atoms::Vector{A},
-                          min_count::Int) where {A<:Union{ListAtom,BitsetAtom}}
+function enumerate_class!(patterns::Vector{Pattern}, prefix::Vector{Int},
+                          atoms::Vector{A}, min_count::Int) where {A<:Union{ListAtom,BitsetAtom}}
     for i in eachindex(atoms)
         a = atoms[i]
-        push!(patterns, Pattern(a.items, tid_support(a.tids)))
+        push!(prefix, a.item)
+        push!(patterns, Pattern(prefix, tid_support(a.tids), Val(:dfs_prefix)))
         children = A[]
         for j in (i + 1):length(atoms)
             b = atoms[j]
             tids = intersect_tids(a.tids, b.tids)
             tid_support(tids) >= min_count || continue
-            push!(children, A((a.items..., last(b.items)), tids))
+            push!(children, A(b.item, tids))
         end
-        isempty(children) || enumerate_class!(patterns, children, min_count)
+        isempty(children) || enumerate_class!(patterns, prefix, children, min_count)
+        pop!(prefix)
     end
     return patterns
 end
@@ -50,15 +52,15 @@ end
 
 TIDs are 1-based row indices; identical transactions remain independent. F2 uses
 pairwise intersections rather than the paper's horizontal-recovery pair counter.
-Both backends use ascending item IDs. See docs/paper-notes.md for DFS adaptation.
+Both backends use ascending item IDs. See docs/ARCHITECTURE.md#zaki for the DFS adaptation.
 """
 function mine(::ListBackend, transactions::Vector{Vector{Int}}, min_count::Int)
     vertical = Dict{Int,Vector{Int}}()
     for (tid, items) in enumerate(transactions), item in items
         push!(get!(() -> Int[], vertical, item), tid)
     end
-    atoms = ListAtom[ListAtom((item,), vertical[item])
+    atoms = ListAtom[ListAtom(item, vertical[item])
                      for item in sort!(collect(keys(vertical)))
                      if length(vertical[item]) >= min_count]
-    return enumerate_class!(Pattern[], atoms, min_count)
+    return enumerate_class!(Pattern[], Int[], atoms, min_count)
 end
