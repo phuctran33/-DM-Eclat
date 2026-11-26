@@ -98,7 +98,7 @@ Log, notebook đã chạy, bảng và `delivery-validation.json` nằm trong th�
 <a id="benchmark"></a>
 ## Benchmark
 
-Script tải bốn bộ benchmark từ FIMI tại RPI, thử tiếp kho Đại học Antwerp và các bản SPMF đã xác minh. Mỗi input phải khớp SHA-256 sau chuẩn hóa với lần đo gốc. `prepare_spmf.py` tải JAR SPMF 2.64b, kiểm phiên bản và SHA-256 để đối chiếu kết quả Julia. `python3 scripts/verify_artifacts.py` kiểm các phép đo, logs và nguồn Git. Để đo lại trên Linux/macOS, dùng môi trường đã cài gói vẽ và chạy các lệnh sau. [Trang SPMF](https://www.philippe-fournier-viger.com/spmf/)
+Script tải bốn bộ benchmark từ FIMI tại RPI, thử tiếp kho Đại học Antwerp và các bản SPMF đã xác minh. Mỗi input phải khớp SHA-256 sau chuẩn hóa với lần đo gốc. `prepare_spmf.py` tải JAR SPMF 2.64b, kiểm phiên bản và SHA-256 để đối chiếu kết quả Julia. `python3 scripts/verify_artifacts.py` kiểm CSV, hình và log có trong checkout hiện tại. Thêm `--history` trong clone đầy đủ để đối chiếu cả tệp đã lưu trữ và mã gốc của lần đo. Để đo lại trên Linux/macOS, dùng môi trường đã cài gói vẽ và chạy các lệnh sau. [Trang SPMF](https://www.philippe-fournier-viger.com/spmf/)
 
 ```bash
 python3 scripts/prepare_spmf.py
@@ -137,4 +137,4 @@ Hình PDF lấy từ `results/plots/`. Các bảng sinh từ CSV đặt trong ha
 | `notebooks/` | Ba notebook Python gọi Julia và một file setup chung |
 | `results/`, `docs/` | Bằng chứng thực nghiệm, báo cáo và tài liệu |
 
-Để ôn vấn đáp, đọc mục tiêu và luồng ECLAT, rồi chọn một kết quả benchmark và một kết quả ứng dụng để giải thích quyết định thiết kế. [Kiến trúc](docs/ARCHITECTURE.md) · [Câu hỏi vấn đáp](docs/DEFENSE_GUIDE.md)
+Để ôn vấn đáp, đọc mục tiêu và luồng ECLAT, rồi chọn một kết quả benchmark và một kết quả ứng dụng để giải thích quyết định thiết kế. [Kiến trúc](docs/ARCHITECTURE.md)

@@ -1,3 +1,8 @@
+function rule_rank_key(rule::AssociationRule)
+    return (-rule.lift, -rule.confidence, -rule.support,
+            length(rule.antecedent) + length(rule.consequent), rule.antecedent, rule.consequent)
+end
+
 """Generate all association rules from the group's complete frequent output.
 
 For disjoint nonempty A, B with union X:
@@ -54,8 +59,6 @@ function association_rules(patterns::Vector{Pattern}, n::Integer;
         end
         split_rule!(1)
     end
-    sort!(rules; by=r -> (-r.lift, -r.confidence, -r.support,
-                         length(r.antecedent) + length(r.consequent),
-                         r.antecedent, r.consequent))
+    sort!(rules; by=rule_rank_key)
     return rules
 end

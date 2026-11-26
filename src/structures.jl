@@ -12,20 +12,24 @@ struct Pattern
         support > 0 || throw(ArgumentError("Support must be positive"))
         new(key, Int(support))
     end
+
+    # DFS visits strictly increasing positive IDs and emits only positive supports.
+    # Capture the reused prefix before enumeration advances to the next sibling.
+    Pattern(prefix::Vector{Int}, support::Int, ::Val{:dfs_prefix}) = new(Tuple(prefix), support)
 end
 
 abstract type TidsetBackend end
 struct ListBackend <: TidsetBackend end
 struct BitsetBackend <: TidsetBackend end
 
-"""Sorted tid-list atom for the baseline; TIDs refer to transaction rows."""
+"""Extension item and its full itemset's sorted transaction IDs."""
 struct ListAtom
-    items::Itemset
+    item::Int
     tids::Vector{Int}
 end
 
-"""Packed BitVector atom; all atoms in one database have equal bit length."""
+"""Extension item and its full itemset's packed transaction mask."""
 struct BitsetAtom
-    items::Itemset
+    item::Int
     tids::BitVector
 end

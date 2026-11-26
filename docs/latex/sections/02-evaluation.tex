@@ -5,9 +5,7 @@
 Thực nghiệm trả lời năm câu hỏi: kết quả có khớp toàn bộ SPMF hay không; minsup
 làm thay đổi runtime và output như thế nào; BitVector có lợi trên dữ liệu nào;
 peak RAM thay đổi ra sao; và số giao dịch/độ rộng transaction tác động thế nào
-khi giữ minsup tương đối. Phân tích dùng dữ liệu được chạy bằng chính hai backends
-ở Chương~\ref{sec:implementation}. Không lấy số runtime hoặc memory của paper làm
-số đo của nhóm. Các bảng LaTeX và hình được sinh trực tiếp từ CSV bởi
+khi giữ minsup tương đối. Các bảng LaTeX và hình được sinh trực tiếp từ CSV bởi
 \path{scripts/plot_results.py}; dữ liệu gốc, stderr/stdout và lệnh cho từng process
 được giữ để kiểm tra lại kết luận.
 
@@ -21,8 +19,10 @@ Java 23 nên không được dùng. Phiên bản và hash đầy đủ nằm tro
 \path{results/raw/environment.json} và manifest reference, không chỉ dựa vào tên
 file \texttt{spmf.jar}.
 
-Bản mã thuật toán/harness cho lần đo được lưu bằng commit và source hashes trong
-\path{results/raw/protocol.json}. Seed là 42. Mỗi cấu hình có một preflight và năm
+Các đồ thị và bảng của chương dùng 875 lượt đo trên Apple M1 tại commit
+\texttt{49dafc9}, khi atom còn lưu khóa đầy đủ. Hash mã và giao thức của
+phiên đo nằm trong \path{results/raw/protocol.json}. Thay đổi cách lưu tiền tố
+ở Chương~\ref{sec:implementation} được kiểm riêng. Seed là 42. Mỗi cấu hình có một preflight và năm
 repetitions; timeout mỗi process 120 giây. SPMF dùng \texttt{-Xmx2g}. Grid gồm
 24 cấu hình benchmark, 5 subsets và 6 widths; output không giới hạn độ dài hay số
 lượng. Các trường hợp không hoàn tất có status riêng, không dùng runtime/pattern
@@ -187,8 +187,18 @@ nguồn: \texttt{results/raw/end\_to\_end\_medium.csv}.}
 \TableMediumEndToEnd
 \end{table}
 
-Bảng~\ref{tab:optimization} và Bảng~\ref{tab:e2e} giúp đánh giá cùng ngưỡng dưới hai
-góc nhìn. Ở các ngưỡng trung bình, median warm của Basic/BitVector lần lượt là
+Tại các ngưỡng giữa, SPMF có trung vị đầu cuối thấp nhất trên cả bốn bộ dữ
+liệu (Bảng~\ref{tab:e2e}). Trên sáu ngưỡng của mỗi bộ, SPMF đứng đầu ở
+23 trong 24 cấu hình. Ngoại lệ là Chess tại minsup 70\%, khi cả ba bản cùng
+xuất 48\,731 tập. BitVector mất 2,419~s, SPMF 2,745~s và Basic 3,608~s
+(trung vị). Khoảng min--max của BitVector (2,277--2,693~s) và SPMF
+(2,660--3,036~s) giao nhau. Như vậy, ở cấu hình có đầu ra lớn nhất trên Chess,
+BitVector có trung vị thấp hơn SPMF trong phiên đo này. Với 23 cấu hình còn
+lại, lợi thế đầu cuối thuộc về SPMF. Phép đo bao gồm khởi động, khai thác và
+ghi kết quả, nên chỉ cho phép so sánh toàn bộ lệnh.
+
+Riêng bước đọc và khai thác sau khi Julia đã khởi động
+(Bảng~\ref{tab:optimization}), tại các ngưỡng giữa, trung vị Basic/BitVector lần lượt là
 82.50/16.16 ms trên Chess, 46.48/26.92 ms trên Mushroom, 231.34/255.48 ms trên
 Retail và 1723.08/552.79 ms trên T10I4D100K. Tỉ số tương ứng xấp xỉ
 $5.10\times$, $1.73\times$, $0.91\times$ và $3.12\times$; giá trị dưới 1 của
@@ -198,8 +208,7 @@ hạ minsup, nên packed AND giảm nhiều công việc quét TID. Với Retail
 số frequent patterns nhỏ, chi phí đọc/validation/verticalization chiếm phần lớn;
 count trước rồi dựng bitmap cũng thêm một lượt dữ liệu. Kết quả này cần được giải
 thích bằng (\ref{eq:list-cost})--(\ref{eq:bit-cost}), thay vì mặc định bitmap thắng
-trên mọi CSDL thưa. SPMF là cài đặt Java trưởng thành, có representation và overhead
-riêng; end-to-end tốt hơn không tự chứng minh một phép AND của Java nhanh hơn Julia.
+trên mọi CSDL thưa. Tỉ số $S$ chỉ so sánh hai backend Julia trong cùng phạm vi đo.
 
 \subsection{Số frequent itemsets theo minsup}
 Hình~\ref{fig:output-size} dùng đúng các outputs đã kiểm chứng, không truncate.
@@ -334,35 +343,19 @@ và các pair intersections, không phải stress test các frequent patterns d�
 lists cho mọi item, BitVector vẫn phải đếm singleton occurrences.
 
 \subsection{Giới hạn và các hướng tối ưu tiếp theo}
-Đợt đo chạy trên một máy cá nhân 8 GiB, không cố định CPU frequency/core affinity
-hay kiểm soát hoàn toàn nhiệt độ và tiến trình nền. Backend order cố định trong
-mỗi repetition có thể gây temporal bias; năm repetitions và min--max chỉ mô tả
-spread trong phiên này. Chưa đo trên máy khác hoặc fresh OS page cache. Các ngưỡng
-được chọn để toàn bộ output có thể kiểm chứng, không đại diện mọi miền minsup;
-chưa chạy đến vùng bùng nổ output không thể chứa trong RAM. Bất kỳ speedup nào
-chỉ áp dụng cùng dữ liệu, threshold và scope đã khai báo.
+Toàn bộ lưới được đo trên một máy M1 8 GiB với thứ tự backend cố định,
+không cô lập lõi CPU, nhiệt độ hay bộ nhớ đệm của hệ điều hành. Min--max
+của năm lượt mô tả biến động trong phiên. Các ngưỡng đều cho đầu ra vừa RAM.
+Phép đo đầu cuối gồm khởi động, khai thác và ghi tệp. Phép đo warm chỉ có ở
+Julia. Peak RSS bao gồm cả runtime. Các độ rộng tổng hợp dùng chung hoán vị
+trên mỗi dòng nên phụ thuộc nhau. Muốn khảo sát các tập dài, cần một thí nghiệm
+riêng với các nhóm item thường xuyên đồng xuất hiện.
 
-End-to-end bao gồm startup/JIT/JVM, serialization và overhead controller; warm
-Julia không so trực tiếp với SPMF vì thiếu Java harness cùng boundary. RSS là peak
-của toàn process, không tách riêng tidset payload và không phản ánh chỉ lượng
-allocation đang sống. Các mức độ rộng dùng chung hoán vị theo từng dòng,
-nên không dùng chúng làm các lần lặp độc lập. Để nghiên cứu tập phổ biến dài trên
-dữ liệu có cấu trúc đồng xuất hiện mạnh, cần generator chèn mẫu và giao thức riêng. Correctness full-map ở các cases đã chạy
-không phải chứng minh thực nghiệm cho mọi CSDL có thể có; lập luận invariant ở
-Chương~\ref{sec:implementation} bổ sung cho test.
-
-Hướng tối ưu thứ nhất là \emph{adaptive representation}: chọn sorted list cho
-tidsets rất thưa và bitmap cho masks dày, theo payload/cost model được đo. Cần
-thêm mixed-intersection dispatch và kiểm lại ownership/correctness; điểm cân bằng
-$n/64$ về TID payload chỉ là giá trị khởi đầu. Thứ hai là \emph{buffer reuse và
-fused AND/popcount}: giảm allocation của candidates bị prune, nhưng chỉ tái sử dụng
-buffer khi không còn parent/child tham chiếu. Có thể dùng buffer pool theo depth
-và đo GC/allocations cùng RSS để xác định lợi ích thực.
-
-Hướng thứ ba là ordering theo support để thử giảm số giao ở các prefix khó, hoặc
-early-abort phép giao list khi số TID tối đa còn có thể khớp không đủ $\tau$.
-Các thay đổi này chưa triển khai trong kết quả hiện tại; cần giữ canonical keys,
-cùng enumeration semantics và tạo protocol mới. Ở tầng đánh giá, randomize thứ tự
-backend, bổ sung Java warm harness và lặp qua nhiều phiên máy sẽ giúp kiểm tra
-độ ổn định của kết luận. Những hướng này là đề xuất từ cơ chế và số đo, không
-được tính là các tối ưu đã hoàn thành.
+Một hướng tối ưu là chọn danh sách cho tidset thưa và bitmap cho tidset dày.
+Ngưỡng $n/64$ từ mô hình bộ nhớ là điểm xuất phát để đo cả phép giao giữa hai
+kiểu. Hướng thứ hai là gộp AND với đếm bit và tái sử dụng vùng nhớ theo độ sâu
+khi các lớp cha, con đã hết dùng. Có thể đánh giá bằng số byte cấp phát,
+thời gian GC và peak RSS. Với danh sách, có thể dừng giao sớm khi số TID còn
+lại không đủ đạt $\tau$, hoặc thử sắp theo support để giảm số phép giao.
+Mỗi thay đổi cần giữ kết quả khớp SPMF. Để so tốc độ, nên đảo thứ tự backend
+qua nhiều phiên đo và bổ sung vùng đo warm tương ứng cho Java.

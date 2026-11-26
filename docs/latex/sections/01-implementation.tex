@@ -54,8 +54,9 @@ $\sigma(Y)\le\sigma(X)$. Đây là tính anti-monotone dùng để prune: candid
 support nhỏ hơn $\tau$ không có frequent descendant.
 
 Cố định item order theo ID tăng dần. Với prefix tăng $P$, các atom trong một lớp
-có dạng $P\mathbin{\|}x$, trong đó $\|$ là phép nối tuple. Mỗi atom lưu key đầy
-đủ và tidset chính xác của key; extension $x$ tăng theo thứ tự của lớp. Chỉ ghép
+đại diện cho $P\mathbin{\|}x$, với $x$ là item mở rộng. DFS giữ $P$ trong một
+vector chung. Mỗi atom lưu $x$ và tidset của $P\mathbin{\|}x$. Các item $x$
+tăng theo thứ tự của lớp. Chỉ ghép
 atom hiện tại với sibling đứng sau. Lớp con cho $P\mathbin{\|}x$ chứa các
 $P\mathbin{\|}x\mathbin{\|}y$ đạt ngưỡng với $y>x$. Phân hoạch này vừa cung cấp
 đường đi canonical vừa giới hạn số lớp trung gian phải xử lý đồng thời.
@@ -74,29 +75,30 @@ giao trực tiếp trong RAM. Nhóm không triển khai bước vertical-to-hori
 recovery và bộ đếm cặp tam giác của mục 5.1. Vì vậy kết quả giữ cùng ngữ nghĩa
 FIM nhưng không được xem là tái tạo toàn bộ các tối ưu và kiến trúc lưu trữ của
 paper. Không dùng diffsets, maximal-clique partitioning hay chỉ xuất maximal sets.
-Ghi chú chi tiết và ánh xạ từng mục paper nằm trong \path{docs/paper-notes.md}.
+Ghi chú chi tiết và ánh xạ từng mục paper nằm trong \path{docs/ARCHITECTURE.md}.
 
 \begin{algorithm}[tb]
 \caption{DFS prefix extension chung cho hai backend}
 \label{alg:dfs}
 \begin{algorithmic}[1]
-\Require Các atom $S$ có cùng prefix, tăng theo extension; ngưỡng $\tau$
-\Function{DFS}{$S,\tau,F$}
+\Require Tiền tố $P$ (ban đầu rỗng), các atom $S$ tăng theo item, ngưỡng $\tau$
+\Function{DFS}{$P,S,\tau,F$}
 \For{$i=1,\ldots,|S|$}
   \State $a\gets S_i$
-  \State thêm $(a.key,\operatorname{support}(a.tids))$ vào $F$
+  \State thêm $a.item$ vào cuối $P$
+  \State thêm $(\operatorname{Tuple}(P),\operatorname{support}(a.tids))$ vào $F$
   \State $C\gets[\ ]$
   \For{$j=i+1,\ldots,|S|$}
     \State $b\gets S_j$
     \State $U\gets\operatorname{intersect}(a.tids,b.tids)$
     \If{$\operatorname{support}(U)\ge\tau$}
-      \State $K\gets a.key\mathbin{\|}\operatorname{last}(b.key)$
-      \State thêm atom $(K,U)$ vào $C$
+      \State thêm atom $(b.item,U)$ vào $C$
     \EndIf
   \EndFor
   \If{$C$ khác rỗng}
-    \State \Call{DFS}{$C,\tau,F$}
+    \State \Call{DFS}{$P,C,\tau,F$}
   \EndIf
+  \State bỏ item cuối của $P$
 \EndFor
 \EndFunction
 \end{algorithmic}
@@ -147,7 +149,8 @@ Bảng~\ref{tab:types} tóm tắt các kiểu của schema v1.0.0. Hai backends 
 \texttt{mine} sang representation cụ thể, nhưng gọi chung
 \texttt{enumerate\_class!}. Vì vậy ordering, phát candidate và pruning không bị
 thay đổi giữa hai phép đo. Các vector atom và tidset trong hot loop có kiểu cụ thể;
-key có độ dài thay đổi theo itemset theo hợp đồng dùng chung.
+mỗi atom có một item kiểu \texttt{Int}. Khi xuất, DFS sao chép tiền tố
+\texttt{Vector\{Int\}} thành tuple bất biến để lần quay lui sau giữ nguyên kết quả.
 
 \begin{table}[tb]
 \centering
@@ -159,8 +162,8 @@ Kiểu & Nội dung chính \\
 \midrule
 \texttt{Itemset} & Tuple ID dương tăng, không trùng \\
 \texttt{Pattern} & Canonical key và support tuyệt đối \\
-\texttt{ListAtom} & Full key và sorted \texttt{Vector\{Int\}} \\
-\texttt{BitsetAtom} & Full key và \texttt{BitVector} \\
+\texttt{ListAtom} & Item mở rộng và danh sách TID \\
+\texttt{BitsetAtom} & Item mở rộng và \texttt{BitVector} \\
 \texttt{PreparedDataset} & Transactions, mapping và metadata \\
 \bottomrule
 \end{tabular}
@@ -233,10 +236,10 @@ chi phí $O(L+m_1\lceil n/w\rceil)$ ngoài sorting, còn tổng giao/count là
  T_{\mathrm{join,bit}}=O\!\left(|C|\lceil n/w\rceil\right).
  \label{eq:bit-cost}
 \end{equation}
-Hai công thức không bao gồm tất cả chi phí: validation và hashing input; tạo key;
-constructor Pattern sort/validate key; GC; writer sort và serialization. Riêng
-normalization các key có tổng bound $O(\sum_{X\in F}|X|\log|X|)$ và ghi output cần
-ít nhất số item IDs $\sum_{X\in F}|X|$. Trường hợp mọi tập con frequent có
+Hai công thức mô tả phần giao tidset. DFS sao chép tiền tố đã tăng dần khi xuất
+mỗi tập, với chi phí tổng cộng $O(\sum_{X\in F}|X|)$. Constructor công khai
+vẫn sắp xếp và kiểm tra các item do người gọi truyền vào. Khi ghi file, writer
+sắp các tập và ghi $\sum_{X\in F}|X|$ ID. Chi phí đọc, kiểm input và GC còn phụ thuộc dữ liệu. Trường hợp mọi tập con frequent có
 $|F|=2^m-1$; không có bound tuyến tính vô điều kiện. Các kết quả graph-theoretic
 với giả thiết sparsity ở Appendix A của paper không thay thế phân tích cài đặt này.
 
@@ -249,6 +252,15 @@ BitVector có thể giảm chi phí trên dense cases nhưng không được gi�
 nhanh hơn hoặc luôn giảm resident set size (RSS). Peak process RSS còn gồm runtime
 và biên dịch just-in-time (JIT); dữ liệu
 cấp phát tích lũy từ \texttt{@timed} là metric khác.
+
+Nhóm đo lại riêng thay đổi cách lưu và xuất tiền tố trên Windows x86-64,
+Julia 1.10.10, một luồng, năm lượt đọc và khai thác sau warm-up. Trên Chess
+70\% (48\,731 tập), trung vị của Basic giảm từ 1\,592,4 xuống 1\,436,8~ms,
+BitVector từ 84,5 xuống 50,0~ms. Mỗi bản tiết kiệm khoảng 40~MB cấp phát.
+Trên Retail 3\% (32 tập), mức giảm chỉ khoảng 22~kB và trung vị tăng
+từ 248,2 lên 307,7~ms với Basic, từ 257,1 lên 286,1~ms với BitVector.
+Kết quả đầu ra ở hai phiên bản khớp từng byte. Số đo từng lượt nằm trong
+\path{docs/validation/dfs-prefix-warm.csv}.
 
 \subsection{Kiểm thử, association rules và tái lập}
 Bộ kiểm thử mặc định bật cả hai backend và SPMF references. Oracle độc lập liệt

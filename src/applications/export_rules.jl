@@ -2,8 +2,7 @@
 function write_association_rules(path::AbstractString, dataset::PreparedDataset,
                                  rules::Vector{AssociationRule}; top_k::Union{Nothing,Int}=nothing)
     top_k === nothing || top_k >= 1 || throw(ArgumentError("top_k must be positive"))
-    ordered = sort(rules; by=r -> (-r.lift,-r.confidence,-r.support,
-        length(r.antecedent)+length(r.consequent),r.antecedent,r.consequent))
+    ordered = sort(rules; by=rule_rank_key)
     allunique((r.antecedent,r.consequent) for r in ordered) || throw(ArgumentError("Duplicate association rule"))
     for rule in ordered
         rule.n_transactions == length(dataset.transactions) || throw(ArgumentError("Rule denominator differs from dataset size"))
