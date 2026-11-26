@@ -137,4 +137,4 @@ Hình PDF lấy từ `results/plots/`. Các bảng sinh từ CSV đặt trong ha
 | `notebooks/` | Ba notebook Python gọi Julia và một file setup chung |
 | `results/`, `docs/` | Bằng chứng thực nghiệm, báo cáo và tài liệu |
 
-Để ôn vấn đáp, đọc mục tiêu và luồng ECLAT, rồi chọn một kết quả benchmark và một kết quả ứng dụng để giải thích quyết định thiết kế. [Kiến trúc](docs/ARCHITECTURE.md) · [Câu hỏi vấn đáp](docs/DEFENSE_GUIDE.md)
+Để ôn vấn đáp, đọc mục tiêu và luồng ECLAT, rồi chọn một kết quả benchmark và một kết quả ứng dụng để giải thích quyết định thiết kế. [Kiến trúc](docs/ARCHITECTURE.md)
