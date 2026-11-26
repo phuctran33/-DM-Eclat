@@ -21,10 +21,11 @@
 \usepackage{booktabs}
 \usepackage{algorithm,algpseudocode}
 \floatname{algorithm}{Thuật toán}
+\algrenewcommand\algorithmicrequire{\textbf{Đầu vào:}}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 
-\title{Khai thác tập phổ biến bằng Eclat:\\Cài đặt Julia, đánh giá và ứng dụng Groceries -- Splice DNA}
+\title{Khai thác tập phổ biến bằng ECLAT\\Cài đặt bằng Julia, thực nghiệm và ứng dụng}
 \author{\IEEEauthorblockN{Nguyễn Đức Hưng \qquad Trần Thiên Phúc}
 \IEEEauthorblockA{Môn Khai phá dữ liệu và ứng dụng\\
 Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM}}
@@ -36,22 +37,25 @@ Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐH
 \maketitle
 
 \begin{abstract}
-Nhóm cài đặt ECLAT bằng Julia để tìm mọi tập mục phổ biến và số giao dịch
-chứa mỗi tập. Hai bản cùng duyệt theo chiều sâu, dùng danh sách mã giao dịch
-(TID) tăng dần hoặc mảng bit (BitVector). Cả 70 phép đối chiếu tập mục và
-support với Java SPMF trên lưới thực nghiệm đều khớp. Trên bốn bộ dữ liệu,
-SPMF có thời gian đầu cuối trung vị (median, giá trị giữa của năm lần đo đã
-sắp thứ tự) thấp nhất ở 23/24 cấu hình. Khi chỉ đo bước đọc và khai thác
-trong Julia đã khởi động, tỉ số trung vị Basic/BitVector tại ngưỡng giữa
-là 5,10 trên Chess và 0,91 trên Retail. Nhóm cũng đo mức bộ nhớ vật lý cao
-nhất mà tiến trình chiếm dụng (peak RSS), thay đổi số giao dịch và độ rộng
-giao dịch để khảo sát chi phí của hai cách biểu diễn. Hai ứng dụng sinh 22
-luật trên Groceries và 463 mẫu so sánh ba lớp trên Splice DNA. Các kết quả
-mô tả liên hệ trong dữ liệu quan sát.
+Nhóm cài đặt ECLAT bằng Julia để tìm mọi tập phổ biến và khảo sát ảnh
+hưởng của cách lưu mã giao dịch (transaction ID, TID) đến thời gian và
+bộ nhớ. Hai bản dùng chung phép duyệt theo chiều sâu. Basic ECLAT lưu
+danh sách TID tăng dần, còn bản tối ưu dùng mảng bit đóng gói
+\texttt{BitVector}. Cả 70 phép đối chiếu tập phổ biến và độ hỗ trợ
+(support) với SPMF trên lưới thực nghiệm đều khớp. Trong phiên đo trên
+Apple M1, SPMF có trung vị (median) thời gian thực thi toàn trình
+(end-to-end) thấp nhất ở 23 trong 24 cấu hình của bốn bộ dữ liệu.
+Khi đo riêng bước đọc và khai thác sau chạy khởi động, hệ số tăng tốc
+của BitVector tại ngưỡng giữa là 5,10 trên Chess và 0,91 trên Retail.
+Nhóm cũng đo bộ nhớ cư trú cực đại (peak RSS) và khảo sát chi phí khi
+thay đổi số lượng, độ dài giao dịch. Trên Groceries, 22 luật kết hợp
+gợi ý những tổ hợp
+mặt hàng có thể khảo sát để bán kèm. Trên Splice DNA, nhóm so sánh độ hỗ trợ
+của 463 mẫu nucleotide theo vị trí ở ba lớp.
 \end{abstract}
 
 \begin{IEEEkeywords}
-frequent itemset mining, Eclat, Julia, BitVector, association rules, splice DNA
+khai thác tập phổ biến, ECLAT, Julia, BitVector, luật kết hợp, Splice DNA
 \end{IEEEkeywords}
 
 \input{sections/01-implementation}

@@ -13,18 +13,24 @@ def tex(value):
         value=value.replace(old,new)
     return value
 
+def format_decimal(value, places):
+    return f"{value:.{places}f}".replace(".", ",")
+
 def tables():
     top=rows("groceries_top10.csv")
     output=["% Generated from results/applications/groceries_top10.csv.",
             r"\newcommand{\TableGroceries}{%",
             r"\begin{tabular}{rp{0.51\textwidth}rrrr}",r"\toprule",
-            r"Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Count & Supp. (\%) & Conf. (\%) & Lift \\",
+            r"Hạng & Tiền kiện $\Rightarrow$ hậu kiện & Số giỏ & Hỗ trợ (\%) & Tin cậy (\%) & Lift \\",
             r"\midrule"]
     for row in top:
         lhs=tex(row["antecedent_labels"].replace(" | ",", "))
         rhs=tex(row["consequent_labels"].replace(" | ",", "))
+        metrics = (format_decimal(100 * float(row["support"]), 4),
+                   format_decimal(100 * float(row["confidence"]), 2),
+                   format_decimal(float(row["lift"]), 3))
         output.append(f'{row["rank"]} & {lhs} $\\Rightarrow$ {rhs} & {row["support_count"]} & '
-                      f'{100*float(row["support"]):.4f} & {100*float(row["confidence"]):.2f} & {float(row["lift"]):.3f} '+r"\\")
+                      + " & ".join(metrics) + r" \\")
     output += [r"\bottomrule",r"\end{tabular}%", "}", ""]
     dna=rows("dna_patterns.csv")
     ranks={1,2}
@@ -32,12 +38,13 @@ def tables():
     output2=["% Generated from results/applications/dna_patterns.csv. First two ranks and first lengths 3 and 4.",
              r"\newcommand{\TableSplice}{%",
              r"\begin{tabular}{rp{0.43\columnwidth}rrr}",r"\toprule",
-             r"Hạng & Pattern (vị trí, base) & EI & IE & N \\",r"\midrule"]
+             r"Hạng & Mẫu theo vị trí & EI & IE & N \\",r"\midrule"]
     for row in dna:
         if int(row["rank"]) not in ranks:continue
         items=[re.fullmatch(r"pos=([+-]?[0-9]+);base=([ACGT])", value).groups() for value in row["pattern_labels"].split(" | ")]
         label=r",\allowbreak ".join(f"({position},{base})" for position,base in items)
-        output2.append(f'{row["rank"]} & $'+label+"$ & "+ " & ".join(f'{100*float(row["support_"+c]):.2f}' for c in ["EI","IE","N"])+r" \\")
+        supports = [format_decimal(100 * float(row["support_" + c]), 2) for c in ("EI", "IE", "N")]
+        output2.append(f'{row["rank"]} & $' + label + '$ & ' + " & ".join(supports) + r" \\")
     output2 += [r"\bottomrule",r"\end{tabular}%", "}"]
     return {"application-tables.tex": "\n".join(output + output2) + "\n"}
 
